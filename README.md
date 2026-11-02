@@ -1,12 +1,19 @@
-# Istio Hybrid: Multi-Cluster und VMs im Service Mesh
+# Istio Hybrid: Multi-Cluster and VMs in a Service Mesh
 
-Workshop zu Istio im Sidecar-Modus mit klassischen Istio-APIs:
-mehrere Kubernetes-Cluster und virtuelle Maschinen in einem gemeinsamen Mesh.
+Workshop on Istio in sidecar mode with the classic Istio APIs (VirtualService, DestinationRule, ServiceEntry, Gateway):
+several Kubernetes clusters and virtual machines in one shared mesh, on an IPv6-only network.
+
+All material in this repository is in English.
 
 ## Agenda
 
-(wird Modul fuer Modul aufgebaut, jede Uebung ist auf dem echten Lab getestet)
+Day 1 – foundations on a ready-made lab
 
-## Verwandte Repos
+1. Explore the lab
+   * [Look around the lab: nodes, pods, sidecar, `istioctl proxy-status`](explore-the-lab/01-look-around.md)
 
-- Allgemeines Istio-Training (Sidecar und Ambient, Gateway API): https://github.com/jmetzger/training-istio-kubernetes
+(more modules follow, every exercise is tested on the real lab)
+
+## Related repositories
+
+- General Istio training (sidecar and ambient mode, Gateway API, German): https://github.com/jmetzger/training-istio-kubernetes
