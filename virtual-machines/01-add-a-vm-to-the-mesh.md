@@ -8,7 +8,7 @@ A virtual machine joins the mesh with the Istio sidecar package (`istio-sidecar.
 
 What `WorkloadGroup`, `WorkloadEntry` and `EndpointSlice` are and how they differ: [who is who](00-workloadgroup-workloadentry-endpointslice.md).
 
-The lab VM has no IPv4 address. Kubernetes and Istio run as IPv6 single stack, but the sidecar on a VM still needs the dual stack switches (`ISTIO_DUAL_STACK` in `istiod`, `DUAL_STACK` on the VM). We set them from the start.
+The lab VM has no IPv4 address. Kubernetes and Istio run as IPv6 single stack, but the sidecar on a VM still needs the dual stack switches (`ISTIO_DUAL_STACK` in `istiod`, `DUAL_STACK` on the VM). We set them from the start. What the switches do and where you set them: [DUAL_STACK and ISTIO_DUAL_STACK](00-dual-stack-switches.md).
 
 | Part | Name in this exercise |
 |---|---|
@@ -185,7 +185,7 @@ Without `ISTIO_DUAL_STACK` and `DUAL_STACK` the VM still joins the mesh and show
 
 | Missing | Result of the call |
 |---|---|
-| `DUAL_STACK='true'` on the VM | no iptables rules for IPv6, the request reaches the application directly: `503`, `WRONG_VERSION_NUMBER` (the pod speaks TLS, the answer is plain text) |
+| neither `DUAL_STACK` nor `ISTIO_DUAL_STACK` in `cluster.env` on the VM | no iptables rules for IPv6, the request reaches the application directly: `503`, `WRONG_VERSION_NUMBER` (the pod speaks TLS, the answer is plain text) |
 | `ISTIO_DUAL_STACK` in `istiod` | rules exist, but Envoy on the VM listens on IPv4 only: `503`, `Connection refused` |
 
 ## Good to know

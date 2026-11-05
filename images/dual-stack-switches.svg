@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="po" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
+  </defs>
+  <rect width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Two dual stack switches: one for the iptables rules, one for the Envoy listeners</text>
+
+  <!-- Cluster -->
+  <rect x="40" y="60" width="500" height="400" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="60" y="86" font-weight="bold" font-size="16" fill="#1f5f1f">Kubernetes cluster (IPv6 single stack)</text>
+
+  <rect x="60" y="105" width="460" height="130" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="290" y="132" text-anchor="middle" font-weight="bold">istiod</text>
+  <rect x="80" y="148" width="420" height="70" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="2.5"/>
+  <text x="290" y="170" text-anchor="middle" font-weight="bold" fill="#8a4500">Switch 2a: ISTIO_DUAL_STACK=true</text>
+  <text x="290" y="190" text-anchor="middle" fill="#555" font-size="12">Helm value pilot.env.ISTIO_DUAL_STACK</text>
+  <text x="290" y="207" text-anchor="middle" fill="#555" font-size="12">istiod then builds listeners for IPv4 and IPv6</text>
+
+  <rect x="60" y="270" width="460" height="100" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="290" y="296" text-anchor="middle" font-weight="bold">Mesh configuration (meshConfig)</text>
+  <rect x="80" y="308" width="420" height="50" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="2.5"/>
+  <text x="290" y="328" text-anchor="middle" font-weight="bold" fill="#8a4500">Switch 2b: ISTIO_DUAL_STACK=true</text>
+  <text x="290" y="347" text-anchor="middle" fill="#555" font-size="12">defaultConfig.proxyMetadata, ends up in mesh.yaml for the VM</text>
+
+  <!-- VM -->
+  <rect x="660" y="60" width="500" height="470" rx="10" fill="#eef4fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="680" y="86" font-weight="bold" font-size="16" fill="#1d3b66">Virtual machine</text>
+
+  <rect x="680" y="105" width="460" height="64" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="2.5"/>
+  <text x="910" y="130" text-anchor="middle" font-weight="bold" fill="#8a4500">Switch 1: DUAL_STACK='true'</text>
+  <text x="910" y="152" text-anchor="middle" fill="#555" font-size="12">one line in /var/lib/istio/envoy/cluster.env</text>
+  <path d="M910,170 L910,200" stroke="#555" stroke-width="2" fill="none" marker-end="url(#pg)"/>
+
+  <rect x="680" y="202" width="460" height="64" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="910" y="227" text-anchor="middle" font-weight="bold">istio-start.sh runs: pilot-agent istio-iptables</text>
+  <text x="910" y="249" text-anchor="middle" fill="#555" font-size="12">DUAL_STACK is the environment form of the flag --dual-stack</text>
+  <path d="M910,267 L910,297" stroke="#555" stroke-width="2" fill="none" marker-end="url(#pg)"/>
+
+  <rect x="680" y="299" width="460" height="64" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="910" y="324" text-anchor="middle" font-weight="bold">iptables and ip6tables rules</text>
+  <text x="910" y="346" text-anchor="middle" fill="#555" font-size="12">redirect the traffic of the VM to Envoy, for IPv4 and IPv6</text>
+
+  <rect x="680" y="395" width="460" height="115" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="910" y="420" text-anchor="middle" font-weight="bold">Envoy (started by pilot-agent proxy)</text>
+  <text x="910" y="442" text-anchor="middle" fill="#555" font-size="12">reads mesh.yaml with Switch 2b and tells istiod</text>
+  <text x="910" y="464" text-anchor="middle" fill="#555" font-size="12">listens on 0.0.0.0 and [::], ports 15001 and 15006</text>
+  <text x="910" y="486" text-anchor="middle" fill="#555" font-size="12">(with Switch 2a and 2b, otherwise on 0.0.0.0 only)</text>
+
+  <!-- arrows between cluster and VM -->
+  <path d="M522,334 L678,462" stroke="#555" stroke-width="2" fill="none" stroke-dasharray="6 4" marker-end="url(#pg)"/>
+  <text x="548" y="486" fill="#555" font-size="12">mesh.yaml is</text>
+  <text x="548" y="502" fill="#555" font-size="12">copied to the VM</text>
+  <path d="M678,405 L522,190" stroke="#d9730d" stroke-width="2.5" fill="none" marker-end="url(#po)"/>
+  <text x="588" y="236" fill="#8a4500" font-size="12">tells istiod</text>
+  <text x="588" y="252" fill="#8a4500" font-size="12">what it needs</text>
+
+  <!-- Legend -->
+  <rect x="40" y="550" width="1120" height="150" rx="8" fill="#fafafa" stroke="#ccc"/>
+  <text x="56" y="576" font-weight="bold" fill="#333">What happens without a switch (measured on the lab VM, IPv6 only)</text>
+  <text x="56" y="600" fill="#333"><tspan font-weight="bold">Without switch 1:</tspan> no IPv6 rules. The request reaches the application directly: 503, WRONG_VERSION_NUMBER (the pod speaks TLS, the answer is plain text).</text>
+  <text x="56" y="622" fill="#333"><tspan font-weight="bold">Without switch 2:</tspan> the rules exist, but Envoy listens on IPv4 only: 503, Connection refused.</text>
+  <text x="56" y="650" fill="#333">Both are needed although Kubernetes runs IPv6 single stack: the sidecar package on a VM has no IPv6-only mode.</text>
+  <text x="56" y="678" fill="#555" font-size="13">Orange: the switches you set. Name check: DUAL_STACK (VM, cluster.env) is not the same setting as ISTIO_DUAL_STACK (istiod and mesh configuration).</text>
+</svg>

@@ -16,4 +16,5 @@ All material in this repository is in English.
    * [Answer requests with pods from the other cluster](multi-cluster/02-answer-requests-from-the-other-cluster.md)
 1. Virtual machines in the mesh
    * [WorkloadGroup, WorkloadEntry and EndpointSlice: who is who](virtual-machines/00-workloadgroup-workloadentry-endpointslice.md)
+   * [DUAL_STACK and ISTIO_DUAL_STACK: what they do and where you set them](virtual-machines/00-dual-stack-switches.md)
    * [Add a virtual machine to the mesh (IPv6 only)](virtual-machines/01-add-a-vm-to-the-mesh.md)
