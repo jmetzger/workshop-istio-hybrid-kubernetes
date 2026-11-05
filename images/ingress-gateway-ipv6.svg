@@ -29,15 +29,25 @@
   <path d="M635,162 L635,222 L300,222 L300,238" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
   <circle cx="635" cy="195" r="12" fill="#d9730d"/><text x="635" y="200" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
 
-  <!-- Node -->
-  <rect x="60" y="240" width="270" height="170" rx="6" fill="#fff" stroke="#3b8a3b"/>
-  <text x="195" y="264" text-anchor="middle" font-weight="bold">Control-plane node</text>
-  <text x="195" y="288" text-anchor="middle" fill="#555" font-size="12">owns a whole /64 network,</text>
-  <text x="195" y="304" text-anchor="middle" fill="#555" font-size="12">routed to it by the provider</text>
-  <rect x="75" y="318" width="240" height="78" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/>
-  <text x="195" y="342" text-anchor="middle" font-weight="bold" fill="#8a4500">MetalLB</text>
-  <text x="195" y="362" text-anchor="middle" fill="#555" font-size="12">holds the fixed address ...::2:1</text>
-  <text x="195" y="380" text-anchor="middle" fill="#555" font-size="12">no floating IP, no cloud load balancer</text>
+  <!-- Node with the /64 -->
+  <rect x="60" y="240" width="270" height="130" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="195" y="264" text-anchor="middle" font-weight="bold">Node that owns the /64</text>
+  <text x="195" y="284" text-anchor="middle" fill="#555" font-size="12">(here the control-plane node)</text>
+  <text x="195" y="306" text-anchor="middle" fill="#555" font-size="12">the provider routes a whole /64 to it;</text>
+  <text x="195" y="322" text-anchor="middle" fill="#555" font-size="12">the fixed address ...::2:1 lies in this /64</text>
+  <rect x="75" y="334" width="240" height="26" rx="5" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/>
+  <text x="195" y="352" text-anchor="middle" fill="#8a4500" font-size="12" font-weight="bold">MetalLB speaker answers for ...::2:1</text>
+
+  <!-- MetalLB namespace -->
+  <rect x="60" y="390" width="270" height="170" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="195" y="414" text-anchor="middle" font-weight="bold">Namespace metallb-system</text>
+  <text x="195" y="438" text-anchor="middle" font-weight="bold" fill="#8a4500" font-size="13">controller</text>
+  <text x="195" y="455" text-anchor="middle" fill="#555" font-size="12">gives the address to the Service</text>
+  <text x="195" y="471" text-anchor="middle" fill="#555" font-size="12">(runs on a worker in our lab)</text>
+  <text x="195" y="496" text-anchor="middle" font-weight="bold" fill="#8a4500" font-size="13">speaker (on every node)</text>
+  <text x="195" y="513" text-anchor="middle" fill="#555" font-size="12">only the speaker of the /64 node announces</text>
+  <text x="195" y="529" text-anchor="middle" fill="#555" font-size="12">the address (L2Advertisement with nodeSelector)</text>
+  <text x="195" y="548" text-anchor="middle" fill="#555" font-size="12">no floating IP, no cloud load balancer</text>
 
   <!-- istio-ingress -->
   <rect x="370" y="240" width="330" height="340" rx="6" fill="#fff" stroke="#3b8a3b"/>
@@ -50,15 +60,15 @@
   <text x="535" y="388" text-anchor="middle" fill="#555" font-size="12">(the pod does not run as root)</text>
   <rect x="385" y="430" width="300" height="130" rx="6" fill="#fff" stroke="#3b8a3b"/>
   <text x="535" y="454" text-anchor="middle" font-weight="bold">Pod istio-ingressgateway (Envoy)</text>
-  <text x="535" y="478" text-anchor="middle" fill="#333" font-size="13">listens on [::]:8080  (IPv6 only)</text>
+  <text x="535" y="478" text-anchor="middle" fill="#333" font-size="13">listens on [::]:8080  (IPv6 only), runs on any node</text>
   <text x="535" y="502" text-anchor="middle" fill="#555" font-size="12">gets its routes from istiod, built from the</text>
   <text x="535" y="518" text-anchor="middle" fill="#555" font-size="12">Gateway and the VirtualService (namespace default)</text>
   <path d="M535,402 L535,428" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
   <circle cx="560" cy="414" r="12" fill="#d9730d"/><text x="560" y="419" text-anchor="middle" fill="#fff" font-weight="bold">4</text>
 
   <!-- node -> service -->
-  <path d="M332,330 L383,330" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
-  <circle cx="357" cy="312" r="12" fill="#d9730d"/><text x="357" y="317" text-anchor="middle" fill="#fff" font-weight="bold">3</text>
+  <path d="M332,347 L383,347" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
+  <circle cx="357" cy="329" r="12" fill="#d9730d"/><text x="357" y="334" text-anchor="middle" fill="#fff" font-weight="bold">3</text>
 
   <!-- default namespace -->
   <rect x="740" y="240" width="400" height="340" rx="6" fill="#fff" stroke="#3b8a3b"/>
@@ -87,7 +97,7 @@
   <!-- legend -->
   <rect x="40" y="640" width="1120" height="115" rx="8" fill="#fafafa" stroke="#ccc"/>
   <text x="56" y="664" fill="#333"><tspan font-weight="bold" fill="#8a4500">1, 2</tspan>  The caller needs only IPv6 and the fixed address of the gateway. The firewall lets TCP 80 and 443 in.</text>
-  <text x="56" y="684" fill="#333"><tspan font-weight="bold" fill="#8a4500">3</tspan>  The address belongs to the /64 of one node. MetalLB holds it there, the Service sends the traffic on to the gateway pod (80 becomes 8080).</text>
+  <text x="56" y="684" fill="#333"><tspan font-weight="bold" fill="#8a4500">3</tspan>  The address lies in the /64 of one node. Only the MetalLB speaker of that node announces it, the traffic arrives there and goes on to the gateway pod (80 becomes 8080).</text>
   <text x="56" y="704" fill="#333"><tspan font-weight="bold" fill="#8a4500">4, 5</tspan>  Envoy in the gateway pod picks the route from the Gateway and the VirtualService and passes the request to productpage,</text>
   <text x="90" y="722" fill="#333">which calls details and reviews (reviews calls ratings).</text>
   <text x="56" y="742" fill="#555" font-size="13">Limit: if the node with the /64 is down, the address is gone, even if the gateway pod runs on another node. Dashed grey line: configuration (through istiod), not traffic.</text>
