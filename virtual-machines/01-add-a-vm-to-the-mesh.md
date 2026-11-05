@@ -8,7 +8,7 @@ A virtual machine joins the mesh with the Istio sidecar package (`istio-sidecar.
 
 What `WorkloadGroup`, `WorkloadEntry` and `EndpointSlice` are and how they differ: [who is who](00-workloadgroup-workloadentry-endpointslice.md).
 
-The lab VM has no IPv4 address. Kubernetes and Istio run as IPv6 single stack, but the sidecar on a VM still needs the dual stack switches (`ISTIO_DUAL_STACK` in `istiod`, `DUAL_STACK` on the VM). We set them from the start. What the switches do and where you set them: [DUAL_STACK and ISTIO_DUAL_STACK](00-dual-stack-switches.md).
+The lab VM has an IPv6 address and a private IPv4 address (`100.65.x.x`, not routed). Kubernetes and Istio run as IPv6 single stack, but because the VM has two address families, the sidecar on it needs the dual stack switches (`ISTIO_DUAL_STACK` in `istiod`, a dual stack variable in `cluster.env` on the VM). We set them from the start. What the switches do and where you set them: [DUAL_STACK and ISTIO_DUAL_STACK](00-dual-stack-switches.md).
 
 | Part | Name in this exercise |
 |---|---|
