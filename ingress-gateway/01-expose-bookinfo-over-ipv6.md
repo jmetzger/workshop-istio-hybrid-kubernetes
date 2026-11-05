@@ -1,5 +1,7 @@
 # Expose Bookinfo through the ingress gateway over IPv6
 
+![The way of a request: caller, cloud firewall, MetalLB address, Service istio-ingressgateway, gateway pod, Bookinfo](../images/ingress-gateway-ipv6.svg)
+
 ## Background
 
 Your lab has an Istio ingress gateway in the namespace `istio-ingress`. It is a normal Kubernetes Service of type `LoadBalancer`, IPv6 single stack. Two things make it reachable from other clusters and from outside the lab:
@@ -103,7 +105,7 @@ ADDRESSES PORT  MATCH DESTINATION
 ::        15090 ALL   Inline Route: /stats/prometheus*
 ```
 
-The addresses are `::`, not `0.0.0.0`. Envoy in an IPv6 single stack cluster listens on IPv6 only. The listener for your Gateway resource (port 80) is on 8080, as seen in step 1.
+The addresses are `::`, not `0.0.0.0`. Envoy in an IPv6 single stack cluster listens on IPv6 only. The listener for your Gateway resource is on 8080: the `Gateway` of the sample names port 8080, the port of the gateway pod, and the Service port 80 leads there (step 1).
 
 ## Step 6: Call it from other places
 

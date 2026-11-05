@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 740" width="1200" height="740" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="po" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
+    <marker id="pb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a6fa5"/></marker>
+  </defs>
+  <rect width="1200" height="740" fill="#ffffff"/>
+  <text x="600" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Ports of istiod and of the sidecar on the VM: who listens where, who connects to whom</text>
+
+  <!-- Cluster -->
+  <rect x="40" y="60" width="450" height="520" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="60" y="86" font-weight="bold" font-size="16" fill="#1f5f1f">Kubernetes cluster</text>
+
+  <rect x="60" y="100" width="410" height="215" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="265" y="124" text-anchor="middle" font-weight="bold">istiod (pilot-discovery)</text>
+  <text x="80" y="150" font-weight="bold" fill="#1d3b66">15012</text><text x="140" y="150" fill="#333" font-size="13">xDS and certificates (CA), TLS: VMs and sidecars</text>
+  <text x="80" y="174" font-weight="bold">15010</text><text x="140" y="174" fill="#555" font-size="13">xDS and CA in plain text (secure networks only)</text>
+  <text x="80" y="198" font-weight="bold">15014</text><text x="140" y="198" fill="#555" font-size="13">monitoring: metrics of the control plane</text>
+  <text x="80" y="222" font-weight="bold">15017</text><text x="140" y="222" fill="#555" font-size="13">webhooks, Service port 443 (kube-apiserver calls it)</text>
+  <text x="80" y="246" font-weight="bold">8080</text><text x="140" y="246" fill="#555" font-size="13">debug (container port); readiness check /ready</text>
+  <text x="265" y="285" text-anchor="middle" fill="#555" font-size="12">Service istiod: 15010, 15012, 443, 15014 (ClusterIP)</text>
+
+  <rect x="60" y="335" width="410" height="70" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/>
+  <text x="265" y="361" text-anchor="middle" font-weight="bold" fill="#8a4500">Service istiod-lb (LoadBalancer, MetalLB)</text>
+  <text x="265" y="383" text-anchor="middle" fill="#555" font-size="12">only 15012, a fixed IPv6 address: the way for the VM</text>
+  <text x="265" y="399" text-anchor="middle" fill="#555" font-size="12">(entry in /etc/hosts: istiod.istio-system.svc)</text>
+
+  <rect x="60" y="440" width="190" height="60" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="155" y="466" text-anchor="middle" font-weight="bold">Prometheus</text>
+  <text x="155" y="486" text-anchor="middle" fill="#555" font-size="12">pulls metrics</text>
+  <rect x="280" y="440" width="190" height="60" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="375" y="466" text-anchor="middle" font-weight="bold">Pod with sidecar</text>
+  <text x="375" y="486" text-anchor="middle" fill="#555" font-size="12">calls the VM</text>
+
+  <!-- VM -->
+  <rect x="620" y="60" width="540" height="520" rx="10" fill="#eef4fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="640" y="86" font-weight="bold" font-size="16" fill="#1d3b66">Virtual machine</text>
+
+  <rect x="640" y="100" width="500" height="95" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="890" y="124" text-anchor="middle" font-weight="bold">pilot-agent</text>
+  <text x="660" y="148" font-weight="bold">15020</text><text x="720" y="148" fill="#555" font-size="13">merged metrics (agent, Envoy, app), all addresses</text>
+  <text x="660" y="172" font-weight="bold">15053</text><text x="720" y="172" fill="#555" font-size="13">DNS proxy, only 127.0.0.1 (tcp and udp)</text>
+
+  <rect x="640" y="215" width="500" height="195" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="890" y="239" text-anchor="middle" font-weight="bold">Envoy</text>
+  <text x="660" y="263" font-weight="bold">15001</text><text x="720" y="263" fill="#555" font-size="13">outbound: all outgoing traffic is redirected here</text>
+  <text x="660" y="287" font-weight="bold">15006</text><text x="720" y="287" fill="#555" font-size="13">inbound: traffic to the listed app ports (ours: 8000)</text>
+  <text x="660" y="311" font-weight="bold">15090</text><text x="720" y="311" fill="#555" font-size="13">Envoy metrics (Prometheus)</text>
+  <text x="660" y="335" font-weight="bold">15021</text><text x="720" y="335" fill="#555" font-size="13">health check (readiness)</text>
+  <text x="660" y="359" font-weight="bold">15000</text><text x="720" y="359" fill="#555" font-size="13">admin, only on the VM itself (127.0.0.1 or [::1])</text>
+  <text x="660" y="391" fill="#555" font-size="12">15001, 15006, 15021, 15090: IPv4 and/or IPv6, see the dual stack page</text>
+
+  <rect x="640" y="430" width="500" height="60" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="890" y="456" text-anchor="middle" font-weight="bold">Your application</text>
+  <text x="890" y="476" text-anchor="middle" fill="#555" font-size="12">port 8000 (our echo server); SSH on 22 is not redirected</text>
+
+  <!-- arrows -->
+  <path d="M638,150 L560,150 L560,372 L472,372" stroke="#4a6fa5" stroke-width="2.5" fill="none" marker-end="url(#pb)"/>
+  <circle cx="560" cy="260" r="12" fill="#4a6fa5"/><text x="560" y="265" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
+
+  <path d="M472,470 L600,470 L600,300 L638,300" stroke="#d9730d" stroke-width="2.5" fill="none" marker-end="url(#po)"/>
+  <circle cx="600" cy="400" r="12" fill="#d9730d"/><text x="600" y="405" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+
+  <path d="M155,502 L155,545 L580,545 L580,330 L638,330" stroke="#555" stroke-width="2" stroke-dasharray="6 4" fill="none" marker-end="url(#pg)"/>
+  <circle cx="400" cy="545" r="12" fill="#555"/><text x="400" y="550" text-anchor="middle" fill="#fff" font-weight="bold">3</text>
+
+  <!-- legend -->
+  <rect x="40" y="600" width="1120" height="130" rx="8" fill="#fafafa" stroke="#ccc"/>
+  <text x="56" y="622" fill="#1d3b66"><tspan font-weight="bold">1</tspan>  The pilot-agent of the VM connects to istiod on 15012 (through the fixed address of istiod-lb): configuration (xDS) and workload certificate.</text>
+  <text x="77" y="640" fill="#1d3b66">The VM opens the connection, istiod does not connect to the VM.</text>
+  <text x="56" y="660" fill="#8a4500"><tspan font-weight="bold">2</tspan>  A pod calls the application: the packet arrives on port 8000, iptables redirects it to Envoy on 15006, Envoy ends the mTLS and passes it on.</text>
+  <text x="56" y="680" fill="#333"><tspan font-weight="bold">3</tspan>  Prometheus pulls metrics from the VM: 15090 (Envoy) or 15020 (agent, merged). 15021 answers the health check. These ports are not redirected.</text>
+  <text x="56" y="702" fill="#555" font-size="13">Documented by Istio but not listening on our VM: 15002 (failure detection), 15004 (debug), 15008 (HBONE, only for ambient mode; iptables leaves it alone).</text>
+  <text x="56" y="720" fill="#555" font-size="13">Not drawn: the kube-apiserver (6443) of the other cluster, which istiod reads for the multi-cluster link.</text>
+</svg>

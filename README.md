@@ -18,4 +18,5 @@ All material in this repository is in English.
    * [WorkloadGroup, WorkloadEntry and EndpointSlice: who is who](virtual-machines/00-workloadgroup-workloadentry-endpointslice.md)
    * [Dual stack on the VM: what to set (`DUAL_STACK` and `ISTIO_DUAL_STACK`)](virtual-machines/00-dual-stack-switches.md)
    * [Add a virtual machine to the mesh (IPv6 only)](virtual-machines/01-add-a-vm-to-the-mesh.md)
+   * [Ports of istiod and of the sidecar on the VM](virtual-machines/00-ports-of-sidecar-and-istiod.md)
    * Reference: [Dual stack on the VM: details and measurements](virtual-machines/00-dual-stack-switches-details.md)
