@@ -138,6 +138,47 @@ kubectl --context $CTX_B exec deploy/client -c curl -- curl -s -m 8 -w "\nHTTP %
 
 All three answer `HTTP 200`.
 
+## Why `ISTIO_SVC_IP`?
+
+`ISTIO_SVC_IP` is a variable in `/var/lib/istio/envoy/cluster.env` on the VM. It tells the sidecar which address to register with `istiod`. That address becomes the `ADDRESS` of the `WorkloadEntry`, and it is the address other pods use to call the VM.
+
+The start script `/usr/local/bin/istio-start.sh` (part of `istio-sidecar.deb`) reads `cluster.env` and then does this:
+
+```
+if [ -z "${ISTIO_SVC_IP:-}" ]; then
+  ISTIO_SVC_IP=$(hostname --all-ip-addresses | cut -d ' ' -f 1)
+fi
+```
+
+So if you do not set the variable, the sidecar takes the **first** address the operating system lists. A VM with both IPv4 and IPv6 can list the IPv4 address first. In our lab the VM has a private IPv4 address (`100.65.9.93`) and an IPv6 address:
+
+```
+ssh $VM hostname --all-ip-addresses
+```
+
+```
+100.65.9.93 2a01:4f8:c013:541::1
+```
+
+We measured both cases (the sidecar was restarted after changing `cluster.env`):
+
+| `cluster.env` | `ADDRESS` of the `WorkloadEntry` | Call from a pod |
+|---|---|---|
+| `ISTIO_SVC_IP='2a01:4f8:c013:541::1'` | `2a01:4f8:c013:541::1` | `HTTP 200`, mTLS |
+| no `ISTIO_SVC_IP` | `100.65.9.93` | `HTTP 503` (3 of 3 calls) |
+
+In an IPv6 single stack cluster nobody can reach the IPv4 address, so the VM is "in the mesh" but unreachable.
+
+The order of the addresses comes from the operating system, not from Istio. On another VM the IPv6 address may come first. Do not rely on it: **always set `ISTIO_SVC_IP`** to the address that the cluster must use, one value per VM. If you create `cluster.env` again (a new `istioctl x workload entry configure`), the variable is gone and you must add it again.
+
+Always check the result:
+
+```
+kubectl --context $CTX_A get workloadentry -n vm
+```
+
+The column `ADDRESS` must show the IPv6 address you expect.
+
 ## If you leave out the dual stack switches
 
 Without `ISTIO_DUAL_STACK` and `DUAL_STACK` the VM still joins the mesh and shows up in `proxy-status`, but the call from a pod fails. Measured on an earlier lab VM:
