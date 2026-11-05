@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 770" width="1200" height="770" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 795" width="1200" height="795" font-family="Segoe UI, Arial, sans-serif" font-size="14">
   <defs>
     <marker id="pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
     <marker id="po" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
   </defs>
-  <rect width="1200" height="770" fill="#ffffff"/>
+  <rect width="1200" height="795" fill="#ffffff"/>
   <text x="600" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Bookinfo through the ingress gateway over IPv6: the way of a request</text>
 
   <!-- Callers -->
@@ -78,27 +78,39 @@
   <text x="940" y="326" text-anchor="middle" fill="#555" font-size="12">port 8080 (the port of the pod), host *, routes</text>
   <text x="940" y="344" text-anchor="middle" fill="#555" font-size="12">/productpage, /static, /login, /logout, /api/v1/products</text>
   <text x="940" y="362" text-anchor="middle" fill="#555" font-size="12">(only configuration, no traffic runs through it)</text>
-  <rect x="755" y="395" width="370" height="55" rx="6" fill="#fff" stroke="#3b8a3b"/>
-  <text x="940" y="419" text-anchor="middle" font-weight="bold">productpage</text>
-  <text x="940" y="437" text-anchor="middle" fill="#555" font-size="12">pod with sidecar (2/2), port 9080</text>
-  <rect x="755" y="480" width="110" height="50" rx="6" fill="#fff" stroke="#3b8a3b"/><text x="810" y="510" text-anchor="middle">details</text>
-  <rect x="885" y="480" width="110" height="50" rx="6" fill="#fff" stroke="#3b8a3b"/><text x="940" y="503" text-anchor="middle">reviews</text><text x="940" y="520" text-anchor="middle" fill="#555" font-size="11">v1, v2, v3</text>
-  <rect x="1015" y="480" width="110" height="50" rx="6" fill="#fff" stroke="#3b8a3b"/><text x="1070" y="510" text-anchor="middle">ratings</text>
-  <path d="M940,452 L810,478" stroke="#555" stroke-width="1.5" fill="none" marker-end="url(#pg)"/>
-  <path d="M940,452 L940,478" stroke="#555" stroke-width="1.5" fill="none" marker-end="url(#pg)"/>
-  <path d="M995,505 L1013,505" stroke="#555" stroke-width="1.5" fill="none" marker-end="url(#pg)"/>
+  <!-- productpage pod: sidecar takes the request, then the app -->
+  <rect x="755" y="390" width="370" height="72" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="940" y="408" text-anchor="middle" font-weight="bold" font-size="13">Pod productpage (2/2)</text>
+  <rect x="767" y="418" width="130" height="34" rx="5" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/><text x="832" y="440" text-anchor="middle" fill="#8a4500" font-size="12" font-weight="bold">sidecar (Envoy)</text>
+  <rect x="983" y="418" width="130" height="34" rx="5" fill="#eef6ee" stroke="#3b8a3b"/><text x="1048" y="440" text-anchor="middle" font-size="12">app :9080</text>
+  <path d="M899,435 L981,435" stroke="#555" stroke-width="1.5" fill="none" marker-end="url(#pg)"/>
+
+  <!-- the other three pods, each with its sidecar -->
+  <rect x="755" y="485" width="110" height="88" rx="6" fill="#fff" stroke="#3b8a3b"/><text x="810" y="502" text-anchor="middle" font-size="13" font-weight="bold">details</text>
+  <rect x="763" y="510" width="94" height="24" rx="4" fill="#eef6ee" stroke="#3b8a3b"/><text x="810" y="527" text-anchor="middle" font-size="12">app</text>
+  <rect x="763" y="540" width="94" height="24" rx="4" fill="#fff4e0" stroke="#d9730d" stroke-width="1.5"/><text x="810" y="557" text-anchor="middle" fill="#8a4500" font-size="12">sidecar</text>
+  <rect x="885" y="485" width="110" height="88" rx="6" fill="#fff" stroke="#3b8a3b"/><text x="940" y="502" text-anchor="middle" font-size="13" font-weight="bold">reviews v1-v3</text>
+  <rect x="893" y="510" width="94" height="24" rx="4" fill="#eef6ee" stroke="#3b8a3b"/><text x="940" y="527" text-anchor="middle" font-size="12">app</text>
+  <rect x="893" y="540" width="94" height="24" rx="4" fill="#fff4e0" stroke="#d9730d" stroke-width="1.5"/><text x="940" y="557" text-anchor="middle" fill="#8a4500" font-size="12">sidecar</text>
+  <rect x="1015" y="485" width="110" height="88" rx="6" fill="#fff" stroke="#3b8a3b"/><text x="1070" y="502" text-anchor="middle" font-size="13" font-weight="bold">ratings</text>
+  <rect x="1023" y="510" width="94" height="24" rx="4" fill="#eef6ee" stroke="#3b8a3b"/><text x="1070" y="527" text-anchor="middle" font-size="12">app</text>
+  <rect x="1023" y="540" width="94" height="24" rx="4" fill="#fff4e0" stroke="#d9730d" stroke-width="1.5"/><text x="1070" y="557" text-anchor="middle" fill="#8a4500" font-size="12">sidecar</text>
+  <path d="M832,464 L810,483" stroke="#555" stroke-width="1.5" fill="none" marker-end="url(#pg)"/>
+  <path d="M900,464 L940,483" stroke="#555" stroke-width="1.5" fill="none" marker-end="url(#pg)"/>
+  <path d="M997,540 L1013,540" stroke="#555" stroke-width="1.5" fill="none" marker-end="url(#pg)"/>
 
   <!-- gateway pod -> productpage -->
-  <path d="M687,495 L728,495 L728,422 L753,422" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
-  <circle cx="728" cy="460" r="12" fill="#d9730d"/><text x="728" y="465" text-anchor="middle" fill="#fff" font-weight="bold">5</text>
+  <path d="M687,495 L728,495 L728,435 L765,435" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
+  <circle cx="728" cy="470" r="12" fill="#d9730d"/><text x="728" y="475" text-anchor="middle" fill="#fff" font-weight="bold">5</text>
   <!-- config -> gateway -->
   <path d="M755,350 L710,350 L710,540 L687,540" stroke="#999" stroke-width="1.8" stroke-dasharray="6 4" fill="none" marker-end="url(#pg)"/>
 
   <!-- legend -->
-  <rect x="40" y="640" width="1120" height="115" rx="8" fill="#fafafa" stroke="#ccc"/>
+  <rect x="40" y="640" width="1120" height="140" rx="8" fill="#fafafa" stroke="#ccc"/>
   <text x="56" y="664" fill="#333"><tspan font-weight="bold" fill="#8a4500">1, 2</tspan>  The caller needs only IPv6 and the fixed address of the gateway. The firewall lets TCP 80 and 443 in.</text>
   <text x="56" y="684" fill="#333"><tspan font-weight="bold" fill="#8a4500">3</tspan>  The address lies in the /64 of one node. Only the MetalLB speaker of that node announces it, the traffic arrives there and goes on to the gateway pod (80 becomes 8080).</text>
-  <text x="56" y="704" fill="#333"><tspan font-weight="bold" fill="#8a4500">4, 5</tspan>  Envoy in the gateway pod picks the route from the Gateway and the VirtualService and passes the request to productpage,</text>
-  <text x="90" y="722" fill="#333">which calls details and reviews (reviews calls ratings).</text>
-  <text x="56" y="742" fill="#555" font-size="13">Limit: if the node with the /64 is down, the address is gone, even if the gateway pod runs on another node. Dashed grey line: configuration (through istiod), not traffic.</text>
+  <text x="56" y="704" fill="#333"><tspan font-weight="bold" fill="#8a4500">4, 5</tspan>  Envoy in the gateway pod picks the route from the Gateway and the VirtualService and passes the request to the sidecar of productpage,</text>
+  <text x="90" y="722" fill="#333">which hands it to its app. The app calls details and reviews (reviews calls ratings).</text>
+  <text x="56" y="742" fill="#333">Every pod has a sidecar (2/2), so every call between the pods goes through two sidecars (mTLS).</text>
+  <text x="56" y="764" fill="#555" font-size="13">Limit: if the node with the /64 is down, the address is gone, even if the gateway pod runs on another node. Dashed grey line: configuration (through istiod), not traffic.</text>
 </svg>
