@@ -15,4 +15,5 @@ All material in this repository is in English.
    * [Check the link between two clusters: `istioctl remote-clusters`](multi-cluster/01-check-the-link-between-clusters.md)
    * [Answer requests with pods from the other cluster](multi-cluster/02-answer-requests-from-the-other-cluster.md)
 1. Virtual machines in the mesh
+   * [WorkloadGroup, WorkloadEntry and EndpointSlice: who is who](virtual-machines/00-workloadgroup-workloadentry-endpointslice.md)
    * [Add a virtual machine to the mesh (IPv6 only)](virtual-machines/01-add-a-vm-to-the-mesh.md)

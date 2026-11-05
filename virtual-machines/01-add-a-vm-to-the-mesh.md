@@ -6,6 +6,8 @@
 
 A virtual machine joins the mesh with the Istio sidecar package (`istio-sidecar.deb`). The sidecar connects to `istiod`, gets a workload certificate and appears in the mesh like a pod. `istiod` creates a `WorkloadEntry` for it automatically (auto-registration). From then on a pod calls the VM through a normal Kubernetes `Service`, with mTLS.
 
+What `WorkloadGroup`, `WorkloadEntry` and `EndpointSlice` are and how they differ: [who is who](00-workloadgroup-workloadentry-endpointslice.md).
+
 The lab VM has no IPv4 address. Kubernetes and Istio run as IPv6 single stack, but the sidecar on a VM still needs the dual stack switches (`ISTIO_DUAL_STACK` in `istiod`, `DUAL_STACK` on the VM). We set them from the start.
 
 | Part | Name in this exercise |
