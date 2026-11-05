@@ -99,6 +99,19 @@ ssh $VM "ISTIO_DUAL_STACK=true pilot-agent istio-iptables --dry-run 2>&1 | grep 
 1
 ```
 
+## Where the `ISTIO_DUAL_STACK` line in `cluster.env` comes from
+
+`istioctl x workload entry configure` copies every entry of `proxyMetadata` from the mesh configuration (ConfigMap `istio` in `istio-system`, key `mesh`) into `mesh.yaml` and `cluster.env`. The `istiod` Helm chart (1.29.9) adds `ISTIO_DUAL_STACK` to that mesh configuration by itself when `pilot.env.ISTIO_DUAL_STACK=true` is set. We checked it with the values of the Helm release:
+
+| `pilot.env.ISTIO_DUAL_STACK` | own `meshConfig...proxyMetadata.ISTIO_DUAL_STACK` | in the ConfigMap `istio` | line in the generated `cluster.env` |
+|---|---|---|---|
+| `true` | `true` | yes | yes |
+| `true` | removed | yes | yes |
+| `false` | `true` | yes | yes |
+| `false` | removed | no | **no** |
+
+So the line comes with `ISTIO_DUAL_STACK=true` in `istiod`, and our own `--set meshConfig...` in the exercise is not needed. If you want a `cluster.env` without the line (for the `probe`), you delete it by hand on the VM.
+
 ## The health probe (`probe` in the WorkloadGroup)
 
 A `probe` in the `WorkloadGroup` is a health check for the VM. It is **not** run by Envoy but by the `pilot-agent` on the VM. The agent checks two things: is Envoy ready (it asks the admin port `15000`) and does the application answer the `probe`. It reports the result to `istiod`. `istiod` sets `Healthy` in the `WorkloadEntry` and removes an unhealthy VM from the lists it sends to the other sidecars.
@@ -119,7 +132,7 @@ The agent log (`/var/log/istio/istio.log`) tells why:
 
 So a `probe` on our VM works only with these three things together:
 
-* **`DUAL_STACK='true'` in `cluster.env` and no `ISTIO_DUAL_STACK` line.** `istioctl` writes that line itself, so you have to delete it and restart the sidecar:
+* **`DUAL_STACK='true'` in `cluster.env` and no `ISTIO_DUAL_STACK` line.** `istioctl x workload entry configure` writes that line itself (it copies it from the mesh configuration, where the `istiod` Helm chart puts it when `pilot.env.ISTIO_DUAL_STACK=true`), so you have to delete it and restart the sidecar:
 
   ```
   ssh $VM "sed -i '/^ISTIO_DUAL_STACK=/d' /var/lib/istio/envoy/cluster.env"

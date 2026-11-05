@@ -78,14 +78,69 @@ kubectl --context $CTX_B apply -f 01-vm-objects.yml
 
 ### Step 4: Create the files for the VM
 
-`istioctl` writes everything the VM needs: root certificate, token, mesh configuration, address of `istiod`. Then the script copies the folder to the VM.
+The command is `istioctl x workload entry configure` (`x` is short for `experimental`). It reads the `WorkloadGroup` and the mesh configuration of the cluster and writes everything the VM needs into a folder. Then the script copies the folder to the VM.
 
 ```
 istioctl --context $CTX_A x workload entry configure -f 02-workloadgroup.yml -o vmfiles --clusterID cluster-a --ingressIP $ISTIOD_ADDR --autoregister
+ls vmfiles
 scp -q -r vmfiles vm-echo-server.py $VM:/root/
 ```
 
-`--autoregister` is important: without it `istiod` does not create the `WorkloadEntry`. The file `istio-token` is a secret. Do not print it and do not commit it.
+| Option | Meaning |
+|---|---|
+| `-f 02-workloadgroup.yml` | the `WorkloadGroup` of the VM (name, namespace, labels, service account, ports, network) |
+| `-o vmfiles` | the folder for the files |
+| `--clusterID cluster-a` | the name of the cluster the VM registers with |
+| `--ingressIP $ISTIOD_ADDR` | the address of `istiod` that the VM can reach (our `istiod-lb`, see step 2) |
+| `--autoregister` | `istiod` creates the `WorkloadEntry` when the VM connects. Without it the `WorkloadEntry` is missing |
+
+The command writes five files:
+
+```
+cluster.env  hosts  istio-token  mesh.yaml  root-cert.pem
+```
+
+| File | Goes to (on the VM) | What is in it |
+|---|---|---|
+| `cluster.env` | `/var/lib/istio/envoy/cluster.env` | One `KEY='value'` line per setting. `istio-start.sh` reads it and every line becomes an environment variable of the sidecar. See below |
+| `mesh.yaml` | `/etc/istio/config/mesh` | The mesh configuration for the agent: `discoveryAddress: istiod.istio-system.svc:15012`, `meshId`, and under `proxyMetadata` the same entries as in `cluster.env` |
+| `hosts` | appended to `/etc/hosts` | One line: `<ISTIOD_ADDR> istiod.istio-system.svc`, so the VM finds `istiod` by name |
+| `root-cert.pem` | `/etc/certs/root-cert.pem` | The root certificate of the mesh (in our lab `Lab Root CA tln1`), so the VM trusts `istiod` and the other workloads |
+| `istio-token` | `/var/run/secrets/tokens/istio-token` | A token (JWT) of the service account `diameter-adapter` in the namespace `vm`. The agent uses it once to get its workload certificate. **Secret**, valid for a short time (one hour by default). Do not print it and do not commit it |
+
+This is the `cluster.env` of our lab (lines in the order `istioctl` writes them):
+
+```
+CANONICAL_REVISION='latest'
+CANONICAL_SERVICE='diameter-adapter'
+ISTIO_DUAL_STACK='true'
+ISTIO_INBOUND_PORTS='8000'
+ISTIO_LOCAL_EXCLUDE_PORTS='22,15090,15021,15020'
+ISTIO_METAJSON_LABELS='{"app":"diameter-adapter",...}'
+ISTIO_META_AUTO_REGISTER_GROUP='diameter-adapter'
+ISTIO_META_CLUSTER_ID='cluster-a'
+ISTIO_META_DNS_AUTO_ALLOCATE='true'
+ISTIO_META_DNS_CAPTURE='true'
+ISTIO_META_MESH_ID='mesh-tln1'
+ISTIO_META_NETWORK='net1'
+ISTIO_META_POD_PORTS='[{"name":"http","containerPort":8000,"protocol":""}]'
+ISTIO_META_WORKLOAD_NAME='diameter-adapter'
+ISTIO_NAMESPACE='vm'
+ISTIO_SERVICE='diameter-adapter.vm'
+ISTIO_SERVICE_CIDR='*'
+POD_NAMESPACE='vm'
+SERVICE_ACCOUNT='diameter-adapter'
+TRUST_DOMAIN='cluster.local'
+```
+
+Where the lines come from:
+
+* **From the `WorkloadGroup`:** `ISTIO_NAMESPACE`, `POD_NAMESPACE`, `SERVICE_ACCOUNT`, `ISTIO_SERVICE`, `ISTIO_INBOUND_PORTS` (the ports of the `WorkloadGroup`), `ISTIO_METAJSON_LABELS` (its labels), `ISTIO_META_NETWORK` (its network), `ISTIO_META_POD_PORTS`.
+* **From the options:** `ISTIO_META_CLUSTER_ID` (`--clusterID`), `ISTIO_META_AUTO_REGISTER_GROUP` (`--autoregister`).
+* **From the mesh configuration of the cluster (`proxyMetadata` in the ConfigMap `istio` in `istio-system`):** every entry there, for example `ISTIO_DUAL_STACK`, `ISTIO_META_DNS_CAPTURE` and `ISTIO_META_DNS_AUTO_ALLOCATE`. They appear in `mesh.yaml` and in `cluster.env`. The `istiod` Helm chart adds `ISTIO_DUAL_STACK` to this ConfigMap by itself as soon as `pilot.env.ISTIO_DUAL_STACK=true` is set (we checked: with the entry removed from our own Helm values it was still there; with `pilot.env.ISTIO_DUAL_STACK=false` and no own entry it was gone, and so were the lines in the generated files).
+* **Fixed by `istioctl`:** `ISTIO_LOCAL_EXCLUDE_PORTS='22,15090,15021,15020'`. These ports are not redirected to Envoy: SSH and the three ports of the sidecar itself.
+
+The script **adds** two more lines to `cluster.env` on the VM, because `istioctl` does not write them: `ISTIO_SVC_IP` (the address of the VM, see below) and `DUAL_STACK='true'`.
 
 ### Step 5: Install the sidecar on the VM and start it
 
