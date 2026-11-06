@@ -55,7 +55,7 @@ The last row matters if you are a tenant: installing CRDs is a cluster-wide act.
 * The Gateway API is the direction Istio is moving in. For **new ingress** configuration it is a good default when the CRDs are available.
 * The Istio APIs stay important. Not every feature of `VirtualService` and `DestinationRule` has an equivalent in the Gateway API, for example fault injection, connection pool settings and outlier detection are still configured with the Istio objects. Existing setups are full of them, and many companies run the classic APIs.
 * You can use both in one cluster, and you can move step by step.
-* **One owner per Service.** Do not describe the routing of the same Service with an `HTTPRoute` and a `VirtualService` at the same time. Pick one.
+* **One owner per Service.** Do not describe the routing of the same Service with an `HTTPRoute` and a `VirtualService` at the same time. Pick one. (Hint: It does not work properly)
 
 In this course the focus is on the Istio APIs. You see the Gateway API as a short contrast.
 
