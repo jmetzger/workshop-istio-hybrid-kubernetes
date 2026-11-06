@@ -1,5 +1,7 @@
 # Ports of istiod and of the sidecar (sidecar mode)
 
+![Ports of istiod and of the sidecar in a pod: who listens where, who connects to whom](/images/ports-sidecar-and-istiod-in-pod.svg)
+
 In sidecar mode two programs open the ports that matter in this course: **`istiod`** in the cluster and the **sidecar** in every pod of the mesh. This page lists every port, what it is for and who connects to it. The column "Measured" is what we saw in our lab (Istio 1.29.9, IPv6 only, the `productpage` pod of Bookinfo, `ss -ltnp` in the pod, `kubectl` for `istiod`). The tasks come from the Istio documentation (*Ports used by Istio*).
 
 ## Who is who
@@ -53,9 +55,10 @@ The `Service istiod` (type `ClusterIP`) has the ports `15010`, `15012`, `443` an
 ## Who connects to whom
 
 1. **A pod starts.** The `kube-apiserver` calls `istiod` on `443` (forwarded to `15017`) so that the sidecar is injected. Then the `pilot-agent` connects to `istiod` on `15012`: it gets the configuration and a certificate. The sidecar opens this connection, `istiod` never connects to the pod.
-2. **A pod calls another pod.** The application opens a connection. iptables sends it to Envoy on `15001`. Envoy sends it with mTLS to the other pod. There iptables redirects it to the Envoy on `15006`, which hands it to the application (here `9080`).
-3. **Prometheus collects metrics.** It scrapes `15020` (everything merged) or `15090` (Envoy only) of every pod, and `15014` of `istiod`.
-4. **The kubelet checks the sidecar.** It asks `15021` (`/healthz/ready`) as startup and readiness probe.
+2. **The application calls another pod (outbound).** The application opens a connection. iptables sends it to Envoy on `15001`. Envoy sends it with mTLS to the other pod.
+3. **Another pod calls the application (inbound).** The mTLS connection arrives. iptables redirects it to the Envoy on `15006`, which ends the mTLS and hands the request to the application (here `9080`).
+4. **Prometheus collects metrics.** It scrapes `15020` (everything merged) or `15090` (Envoy only) of every pod, and `15014` of `istiod`.
+5. **The kubelet checks the sidecar.** It asks `15021` (`/healthz/ready`) as startup and readiness probe.
 
 ## Look at it yourself
 
