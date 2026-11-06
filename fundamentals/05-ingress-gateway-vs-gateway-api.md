@@ -11,8 +11,8 @@ Traffic that comes **into** the cluster from outside is called north-south traff
 
 | Object | What it does |
 |---|---|
-| Ingress gateway (`istio-ingressgateway`) | A Deployment with a Service of type `LoadBalancer`. In the lab both are called `istio-ingressgateway` and live in the namespace `istio-ingress`. Behind it run the **gateway pods**: each one is an Envoy without application. You run it yourself |
-| `Gateway` (`networking.istio.io`) | Opens the door on that pod: ports, hosts, TLS. A `selector` picks the gateway pods |
+| Ingress gateway (`istio-ingressgateway`) | A Deployment with a Service of type `LoadBalancer`. In the lab both are called `istio-ingressgateway` and live in the namespace `istio-ingress`. |
+| `Gateway` (`networking.istio.io`) | Opens the door on the ingress gateway: ports, hosts, TLS. A `selector` picks the gateway pods |
 | `VirtualService` | The routing rules. It names the `Gateway` in its `gateways` field |
 | `DestinationRule` | Defines **subsets** (for example `v1`, `v2` by pod label) and the policy for the target: load balancing, connection pool, outlier detection |
 
