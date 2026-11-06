@@ -36,7 +36,7 @@ ssh a-vm1 "printf 'network:\n  version: 2\n  ethernets:\n    eth0:\n      dhcp4:
 We go through the steps one by one. For every step the trainer explains what happens and why. You do **not** type everything by hand: the script `vm-in-the-mesh.sh` (in the folder `virtual-machines` on your bastion host) runs the steps for you.
 
 ```
-cd virtual-machines
+cd ~/virtual-machines
 ./vm-in-the-mesh.sh
 ```
 
