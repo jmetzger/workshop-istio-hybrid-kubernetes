@@ -14,6 +14,7 @@ All material in this repository is in English.
      * [Istio architecture and components](fundamentals/04-istio-architecture-and-components.md)
      * [Istio ingress gateway vs. Kubernetes Gateway API](fundamentals/05-ingress-gateway-vs-gateway-api.md)
      * [Ports of istiod and of the sidecar (sidecar mode)](fundamentals/06-ports-of-istiod-and-the-sidecar.md)
+     * [How the sidecar gets into the pod (sidecar injection)](fundamentals/07-sidecar-injection.md)
   
   1. Explore the lab
      * [Look around the lab: nodes, pods, sidecar, `istioctl proxy-status`](explore-the-lab/01-look-around.md)

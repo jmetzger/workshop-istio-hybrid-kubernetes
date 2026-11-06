@@ -1,43 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900" font-family="Segoe UI, Arial, sans-serif" font-size="14">
   <defs>
     <marker id="pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
     <marker id="po" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
     <marker id="pb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#4a6fa5"/></marker>
   </defs>
-  <rect width="1200" height="800" fill="#ffffff"/>
+  <rect width="1200" height="900" fill="#ffffff"/>
   <text x="600" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Ports of istiod and of the sidecar in a pod: who listens where, who connects to whom</text>
 
   <!-- left: cluster -->
-  <rect x="40" y="60" width="450" height="490" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <rect x="40" y="60" width="450" height="590" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
   <text x="60" y="86" font-weight="bold" font-size="16" fill="#1f5f1f">Kubernetes cluster</text>
-  <rect x="60" y="100" width="410" height="230" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <rect x="60" y="100" width="410" height="320" rx="6" fill="#fff" stroke="#3b8a3b"/>
   <text x="265" y="124" text-anchor="middle" font-weight="bold">istiod (pilot-discovery)</text>
-  <text x="80" y="150" font-weight="bold" fill="#1d3b66">15012</text><text x="140" y="150" fill="#333" font-size="13">xDS and certificates (CA), TLS: the sidecars</text>
-  <text x="80" y="174" font-weight="bold" fill="#000">15010</text><text x="140" y="174" fill="#555" font-size="13">xDS and CA in plain text (secure networks only)</text>
-  <text x="80" y="198" font-weight="bold" fill="#000">15014</text><text x="140" y="198" fill="#555" font-size="13">monitoring: metrics of the control plane</text>
-  <text x="80" y="222" font-weight="bold" fill="#000">15017</text><text x="140" y="222" fill="#555" font-size="13">webhooks, Service port 443 (kube-apiserver calls it)</text>
-  <text x="80" y="246" font-weight="bold" fill="#000">8080</text><text x="140" y="246" fill="#555" font-size="13">debug (container port); readiness check /ready</text>
-  <text x="80" y="270" font-weight="bold" fill="#000">9876</text><text x="140" y="270" fill="#555" font-size="13">introspection (ControlZ), 127.0.0.1 only</text>
-  <text x="265" y="312" text-anchor="middle" fill="#555" font-size="12">Service istiod: 15010, 15012, 443, 15014 (ClusterIP)</text>
-
-  <rect x="60" y="350" width="190" height="50" rx="6" fill="#fff" stroke="#3b8a3b"/>
-  <text x="155" y="372" text-anchor="middle" font-weight="bold">kube-apiserver</text>
-  <text x="155" y="390" text-anchor="middle" fill="#555" font-size="12">injection, validation</text>
-
-  <rect x="280" y="350" width="190" height="50" rx="6" fill="#fff" stroke="#3b8a3b"/>
-  <text x="375" y="372" text-anchor="middle" font-weight="bold">Other pod with sidecar</text>
-  <text x="375" y="390" text-anchor="middle" fill="#555" font-size="12">calls the application</text>
-
-  <rect x="280" y="420" width="190" height="50" rx="6" fill="#fff" stroke="#3b8a3b"/>
-  <text x="375" y="442" text-anchor="middle" font-weight="bold">Prometheus</text>
-  <text x="375" y="460" text-anchor="middle" fill="#555" font-size="12">scrapes the pod and istiod:15014</text>
-
-  <rect x="280" y="490" width="190" height="50" rx="6" fill="#fff" stroke="#3b8a3b"/>
-  <text x="375" y="512" text-anchor="middle" font-weight="bold">kubelet</text>
-  <text x="375" y="530" text-anchor="middle" fill="#555" font-size="12">probes the sidecar</text>
+  <text x="80" y="152" font-weight="bold" fill="#1d3b66">15012</text><text x="140" y="152" fill="#222" font-size="13">xDS and certificates (CA), TLS</text>
+  <text x="140" y="169" fill="#666" font-size="12">used by the pilot-agent of every sidecar</text>
+  <text x="80" y="194" font-weight="bold" fill="#000">15010</text><text x="140" y="194" fill="#222" font-size="13">xDS and CA in plain text</text>
+  <text x="140" y="211" fill="#666" font-size="12">secure networks only, not used in our lab</text>
+  <text x="80" y="236" font-weight="bold" fill="#000">15014</text><text x="140" y="236" fill="#222" font-size="13">monitoring: metrics of istiod</text>
+  <text x="140" y="253" fill="#666" font-size="12">used by Prometheus</text>
+  <text x="80" y="278" font-weight="bold" fill="#000">15017</text><text x="140" y="278" fill="#222" font-size="13">webhooks (Service port 443)</text>
+  <text x="140" y="295" fill="#666" font-size="12">used by the kube-apiserver: sidecar injection</text>
+  <text x="80" y="320" font-weight="bold" fill="#000">8080</text><text x="140" y="320" fill="#222" font-size="13">debug (container port only)</text>
+  <text x="140" y="337" fill="#666" font-size="12">readiness check /ready, used by the kubelet</text>
+  <text x="80" y="362" font-weight="bold" fill="#000">9876</text><text x="140" y="362" fill="#222" font-size="13">introspection (ControlZ)</text>
+  <text x="140" y="379" fill="#666" font-size="12">127.0.0.1 only: reachable inside the istiod pod</text>
+  <text x="265" y="408" text-anchor="middle" fill="#555" font-size="12">Service istiod: 15010, 15012, 443, 15014 (ClusterIP)</text>
+  <rect x="280" y="440" width="190" height="50" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="375" y="462" text-anchor="middle" font-weight="bold">Other pod with sidecar</text>
+  <text x="375" y="480" text-anchor="middle" fill="#555" font-size="12">calls the application</text>
+  <rect x="280" y="510" width="190" height="50" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="375" y="532" text-anchor="middle" font-weight="bold">Prometheus</text>
+  <text x="375" y="550" text-anchor="middle" fill="#555" font-size="12">scrapes the pod and istiod:15014</text>
+  <rect x="280" y="580" width="190" height="50" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="375" y="602" text-anchor="middle" font-weight="bold">kubelet</text>
+  <text x="375" y="620" text-anchor="middle" fill="#555" font-size="12">probes the sidecar</text>
 
   <!-- right: pod -->
-  <rect x="620" y="60" width="540" height="490" rx="10" fill="#eef4fb" stroke="#4a6fa5" stroke-width="2"/>
+  <rect x="620" y="60" width="540" height="590" rx="10" fill="#eef4fb" stroke="#4a6fa5" stroke-width="2"/>
   <text x="640" y="86" font-weight="bold" font-size="16" fill="#1d3b66">Pod productpage-v1 (sidecar mode)</text>
 
   <rect x="640" y="100" width="500" height="52" rx="6" fill="#fff" stroke="#4a6fa5" stroke-dasharray="6 4"/>
@@ -50,7 +49,7 @@
   <rect x="655" y="194" width="470" height="76" rx="6" fill="#f7f9fc" stroke="#4a6fa5"/>
   <text x="890" y="213" text-anchor="middle" font-weight="bold">pilot-agent</text>
   <text x="675" y="237" font-weight="bold">15020</text><text x="735" y="237" fill="#555" font-size="13">merged metrics (agent, Envoy, application), all addresses</text>
-  <text x="675" y="258" font-weight="bold" fill="#999">15053</text><text x="735" y="258" fill="#999" font-size="13">DNS proxy: not listening in our pod (needs DNS capture)</text>
+  <text x="675" y="258" font-weight="bold" fill="#999">15053</text><text x="735" y="258" fill="#999" font-size="13">DNS proxy: only with DNS capture (see the page)</text>
 
   <rect x="655" y="282" width="470" height="164" rx="6" fill="#f7f9fc" stroke="#4a6fa5"/>
   <text x="890" y="301" text-anchor="middle" font-weight="bold">Envoy</text>
@@ -67,31 +66,28 @@
   <text x="890" y="527" text-anchor="middle" fill="#555" font-size="12">outgoing traffic to 15001.</text>
 
   <!-- arrows -->
-  <path d="M155,350 L155,332" stroke="#4a6fa5" stroke-width="3" fill="none" marker-end="url(#pb)"/>
   <path d="M655,226 L548,226 L548,145 L472,145" stroke="#4a6fa5" stroke-width="3" fill="none" marker-end="url(#pb)"/>
-  <path d="M470,388 L545,388 L545,342 L653,342" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
-  <path d="M655,320 L500,320 L500,358 L472,358" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
+  <path d="M655,320 L500,320 L500,446 L472,446" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
+  <path d="M470,476 L545,476 L545,342 L653,342" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
+  <path d="M470,535 L575,535 L575,364 L653,364" stroke="#555" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#pg)"/>
+  <path d="M470,605 L610,605 L610,386 L653,386" stroke="#555" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#pg)"/>
   <text x="575" y="314" text-anchor="middle" font-size="11" font-weight="bold" fill="#8a4500">outbound</text>
   <text x="590" y="336" text-anchor="middle" font-size="11" font-weight="bold" fill="#8a4500">inbound</text>
-  <path d="M470,445 L575,445 L575,364 L653,364" stroke="#555" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#pg)"/>
-  <path d="M470,515 L610,515 L610,386 L653,386" stroke="#555" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#pg)"/>
-  <circle cx="133" cy="341" r="12" fill="#4a6fa5"/><text x="133" y="346" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">1</text>
   <circle cx="548" cy="186" r="12" fill="#4a6fa5"/><text x="548" y="191" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">1</text>
-  <circle cx="500" cy="339" r="12" fill="#d9730d"/><text x="500" y="344" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">2</text>
-  <circle cx="545" cy="368" r="12" fill="#d9730d"/><text x="545" y="373" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">3</text>
-  <circle cx="575" cy="410" r="12" fill="#555"/><text x="575" y="415" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">4</text>
-  <circle cx="610" cy="455" r="12" fill="#555"/><text x="610" y="460" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">5</text>
+  <circle cx="500" cy="390" r="12" fill="#d9730d"/><text x="500" y="395" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">2</text>
+  <circle cx="545" cy="430" r="12" fill="#d9730d"/><text x="545" y="435" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">3</text>
+  <circle cx="575" cy="490" r="12" fill="#555"/><text x="575" y="495" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">4</text>
+  <circle cx="610" cy="540" r="12" fill="#555"/><text x="610" y="545" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">5</text>
 
   <!-- legend -->
-  <rect x="40" y="570" width="1120" height="215" rx="8" fill="#fafafa" stroke="#bbb"/>
-  <text x="56" y="594" font-size="13" fill="#1d3b66"><tspan font-weight="bold">1</tspan>  A pod starts. The kube-apiserver calls istiod on 443 (forwarded to 15017) for the injection. Then the pilot-agent connects to istiod</text>
-  <text x="73" y="612" font-size="13" fill="#1d3b66">on 15012: configuration (xDS) and workload certificate. The sidecar opens the connection, istiod never connects to the pod.</text>
-  <text x="56" y="636" font-size="13" fill="#8a4500"><tspan font-weight="bold">2</tspan>  Outbound: the application calls another pod. iptables sends the connection to Envoy on 15001, Envoy sends it with mTLS to the other pod.</text>
-  <text x="56" y="658" font-size="13" fill="#8a4500"><tspan font-weight="bold">3</tspan>  Inbound: another pod calls the application. The mTLS connection arrives, iptables redirects it to Envoy on 15006, Envoy ends the mTLS and</text>
-  <text x="73" y="676" font-size="13" fill="#8a4500">hands the request to the application (here 9080).</text>
-  <text x="56" y="698" font-size="13" fill="#333"><tspan font-weight="bold">4</tspan>  Prometheus scrapes 15020 (everything merged) or 15090 (Envoy only) of the pod, and 15014 of istiod. These ports are not redirected.</text>
-  <text x="56" y="718" font-size="13" fill="#333"><tspan font-weight="bold">5</tspan>  The kubelet asks 15021 (/healthz/ready) as startup and readiness probe of istio-proxy. This port is not redirected either.</text>
-  <text x="56" y="745" font-size="12" fill="#555">Documented by Istio but not listening in our pod: 15002 (failure detection), 15004 (debug), 15008 (HBONE, only for ambient mode; iptables leaves it alone).</text>
-  <text x="56" y="762" font-size="12" fill="#555">15053 listens only if DNS capture is switched on. Not drawn: the other cluster (6443, multi-cluster link) and the gateways. Measured in our lab: Istio 1.29.9,</text>
-  <text x="56" y="777" font-size="12" fill="#555">IPv6-only cluster, pod productpage-v1 of Bookinfo.</text>
+  <rect x="40" y="670" width="1120" height="215" rx="8" fill="#fafafa" stroke="#bbb"/>
+  <text x="56" y="694" font-size="13" fill="#1d3b66"><tspan font-weight="bold">1</tspan>  The sidecar starts. The pilot-agent connects to istiod on 15012: it gets the configuration (xDS) and the workload certificate.</text>
+  <text x="73" y="712" font-size="13" fill="#1d3b66">The sidecar opens the connection, istiod never connects to the pod.</text>
+  <text x="56" y="736" font-size="13" fill="#8a4500"><tspan font-weight="bold">2</tspan>  Outbound: the application calls another pod. iptables sends the connection to Envoy on 15001, Envoy sends it with mTLS to the other pod.</text>
+  <text x="56" y="758" font-size="13" fill="#8a4500"><tspan font-weight="bold">3</tspan>  Inbound: another pod calls the application. The mTLS connection arrives, iptables redirects it to Envoy on 15006, Envoy ends the mTLS and</text>
+  <text x="73" y="776" font-size="13" fill="#8a4500">hands the request to the application (here 9080).</text>
+  <text x="56" y="798" font-size="13" fill="#333"><tspan font-weight="bold">4</tspan>  Prometheus scrapes 15020 (everything merged) or 15090 (Envoy only) of the pod, and 15014 of istiod. These ports are not redirected.</text>
+  <text x="56" y="818" font-size="13" fill="#333"><tspan font-weight="bold">5</tspan>  The kubelet asks 15021 (/healthz/ready) as startup and readiness probe of istio-proxy. This port is not redirected either.</text>
+  <text x="56" y="845" font-size="12" fill="#555">Not drawn: the kube-apiserver, which calls istiod on 15017 when a pod is created (sidecar injection, see the injection page), the other cluster and the gateways.</text>
+  <text x="56" y="862" font-size="12" fill="#555">Documented by Istio but not listening in our pod: 15002, 15004, 15008. Measured in our lab: Istio 1.29.9, IPv6-only cluster, pod productpage-v1.</text>
 </svg>
