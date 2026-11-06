@@ -33,3 +33,7 @@ All material in this repository is in English.
      * (Optional) [Add a virtual machine to the mesh with IPv4 and IPv6 (dual stack)](virtual-machines/02-add-a-vm-to-the-mesh-dual-stack-optional.md)
      * (Optional) [Dual stack on the VM: what to set (`DUAL_STACK` and `ISTIO_DUAL_STACK`)](virtual-machines/00-dual-stack-switches.md)
      * (Optional) [Reference: Dual stack on the VM: details and measurements](virtual-machines/00-dual-stack-switches-details.md)
+
+  1. Debugging Istio
+     * [Logs and log levels](debugging/01-logs-and-log-levels.md)
+     * [ControlZ: the debug page of istiod](debugging/02-controlz.md)

@@ -41,7 +41,8 @@ Format der Übungen: Skill `workshop-training`.
 
 ## Offen / nächste Schritte
 
-- **Abschnitt `debugging/`** (eigener Ordner, Agenda-Zeile "Debugging Istio"): zuerst `01-logs-and-log-levels.md`, dann `02-controlz.md`. Nur Befehle, die am Lab getestet sind: Level setzen und zurücksetzen (`ads` bei `istiod`, `http` bei Envoy). Später: `istioctl proxy-config`, `istioctl analyze`, typische Fehlerbilder (`503`). Von `fundamentals/06` bei `9876` und `ads` dorthin verlinken.
+- **Abschnitt `debugging/`** (Agenda-Zeile "Debugging Istio"): `01-logs-and-log-levels.md` und `02-controlz.md` sind geschrieben, alle Befehle am Lab getestet (Level setzen und zurücksetzen mit `ads:debug` bei `istiod` und `http:debug` bei Envoy, ControlZ per Port-Forward). Noch offen, jeweils nach Test am Lab: `istioctl proxy-config` (was sieht der Envoy), `istioctl analyze`, typische Fehlerbilder (`503`), die Annotationen `sidecar.istio.io/logLevel` auf einem Pod und eine Helm-Änderung von `global.logging.level` auf dem Cluster.
+- **Zustand des Labs:** `istiod` hat `ISTIO_DUAL_STACK=true` (Rest vom Test der optionalen Dual-Stack-Variante). Ein frisches Lab hat das nicht. Soll das Lab wieder dem Ausgangszustand entsprechen, mit `helm upgrade --reuse-values` zurücknehmen.
 - `fundamentals/01`: Tabelle unter der Vergleichsgrafik Sidecar/Ambient kürzen? Noch nicht entschieden.
 - Offene Telekom-Frage: Auto-Registrierung oder manuelle `WorkloadEntry`? Steht in keinem Transkript (Vorbereitungsrepo, `allgemeine-fragen-in-der-schulung.md`).
 - Gateway-API-CRDs im Lab für die Gateway-API-Beispiele von Tag 1: noch nicht geprüft.

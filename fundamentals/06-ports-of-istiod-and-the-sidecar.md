@@ -42,12 +42,12 @@ That is why the picture, measured on `productpage-v1`, shows `15053` greyed out.
 
 | Word | Meaning |
 |---|---|
-| **xDS** | The family of discovery APIs over which `istiod` sends the configuration to the proxies: clusters, listeners, endpoints, routes and names (CDS, LDS, EDS, RDS, NDS). You see them in the column `SUBSCRIBED TYPES` of `istioctl proxy-status`. One long-lived gRPC connection that the proxy opens. **ADS** is the one stream over which `istiod` sends all of this to the proxy; the log scope `ads` is named after it |
+| **xDS** | The family of discovery APIs over which `istiod` sends the configuration to the proxies: clusters, listeners, endpoints, routes and names (CDS, LDS, EDS, RDS, NDS). You see them in the column `SUBSCRIBED TYPES` of `istioctl proxy-status`. One long-lived gRPC connection that the proxy opens. **ADS** is the one stream over which `istiod` sends all of this to the proxy; the log scope `ads` is named after it (see [log levels](../debugging/01-logs-and-log-levels.md)) |
 | **CA** | `istiod` is also the certificate authority. The `pilot-agent` sends a certificate request with the token of the service account of the pod (the volume `istio-token`) on the same connection and gets the workload certificate for mTLS |
 | **`15012` and `15010`** | The same two services, with TLS (`15012`) and in plain text (`15010`). Plain text is only for networks you trust completely. We use `15012` |
 | **Webhook** | An HTTPS address that the `kube-apiserver` calls when something is created. A *mutating* webhook may change the object (the [sidecar injection](07-sidecar-injection.md)), a *validating* webhook may reject it (`istiod` checks Istio resources). Both use `443` and `15017` |
 | **Readiness (`8080`)** | The kubelet asks `/ready` to find out whether `istiod` is ready. Only then the `Service` sends traffic to it |
-| **ControlZ (`9876`)** | A small introspection interface of `istiod`. It listens on `127.0.0.1` only. We do not use it in the course |
+| **ControlZ (`9876`)** | The debug page of `istiod`: it shows its environment, start arguments, log scopes and memory. It listens on `127.0.0.1` only. `istioctl admin log` talks to `istiod` through it. See [ControlZ](../debugging/02-controlz.md) |
 
 ## Look at it yourself
 
