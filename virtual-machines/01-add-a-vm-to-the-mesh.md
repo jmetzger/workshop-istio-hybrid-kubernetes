@@ -10,7 +10,19 @@ A virtual machine joins the mesh with the Istio sidecar package (`istio-sidecar.
 
 What `WorkloadGroup`, `WorkloadEntry` and `EndpointSlice` are and how they differ: [who is who](00-workloadgroup-workloadentry-endpointslice.md).
 
-The lab VM has an IPv6 address and a private IPv4 address (`100.65.x.x`, not routed). Kubernetes and Istio run as IPv6 single stack, but because the VM has two address families, the sidecar on it needs the dual stack switches (`ISTIO_DUAL_STACK` in `istiod`, a dual stack variable in `cluster.env` on the VM). We set them from the start. What the switches do and where you set them: [DUAL_STACK and ISTIO_DUAL_STACK](00-dual-stack-switches.md).
+Kubernetes, Istio and the VM run as IPv6 single stack. The lab VM has an IPv6 address and **no IPv4 address** (the private address `100.65.x.x` that the cloud gives it is switched off in the VM). Then Istio needs no dual stack switches and no extra settings on the VM. You can check it on the VM:
+
+```
+ssh a-vm1 "ip -4 -br addr show eth0; ip -6 -br addr show eth0"
+```
+
+The first command prints nothing, the second the IPv6 address. If your VM has an IPv4 address, switch it off first. The file tells the VM not to ask for an IPv4 address by DHCP:
+
+```
+ssh a-vm1 "printf 'network:\n  version: 2\n  ethernets:\n    eth0:\n      dhcp4: false\n' > /etc/netplan/99-vm-no-ipv4.yaml && chmod 600 /etc/netplan/99-vm-no-ipv4.yaml && netplan apply"
+```
+
+(Or follow the optional page [with IPv4 and IPv6 (dual stack)](02-add-a-vm-to-the-mesh-dual-stack-optional.md).)
 
 | Part | Name in this exercise |
 |---|---|
@@ -40,20 +52,21 @@ Press ENTER and the script runs exactly the commands you see. You can copy any o
 
 ### Step 1: Settings
 
-The script sets the contexts of both clusters, the name of the VM and the IPv6 address of the VM.
+The script sets the contexts of both clusters, the name of the VM and the IPv6 address of the VM. It also reads the IPv4 address of the VM and stops if there is one.
 
 ```
 export CTX_A=cluster-a
 export CTX_B=cluster-b
 export VM=a-vm1
 export VM_IP=$(ssh $VM "ip -6 -o addr show dev eth0 scope global" | awk '{print $4}' | cut -d/ -f1 | head -1)
+export VM_IP4=$(ssh $VM "ip -4 -o addr show dev eth0 scope global" | awk '{print $4}' | head -1)
 ```
 
 ### Step 2: Make `istiod` ready for VMs
 
 The VM is outside the cluster and must reach `istiod` from outside. The script does two things:
 
-* It switches on auto-registration (`PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION`), the DNS proxy and `ISTIO_DUAL_STACK` with `helm upgrade istiod ... --reuse-values`.
+* It switches on auto-registration (`PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION`) and the DNS proxy with `helm upgrade istiod ... --reuse-values`.
 * It creates the Service `istiod-lb` of type `LoadBalancer` with a fixed IPv6 address (MetalLB), port 15012.
 
 If your lab is already prepared, the script says so and skips the step.
@@ -110,12 +123,11 @@ cluster.env  hosts  istio-token  mesh.yaml  root-cert.pem
 | `root-cert.pem` | `/etc/certs/root-cert.pem` | The root certificate of the mesh (in our lab `Lab Root CA tln1`), so the VM trusts `istiod` and the other workloads |
 | `istio-token` | `/var/run/secrets/tokens/istio-token` | A token (JWT) of the service account `diameter-adapter` in the namespace `vm`. The agent uses it once to get its workload certificate. **Secret**, valid for a short time (one hour by default). Do not print it and do not commit it |
 
-This is the `cluster.env` of our lab (lines in the order `istioctl` writes them):
+This is the `cluster.env` of our lab (lines in the order `istioctl` writes them). There is no dual stack line, because `istiod` has no `ISTIO_DUAL_STACK` setting:
 
 ```
 CANONICAL_REVISION='latest'
 CANONICAL_SERVICE='diameter-adapter'
-ISTIO_DUAL_STACK='true'
 ISTIO_INBOUND_PORTS='8000'
 ISTIO_LOCAL_EXCLUDE_PORTS='22,15090,15021,15020'
 ISTIO_METAJSON_LABELS='{"app":"diameter-adapter",...}'
@@ -139,14 +151,14 @@ Where the lines come from:
 
 * **From the `WorkloadGroup`:** `ISTIO_NAMESPACE`, `POD_NAMESPACE`, `SERVICE_ACCOUNT`, `ISTIO_SERVICE`, `ISTIO_INBOUND_PORTS` (the ports of the `WorkloadGroup`), `ISTIO_METAJSON_LABELS` (its labels), `ISTIO_META_NETWORK` (its network), `ISTIO_META_POD_PORTS`.
 * **From the options:** `ISTIO_META_CLUSTER_ID` (`--clusterID`), `ISTIO_META_AUTO_REGISTER_GROUP` (`--autoregister`).
-* **From the mesh configuration of the cluster (`proxyMetadata` in the ConfigMap `istio` in `istio-system`):** every entry there, for example `ISTIO_DUAL_STACK`, `ISTIO_META_DNS_CAPTURE` and `ISTIO_META_DNS_AUTO_ALLOCATE`. They appear in `mesh.yaml` and in `cluster.env`. The `istiod` Helm chart adds `ISTIO_DUAL_STACK` to this ConfigMap by itself as soon as `pilot.env.ISTIO_DUAL_STACK=true` is set (we checked: with the entry removed from our own Helm values it was still there; with `pilot.env.ISTIO_DUAL_STACK=false` and no own entry it was gone, and so were the lines in the generated files).
+* **From the mesh configuration of the cluster (`proxyMetadata` in the ConfigMap `istio` in `istio-system`):** every entry there, for example `ISTIO_META_DNS_CAPTURE` and `ISTIO_META_DNS_AUTO_ALLOCATE`. They appear in `mesh.yaml` and in `cluster.env`. (With the dual stack setting in `istiod`, `ISTIO_DUAL_STACK` would appear here, too: see the [optional dual stack page](02-add-a-vm-to-the-mesh-dual-stack-optional.md).)
 * **Fixed by `istioctl`:** `ISTIO_LOCAL_EXCLUDE_PORTS='22,15090,15021,15020'`. These ports are not redirected to Envoy: SSH and the three ports of the sidecar itself.
 
-The script **adds** two more lines to `cluster.env` on the VM, because `istioctl` does not write them: `ISTIO_SVC_IP` (the address of the VM, see below) and `DUAL_STACK='true'`.
+The script does **not** change `cluster.env`: for a VM with IPv6 only, what `istioctl` wrote is enough.
 
 ### Step 5: Install the sidecar on the VM and start it
 
-The script logs in to the VM and does this: install `istio-sidecar.deb`, copy the files to the places the sidecar reads them from, add `ISTIO_SVC_IP` (the address of the VM) and `DUAL_STACK='true'` to `cluster.env`, start the sidecar and the echo server.
+The script logs in to the VM and does this: install `istio-sidecar.deb` (the download goes over IPv6), copy the files to the places the sidecar reads them from, start the sidecar and the echo server.
 
 ### Step 6: Is the VM in the mesh?
 
@@ -195,55 +207,26 @@ kubectl --context $CTX_B exec deploy/client -c curl -- curl -s -m 8 -w "\nHTTP %
 
 All three answer `HTTP 200`.
 
-## Why `ISTIO_SVC_IP`?
+## What to check on the VM
 
-`ISTIO_SVC_IP` is a variable in `/var/lib/istio/envoy/cluster.env` on the VM. It tells the sidecar which address to register with `istiod`. That address becomes the `ADDRESS` of the `WorkloadEntry`, and it is the address other pods use to call the VM.
-
-The start script `/usr/local/bin/istio-start.sh` (part of `istio-sidecar.deb`) reads `cluster.env` and then does this:
+The sidecar sets iptables rules and Envoy listens on the IPv6 wildcard. On the VM (`ssh a-vm1`):
 
 ```
-if [ -z "${ISTIO_SVC_IP:-}" ]; then
-  ISTIO_SVC_IP=$(hostname --all-ip-addresses | cut -d ' ' -f 1)
-fi
-```
-
-So if you do not set the variable, the sidecar takes the **first** address the operating system lists. A VM with both IPv4 and IPv6 can list the IPv4 address first. In our lab the VM has a private IPv4 address (`100.65.9.93`) and an IPv6 address:
-
-```
-ssh $VM hostname --all-ip-addresses
+echo "IPv4 rules: $(iptables-save -t nat | grep -c ISTIO)  IPv6 rules: $(ip6tables-save -t nat | grep -c ISTIO)"
+ss -lnt | grep -E ':1500[16] '
 ```
 
 ```
-100.65.9.93 2a01:4f8:c013:541::1
+IPv4 rules: 23  IPv6 rules: 19
+LISTEN 0      4096            [::]:15006         [::]:*
+LISTEN 0      4096            [::]:15006         [::]:*
+LISTEN 0      4096            [::]:15001         [::]:*
+LISTEN 0      4096            [::]:15001         [::]:*
 ```
 
-We measured both cases (the sidecar was restarted after changing `cluster.env`):
+The tool always sets the IPv4 rules, and it sets the IPv6 rules because the first address of the VM is an IPv6 address. Nothing to configure. Every port shows twice in our lab; what matters is `[::]`, the IPv6 wildcard address.
 
-| `cluster.env` | `ADDRESS` of the `WorkloadEntry` | Call from a pod |
-|---|---|---|
-| `ISTIO_SVC_IP='2a01:4f8:c013:541::1'` | `2a01:4f8:c013:541::1` | `HTTP 200`, mTLS |
-| no `ISTIO_SVC_IP` | `100.65.9.93` | `HTTP 503` (3 of 3 calls) |
-
-In an IPv6 single stack cluster nobody can reach the IPv4 address, so the VM is "in the mesh" but unreachable.
-
-The order of the addresses comes from the operating system, not from Istio. On another VM the IPv6 address may come first. Do not rely on it: **always set `ISTIO_SVC_IP`** to the address that the cluster must use, one value per VM. If you create `cluster.env` again (a new `istioctl x workload entry configure`), the variable is gone and you must add it again.
-
-Always check the result:
-
-```
-kubectl --context $CTX_A get workloadentry -n vm
-```
-
-The column `ADDRESS` must show the IPv6 address you expect.
-
-## If you leave out the dual stack switches
-
-Without `ISTIO_DUAL_STACK` and `DUAL_STACK` the VM still joins the mesh and shows up in `proxy-status`, but the call from a pod fails. Measured on an earlier lab VM:
-
-| Missing | Result of the call |
-|---|---|
-| neither `DUAL_STACK` nor `ISTIO_DUAL_STACK` in `cluster.env` on the VM | no iptables rules for IPv6, the request reaches the application directly: `503`, `WRONG_VERSION_NUMBER` (the pod speaks TLS, the answer is plain text) |
-| `ISTIO_DUAL_STACK` in `istiod` | rules exist, but Envoy on the VM listens on IPv4 only: `503`, `Connection refused` |
+If a VM has an IPv4 address, things change: the sidecar may register the IPv4 address (calls fail with `503`) and needs the dual stack switches. That is the topic of the [optional page](02-add-a-vm-to-the-mesh-dual-stack-optional.md) and of [DUAL_STACK and ISTIO_DUAL_STACK](00-dual-stack-switches.md).
 
 ## Good to know
 

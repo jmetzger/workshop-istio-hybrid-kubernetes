@@ -7,7 +7,7 @@ This page is the reference behind the short page [Dual stack on the VM: what to 
 * Our Kubernetes clusters run IPv6 single stack, but **the lab VM has two addresses**: an IPv6 address and a private IPv4 address (`100.65.x.x`) that is not routed. Istio sees two address families and treats the VM as a dual stack workload.
 * A dual stack workload needs a dual stack setting in the file `/var/lib/istio/envoy/cluster.env`. Without it the IPv6 traffic of the VM does not go through Envoy, and calls from a pod fail with `503`.
 * **One line is enough.** `ISTIO_DUAL_STACK='true'` is written into `cluster.env` by `istioctl` (if `istiod` already has the setting). `DUAL_STACK='true'` does the same for the traffic. You do not need both.
-* Always set `ISTIO_SVC_IP` as well (see [exercise](01-add-a-vm-to-the-mesh.md)), otherwise the sidecar may register the IPv4 address.
+* Always set `ISTIO_SVC_IP` as well (see [optional exercise](02-add-a-vm-to-the-mesh-dual-stack-optional.md)), otherwise the sidecar may register the IPv4 address.
 
 ## Why: the VM has an IPv4 address
 

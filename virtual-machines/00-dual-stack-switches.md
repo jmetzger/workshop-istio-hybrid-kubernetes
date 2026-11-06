@@ -9,7 +9,7 @@
 | The VM has | You set |
 |---|---|
 | **IPv6 only** | nothing |
-| **IPv4 and IPv6** (our lab VM: IPv6 plus a private, not routed `100.65.x.x`) | one dual stack line in `/var/lib/istio/envoy/cluster.env`, and `ISTIO_SVC_IP` |
+| **IPv4 and IPv6** (in our lab only if you switch the private, not routed `100.65.x.x` on again, see [the optional exercise](02-add-a-vm-to-the-mesh-dual-stack-optional.md)) | one dual stack line in `/var/lib/istio/envoy/cluster.env`, and `ISTIO_SVC_IP` |
 
 Why: A VM with IPv4 and IPv6 is a dual stack workload for Istio. Without a dual stack line, Istio sets the iptables rules only for IPv4. Traffic that arrives over IPv6 then bypasses the sidecar and reaches the application directly. The calling pod speaks mTLS, the application does not, and the call fails with `503`.
 

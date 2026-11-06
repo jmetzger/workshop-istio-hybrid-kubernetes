@@ -5,14 +5,16 @@
 # Every step shows the commands first. Press ENTER and the script runs exactly these commands.
 # You can type the same commands by hand, the script only saves you the typing.
 #
-#   ./vm-in-the-mesh.sh            all steps, one after the other
-#   ./vm-in-the-mesh.sh cleanup    remove everything this script created
+#   ./vm-in-the-mesh.sh                 all steps, one after the other (VM with IPv6 only, the default)
+#   DUAL_STACK=1 ./vm-in-the-mesh.sh    the optional variant: the VM also has an IPv4 address (dual stack switches)
+#   ./vm-in-the-mesh.sh cleanup         remove everything this script created
 #
-# Settings (optional): VM=a-vm1  CTX_A=cluster-a  CTX_B=cluster-b  NOPAUSE=1 (no ENTER prompts)
+# Settings (optional): VM=a-vm1  CTX_A=cluster-a  CTX_B=cluster-b  NOPAUSE=1 (no ENTER prompts)  DUAL_STACK=1
 set -eEo pipefail
 
 HERE=$(cd "$(dirname "$0")" && pwd)
 WORK=${WORK:-$HOME/vm-in-the-mesh}
+export DUAL_STACK=${DUAL_STACK:-0}
 mkdir -p "$WORK"
 cp "$HERE/vm-echo-server.py" "$WORK/"
 cd "$WORK"
@@ -71,26 +73,36 @@ echo "Picture: images/vm-in-the-mesh.svg. Files of this run are in $WORK (vmfile
 
 step "Settings" \
   "Two clusters, one VM. The VM is called a-vm1 and joins cluster a (cluster b finds it through the mesh)." \
-  "The VM has an IPv6 address only. We read it from the VM."
+  "The VM must have an IPv6 address only (its IPv4 address is switched off). We read the addresses from the VM."
 go <<'EOF'
 export CTX_A=${CTX_A:-cluster-a}
 export CTX_B=${CTX_B:-cluster-b}
 export VM=${VM:-a-vm1}
 export ISTIO_VERSION=$(istioctl version --remote=false | awk '{print $3}')
 export VM_IP=$(ssh $VM "ip -6 -o addr show dev eth0 scope global" | awk '{print $4}' | cut -d/ -f1 | head -1)
-echo "Istio $ISTIO_VERSION, VM $VM has the address $VM_IP"
+export VM_IP4=$(ssh $VM "ip -4 -o addr show dev eth0 scope global" | awk '{print $4}' | head -1)
+echo "Istio $ISTIO_VERSION, VM $VM has the IPv6 address $VM_IP and the IPv4 address: ${VM_IP4:-none}"
 EOF
+if [ -n "${VM_IP4:-}" ] && [ "$DUAL_STACK" != 1 ]; then
+  printf '\n%s!! %s has the IPv4 address %s. For IPv6 only switch it off first (ask the trainer), or run the dual stack variant: DUAL_STACK=1 ./vm-in-the-mesh.sh%s\n' "$B" "$VM" "$VM_IP4" "$N" >&2
+  exit 1
+fi
+if [ -z "${VM_IP4:-}" ] && [ "$DUAL_STACK" = 1 ]; then
+  printf '\n%s!! DUAL_STACK=1 needs a VM with an IPv4 address, but %s has none. Switch IPv4 on first (ask the trainer), or run without DUAL_STACK.%s\n' "$B" "$VM" "$N" >&2
+  exit 1
+fi
 
 # ---------------------------------------------------------------------------
 step "Make istiod ready for VMs" \
   "The VM must reach istiod from outside the cluster, so istiod gets a fixed LoadBalancer address (port 15012)." \
-  "Three switches in istiod: auto registration (istiod creates the WorkloadEntry for us), DNS proxy (the VM resolves" \
-  "service names of the cluster) and ISTIO_DUAL_STACK (the sidecar on a VM needs it, even when the VM has IPv6 only)."
+  "Two switches in istiod: auto registration (istiod creates the WorkloadEntry for us) and DNS proxy (the VM resolves" \
+  "service names of the cluster). With DUAL_STACK=1 a third one, ISTIO_DUAL_STACK, for a VM with IPv4 and IPv6."
 
 istiod_ready() {
   local env
   env=$(kubectl --context "$CTX_A" -n istio-system get deploy istiod -o jsonpath='{.spec.template.spec.containers[0].env[*].name}')
-  [[ "$env" == *PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION* && "$env" == *ISTIO_DUAL_STACK* ]] &&
+  [[ "$env" == *PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION* ]] || return 1
+  [[ "$DUAL_STACK" != 1 || "$env" == *ISTIO_DUAL_STACK* ]] &&
     kubectl --context "$CTX_A" -n istio-system get svc istiod-lb > /dev/null 2>&1
 }
 
@@ -100,15 +112,23 @@ if istiod_ready; then
   echo "Address of istiod for the VM: $ISTIOD_ADDR"
   pause
 else
-  go <<'EOF'
+  helm_cmds() {
+    cat <<'EOF'
 helm repo add istio https://istio-release.storage.googleapis.com/charts --force-update
 helm --kube-context $CTX_A upgrade istiod istio/istiod -n istio-system --version $ISTIO_VERSION --reuse-values --wait \
   --set-string pilot.env.PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION=true \
+EOF
+    if [ "$DUAL_STACK" = 1 ]; then cat <<'EOF'
   --set-string pilot.env.ISTIO_DUAL_STACK=true \
   --set-string meshConfig.defaultConfig.proxyMetadata.ISTIO_DUAL_STACK=true \
+EOF
+    fi
+    cat <<'EOF'
   --set-string meshConfig.defaultConfig.proxyMetadata.ISTIO_META_DNS_CAPTURE=true \
   --set-string meshConfig.defaultConfig.proxyMetadata.ISTIO_META_DNS_AUTO_ALLOCATE=true
 EOF
+  }
+  helm_cmds | go
   echo "The fixed address: next to the address of the ingress gateway (same /64 as the control plane)."
   go <<'EOF'
 export CP_NODE=$(kubectl --context $CTX_A get node -l node-role.kubernetes.io/control-plane -o jsonpath='{.items[0].metadata.name}')
@@ -216,8 +236,10 @@ EOF
 # ---------------------------------------------------------------------------
 step "Install the sidecar on the VM and start it" \
   "Everything below runs on the VM (through ssh): install the package, put the files in place, start the sidecar" \
-  "and the application. DUAL_STACK is the switch that makes the sidecar redirect IPv6 traffic."
-go <<'EOF'
+  "and the application. The VM has IPv6 only, so the files from istioctl are all the sidecar needs."
+[ "$DUAL_STACK" != 1 ] || echo "Dual stack variant: we also add ISTIO_SVC_IP (the address to register) and DUAL_STACK (IPv6 iptables rules) to cluster.env."
+sidecar_cmds() {
+  cat <<'EOF'
 ssh $VM bash -s <<VMSTEPS
 set -e
 curl -fsSL https://storage.googleapis.com/istio-release/releases/$ISTIO_VERSION/deb/istio-sidecar.deb -o /tmp/istio-sidecar.deb
@@ -230,13 +252,20 @@ cp istio-token /var/run/secrets/tokens/istio-token
 cp cluster.env /var/lib/istio/envoy/cluster.env
 cp mesh.yaml /etc/istio/config/mesh
 cat hosts >> /etc/hosts
+EOF
+  if [ "$DUAL_STACK" = 1 ]; then cat <<'EOF'
 echo "ISTIO_SVC_IP='$VM_IP'" >> /var/lib/istio/envoy/cluster.env
 echo "DUAL_STACK='true'" >> /var/lib/istio/envoy/cluster.env
+EOF
+  fi
+  cat <<'EOF'
 chown -R istio-proxy: /var/lib/istio /etc/certs /etc/istio/proxy /etc/istio/config /var/run/secrets
 systemctl start istio
 systemd-run --unit vm-echo python3 /root/vm-echo-server.py
 VMSTEPS
 EOF
+}
+sidecar_cmds | go
 
 # ---------------------------------------------------------------------------
 step "Check: is the VM in the mesh?" \
