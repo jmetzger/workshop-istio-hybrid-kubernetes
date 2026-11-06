@@ -2,10 +2,6 @@
 
 ![Before and after: three services talk directly to each other, or each service has an Envoy sidecar and the sidecars talk mTLS](/images/service-mesh-before-after.svg)
 
-## Background
-
-This page has no commands. It gives you the words for the rest of the course. You look at a real mesh in the exercise [Look around the lab](../explore-the-lab/01-look-around.md).
-
 ## What is a service mesh?
 
 A service mesh is a layer of infrastructure that handles the communication between services:

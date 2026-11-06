@@ -21,7 +21,7 @@
   <text x="300" y="148" text-anchor="middle" fill="#555" font-size="12">direct traffic</text>
   <text x="300" y="396" text-anchor="middle" fill="#8a2a2a" font-size="13" font-weight="bold">Every service brings its own retries, timeouts,</text>
   <text x="300" y="416" text-anchor="middle" fill="#8a2a2a" font-size="13" font-weight="bold">TLS and metrics in its own code.</text>
-  <text x="300" y="446" text-anchor="middle" fill="#555" font-size="12">Traffic is plain by default, nobody sees the whole picture.</text>
+  <text x="300" y="446" text-anchor="middle" fill="#555" font-size="12">Traffic is often unencrypted, with no central place to see it.</text>
 
   <!-- Right: with -->
   <rect x="630" y="55" width="540" height="420" rx="10" fill="#f3f8ff" stroke="#4a6fa5" stroke-width="2"/>
