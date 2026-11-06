@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a5fb4"/></marker>
+    <marker id="ap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a4fa5"/></marker>
+  </defs>
+  <rect width="1200" height="500" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Sidecar mode and ambient mode: where the proxy runs</text>
+
+  <!-- Left: sidecar -->
+  <rect x="30" y="55" width="540" height="420" rx="10" fill="#f3f8ff" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="300" y="86" text-anchor="middle" font-size="17" font-weight="bold" fill="#1d3b66">Sidecar mode: taught and practised</text>
+  <rect x="45" y="105" width="240" height="205" rx="8" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="55" y="122" font-size="12" fill="#555">Node 1</text>
+  <rect x="315" y="105" width="240" height="205" rx="8" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="325" y="122" font-size="12" fill="#555">Node 2</text>
+  <rect x="65" y="135" width="200" height="70" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="75" y="149" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <rect x="75" y="157" width="80" height="40" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="115" y="182" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="13">Service</text>
+  <rect x="180" y="157" width="75" height="40" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="217" y="182" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">Envoy</text>
+  <rect x="65" y="220" width="200" height="70" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="75" y="234" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <rect x="75" y="242" width="80" height="40" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="115" y="267" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="13">Service</text>
+  <rect x="180" y="242" width="75" height="40" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="217" y="267" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">Envoy</text>
+  <rect x="335" y="135" width="200" height="70" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="345" y="149" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <rect x="445" y="157" width="80" height="40" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="485" y="182" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="13">Service</text>
+  <rect x="350" y="157" width="75" height="40" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="387" y="182" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">Envoy</text>
+  <rect x="335" y="220" width="200" height="70" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="345" y="234" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <rect x="445" y="242" width="80" height="40" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="485" y="267" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="13">Service</text>
+  <rect x="350" y="242" width="75" height="40" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="387" y="267" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">Envoy</text>
+  <path d="M257,177 L348,177" stroke="#1a5fb4" stroke-width="3" fill="none" marker-end="url(#ab)"/>
+  <text x="302" y="163" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="12">mTLS</text>
+  <path d="M257,262 L348,262" stroke="#1a5fb4" stroke-width="3" fill="none" marker-end="url(#ab)"/>
+  <text x="302" y="248" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="12">mTLS</text>
+  <text x="300" y="345" text-anchor="middle" fill="#555" font-size="12">Every pod has its own Envoy next to the service.</text>
+  <text x="300" y="395" text-anchor="middle" fill="#1d3b66" font-size="14" font-weight="bold">One Envoy in every pod: layer 4 and layer 7</text>
+  <text x="300" y="418" text-anchor="middle" fill="#333" font-size="13">The pod gets a sidecar (injection, restart needed)</text>
+  <text x="300" y="438" text-anchor="middle" fill="#333" font-size="13">CPU and memory in every pod</text>
+  <text x="300" y="458" text-anchor="middle" fill="#333" font-size="13">Needs nothing special from the cluster</text>
+
+  <!-- Right: ambient -->
+  <rect x="630" y="55" width="540" height="420" rx="10" fill="#fbf8ff" stroke="#7a4fa5" stroke-width="2"/>
+  <text x="900" y="86" text-anchor="middle" font-size="17" font-weight="bold" fill="#4b2d73">Ambient mode: theory only</text>
+  <rect x="645" y="105" width="240" height="205" rx="8" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="655" y="122" font-size="12" fill="#555">Node 1</text>
+  <rect x="915" y="105" width="240" height="205" rx="8" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="925" y="122" font-size="12" fill="#555">Node 2</text>
+  <rect x="665" y="135" width="200" height="44" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="675" y="149" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <rect x="710" y="151" width="110" height="24" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="765" y="168" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">Service only</text>
+  <rect x="665" y="190" width="200" height="44" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="675" y="204" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <rect x="710" y="206" width="110" height="24" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="765" y="223" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">Service only</text>
+  <rect x="935" y="135" width="200" height="44" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="945" y="149" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <rect x="980" y="151" width="110" height="24" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="1035" y="168" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">Service only</text>
+  <rect x="935" y="190" width="200" height="44" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="945" y="204" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <rect x="980" y="206" width="110" height="24" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="1035" y="223" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">Service only</text>
+  <rect x="665" y="250" width="200" height="40" rx="6" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="765" y="275" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">ztunnel (layer 4)</text>
+  <rect x="935" y="250" width="200" height="40" rx="6" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="1035" y="275" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">ztunnel (layer 4)</text>
+  <path d="M867,270 L933,270" stroke="#1a5fb4" stroke-width="3" fill="none" marker-end="url(#ab)"/>
+  <text x="900" y="256" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="12">mTLS</text>
+  <rect x="740" y="322" width="320" height="34" rx="6" fill="#f3e8fb" stroke="#7a4fa5" stroke-width="2" stroke-dasharray="7 4"/>
+  <text x="900" y="344" text-anchor="middle" fill="#4b2d73" font-weight="bold" font-size="13">waypoint proxy (layer 7, optional)</text>
+  <path d="M790,292 L800,320" stroke="#7a4fa5" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#ap)"/>
+  <path d="M1010,292 L1000,320" stroke="#7a4fa5" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#ap)"/>
+  <text x="900" y="374" text-anchor="middle" fill="#555" font-size="12">The pods have no proxy. One ztunnel serves all pods of its node.</text>
+  <text x="900" y="395" text-anchor="middle" fill="#4b2d73" font-size="14" font-weight="bold">One ztunnel per node, optional waypoint per namespace</text>
+  <text x="900" y="418" text-anchor="middle" fill="#333" font-size="13">Pods stay unchanged (no restart), less overhead</text>
+  <text x="900" y="438" text-anchor="middle" fill="#333" font-size="13">Routing and retries (layer 7) only with a waypoint</text>
+  <text x="900" y="458" text-anchor="middle" fill="#333" font-size="13">Needs Istio CNI on every node (a privileged component)</text>
+</svg>

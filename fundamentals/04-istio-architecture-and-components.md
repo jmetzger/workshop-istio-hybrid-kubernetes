@@ -2,16 +2,12 @@
 
 ![Istio in sidecar mode: istiod in the control plane pushes configuration to the Envoy in every pod, the Envoys talk mTLS, Prometheus scrapes the proxies](/images/istio-components.svg)
 
-## Background
-
 An Istio mesh has two parts:
 
 | Part | What it is | Where in your lab |
 |---|---|---|
 | **Control plane** | `istiod`: one Deployment that decides | namespace `istio-system` |
 | **Data plane** | The Envoy proxies that carry the traffic: one in every pod of the mesh, plus the gateways | the sidecar in every pod, the gateway in `istio-ingress` |
-
-You can look at all of this in the exercise [Look around the lab](../explore-the-lab/01-look-around.md).
 
 ## The control plane: istiod
 

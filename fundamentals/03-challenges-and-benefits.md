@@ -2,10 +2,6 @@
 
 ![Decision flow: fewer than 10 services means too much overhead, 10 to 20 depends on security, more than 20 is recommended, plan the resources in every case](/images/service-mesh-decision.svg)
 
-## Background
-
-This page has no commands. A mesh is not free. Know both sides before you decide.
-
 ## Benefits
 
 * **mTLS between all services**, automatic. The sidecars get certificates and rotate them.

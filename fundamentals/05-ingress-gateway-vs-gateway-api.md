@@ -1,13 +1,9 @@
 # Istio ingress gateway vs. Kubernetes Gateway API
 
-## Background
-
 Traffic that comes **into** the cluster from outside is called north-south traffic. In Istio you have two ways to describe it:
 
 * the **Istio APIs**: `Gateway` plus `VirtualService` (plus `DestinationRule`). This is what the exercise [Expose Bookinfo through the ingress gateway over IPv6](../ingress-gateway/01-expose-bookinfo-over-ipv6.md) uses.
 * the **Kubernetes Gateway API**: `GatewayClass`, `Gateway` and `HTTPRoute`. It is a Kubernetes standard, not an Istio invention, and several products implement it.
-
-This page has no commands. It shows how the two ideas differ, so you can read both.
 
 ## The Istio way
 

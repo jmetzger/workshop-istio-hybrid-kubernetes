@@ -2,10 +2,6 @@
 
 ![Without a mesh every service implements load balancing, retries, mTLS and tracing itself, with a mesh these features live once in the mesh](/images/features-in-code-vs-in-mesh.svg)
 
-## Background
-
-This page has no commands.
-
 ## The problem
 
 With a few services, the network is easy. With dozens or hundreds of services, communication becomes the hard part. Every service needs:

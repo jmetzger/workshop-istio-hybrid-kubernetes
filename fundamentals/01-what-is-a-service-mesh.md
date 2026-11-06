@@ -18,6 +18,8 @@ In this course you use Istio in **sidecar mode** with the classic Istio APIs (`V
 
 ## Two architectures: sidecar and ambient
 
+![Sidecar mode: one Envoy in every pod, the Envoys talk mTLS. Ambient mode: one ztunnel per node talks mTLS for all pods of the node, an optional waypoint proxy handles layer 7](/images/sidecar-vs-ambient.svg)
+
 Istio knows two data plane modes. They can run side by side in one cluster.
 
 | | Sidecar mode | Ambient mode |
@@ -33,7 +35,7 @@ Why sidecar here: you work as a tenant and you cannot install a privileged compo
 
 ## What you should remember
 
-* A mesh is a **control plane** (decides) and a **data plane** (the proxies that carry the traffic).
+* A service mesh consists of a **control plane** (decides) and a **data plane** (the proxies that carry the traffic).
 * In sidecar mode every pod has an Envoy next to the application.
 * The mesh works at the network level, so it works for every language.
 
