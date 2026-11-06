@@ -60,3 +60,4 @@ The last row matters if you are a tenant: installing CRDs is a cluster-wide act.
 In this course the focus is on the Istio APIs. You see the Gateway API as a short contrast.
 
 Previous: [Istio architecture and components](04-istio-architecture-and-components.md)
+Next: [Ports of istiod and of the sidecar](06-ports-of-istiod-and-the-sidecar.md)
