@@ -2,6 +2,8 @@
 
 ![On the VM: DUAL_STACK sets the iptables rules, ISTIO_DUAL_STACK sets the rules and moves the ports of the sidecar to IPv6](../images/dual-stack-switches.svg)
 
+> **Attention:** When you use IPv6 only on the VMs (Istio hybrid), be sure that the IPv4 address on the VM is disabled. That is the best and easiest way. Otherwise you need to fiddle around (dual stack switches, `ISTIO_SVC_IP`, health `probe` workarounds).
+
 ## The rule
 
 | The VM has | You set |
