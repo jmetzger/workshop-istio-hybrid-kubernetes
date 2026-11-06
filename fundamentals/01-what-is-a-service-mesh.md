@@ -1,6 +1,6 @@
 # What is a service mesh, and what is Istio?
 
-![Before and after: three services talk directly to each other, or each service has an Envoy sidecar and the sidecars talk mTLS](../images/service-mesh-before-after.svg)
+![Before and after: three services talk directly to each other, or each service has an Envoy sidecar and the sidecars talk mTLS](/images/service-mesh-before-after.svg)
 
 ## Background
 

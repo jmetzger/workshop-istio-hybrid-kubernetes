@@ -1,6 +1,6 @@
 # Istio architecture and components
 
-![Istio in sidecar mode: istiod in the control plane pushes configuration to the Envoy in every pod, the Envoys talk mTLS, Prometheus scrapes the proxies](../images/istio-components.svg)
+![Istio in sidecar mode: istiod in the control plane pushes configuration to the Envoy in every pod, the Envoys talk mTLS, Prometheus scrapes the proxies](/images/istio-components.svg)
 
 ## Background
 
@@ -51,7 +51,7 @@ A gateway is an Envoy that runs **on its own**, without an application next to i
 
 ## From configuration to traffic
 
-![Flow 1: an administrator applies a VirtualService, istiod translates it and pushes it to the Envoys. Flow 2: a request goes from Service A through two Envoys to Service B](../images/istio-config-and-request-flow.svg)
+![Flow 1: an administrator applies a VirtualService, istiod translates it and pushes it to the Envoys. Flow 2: a request goes from Service A through two Envoys to Service B](/images/istio-config-and-request-flow.svg)
 
 1. You apply a high level object, for example a `VirtualService`.
 2. istiod validates it and translates it into Envoy configuration.

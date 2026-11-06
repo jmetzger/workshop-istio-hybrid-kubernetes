@@ -1,6 +1,6 @@
 # WorkloadGroup, WorkloadEntry and EndpointSlice: who is who
 
-![WorkloadGroup is the template for VMs, WorkloadEntry is one VM, EndpointSlice is the plain Kubernetes list of addresses](../images/workloadgroup-workloadentry-endpointslice.svg)
+![WorkloadGroup is the template for VMs, WorkloadEntry is one VM, EndpointSlice is the plain Kubernetes list of addresses](/images/workloadgroup-workloadentry-endpointslice.svg)
 
 ## Background
 

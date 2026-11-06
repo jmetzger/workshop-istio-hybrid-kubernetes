@@ -1,6 +1,6 @@
 # Why a service mesh?
 
-![Without a mesh every service implements load balancing, retries, mTLS and tracing itself, with a mesh these features live once in the mesh](../images/features-in-code-vs-in-mesh.svg)
+![Without a mesh every service implements load balancing, retries, mTLS and tracing itself, with a mesh these features live once in the mesh](/images/features-in-code-vs-in-mesh.svg)
 
 ## Background
 

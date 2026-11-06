@@ -1,6 +1,6 @@
 # Expose Bookinfo through the ingress gateway over IPv6
 
-![The way of a request: caller, cloud firewall, MetalLB address, Service istio-ingressgateway, gateway pod, Bookinfo](../images/ingress-gateway-ipv6.svg)
+![The way of a request: caller, cloud firewall, MetalLB address, Service istio-ingressgateway, gateway pod, Bookinfo](/images/ingress-gateway-ipv6.svg)
 
 ## Background
 

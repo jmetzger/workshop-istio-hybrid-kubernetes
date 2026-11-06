@@ -1,6 +1,6 @@
 # Ports of istiod and of the sidecar on the VM
 
-![Ports of istiod and of the sidecar on the VM: who listens where, who connects to whom](../images/ports-sidecar-and-istiod.svg)
+![Ports of istiod and of the sidecar on the VM: who listens where, who connects to whom](/images/ports-sidecar-and-istiod.svg)
 
 ## Background
 

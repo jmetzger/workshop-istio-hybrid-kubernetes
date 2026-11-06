@@ -1,6 +1,6 @@
 # Challenges and benefits
 
-![Decision flow: fewer than 10 services means too much overhead, 10 to 20 depends on security, more than 20 is recommended, plan the resources in every case](../images/service-mesh-decision.svg)
+![Decision flow: fewer than 10 services means too much overhead, 10 to 20 depends on security, more than 20 is recommended, plan the resources in every case](/images/service-mesh-decision.svg)
 
 ## Background
 

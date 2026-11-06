@@ -4,7 +4,7 @@
 
 In the previous exercise you checked the link between two clusters. Now you see what the link is good for: a request that enters cluster B can be answered by pods that run in cluster A, without a gateway between the clusters. The pods talk directly over IPv6, protected by mTLS.
 
-![Two clusters, one mesh: a request enters cluster b and is answered by the reviews pods of cluster a](../images/two-clusters-one-mesh.svg)
+![Two clusters, one mesh: a request enters cluster b and is answered by the reviews pods of cluster a](/images/two-clusters-one-mesh.svg)
 
 The orange arrows show the path of the request you follow in this exercise. The grey numbers are the four parts in the table below.
 

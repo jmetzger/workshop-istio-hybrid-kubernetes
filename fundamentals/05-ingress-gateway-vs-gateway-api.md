@@ -11,7 +11,7 @@ This page has no commands. It shows how the two ideas differ, so you can read bo
 
 ## The Istio way
 
-![Client, ingress gateway pod, Gateway, VirtualService with weights, DestinationRule with subsets, two versions of a service](../images/istio-ingress-gateway-flow.svg)
+![Client, ingress gateway pod, Gateway, VirtualService with weights, DestinationRule with subsets, two versions of a service](/images/istio-ingress-gateway-flow.svg)
 
 | Object | What it does |
 |---|---|
@@ -24,7 +24,7 @@ The same `VirtualService` and `DestinationRule` also work for traffic **inside**
 
 ## The Kubernetes Gateway API way
 
-![Client, Gateway, GatewayClass, HTTPRoute with weights, two Services](../images/gateway-api-flow.svg)
+![Client, Gateway, GatewayClass, HTTPRoute with weights, two Services](/images/gateway-api-flow.svg)
 
 | Object | What it does |
 |---|---|
