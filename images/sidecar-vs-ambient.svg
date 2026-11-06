@@ -1,38 +1,38 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" width="1200" height="540" font-family="Segoe UI, Arial, sans-serif" font-size="14">
   <defs>
     <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a5fb4"/></marker>
     <marker id="ap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a4fa5"/></marker>
   </defs>
-  <rect width="1200" height="500" fill="#ffffff"/>
+  <rect width="1200" height="540" fill="#ffffff"/>
   <text x="600" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Sidecar mode and ambient mode: where the proxy runs</text>
 
   <!-- Left: sidecar -->
-  <rect x="30" y="55" width="540" height="420" rx="10" fill="#f3f8ff" stroke="#4a6fa5" stroke-width="2"/>
+  <rect x="30" y="55" width="540" height="480" rx="10" fill="#f3f8ff" stroke="#4a6fa5" stroke-width="2"/>
   <text x="300" y="86" text-anchor="middle" font-size="17" font-weight="bold" fill="#1d3b66">Sidecar mode: taught and practised</text>
   <rect x="45" y="105" width="240" height="205" rx="8" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="6 4"/>
   <text x="55" y="122" font-size="12" fill="#555">Node 1</text>
   <rect x="315" y="105" width="240" height="205" rx="8" fill="none" stroke="#999" stroke-width="1.5" stroke-dasharray="6 4"/>
   <text x="325" y="122" font-size="12" fill="#555">Node 2</text>
   <rect x="65" y="135" width="200" height="70" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
-  <text x="75" y="149" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <text x="75" y="149" font-size="11" fill="#1d3b66" font-weight="bold">Pod A</text>
   <rect x="75" y="157" width="80" height="40" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
   <text x="115" y="182" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="13">Service</text>
   <rect x="180" y="157" width="75" height="40" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
   <text x="217" y="182" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">Envoy</text>
   <rect x="65" y="220" width="200" height="70" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
-  <text x="75" y="234" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <text x="75" y="234" font-size="11" fill="#1d3b66" font-weight="bold">Pod B</text>
   <rect x="75" y="242" width="80" height="40" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
   <text x="115" y="267" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="13">Service</text>
   <rect x="180" y="242" width="75" height="40" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
   <text x="217" y="267" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">Envoy</text>
   <rect x="335" y="135" width="200" height="70" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
-  <text x="345" y="149" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <text x="345" y="149" font-size="11" fill="#1d3b66" font-weight="bold">Pod C</text>
   <rect x="445" y="157" width="80" height="40" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
   <text x="485" y="182" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="13">Service</text>
   <rect x="350" y="157" width="75" height="40" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
   <text x="387" y="182" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">Envoy</text>
   <rect x="335" y="220" width="200" height="70" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
-  <text x="345" y="234" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <text x="345" y="234" font-size="11" fill="#1d3b66" font-weight="bold">Pod D</text>
   <rect x="445" y="242" width="80" height="40" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
   <text x="485" y="267" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="13">Service</text>
   <rect x="350" y="242" width="75" height="40" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
@@ -41,14 +41,14 @@
   <text x="302" y="163" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="12">mTLS</text>
   <path d="M257,262 L348,262" stroke="#1a5fb4" stroke-width="3" fill="none" marker-end="url(#ab)"/>
   <text x="302" y="248" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="12">mTLS</text>
-  <text x="300" y="345" text-anchor="middle" fill="#555" font-size="12">Every pod has its own Envoy next to the service.</text>
-  <text x="300" y="395" text-anchor="middle" fill="#1d3b66" font-size="14" font-weight="bold">One Envoy in every pod: layer 4 and layer 7</text>
-  <text x="300" y="418" text-anchor="middle" fill="#333" font-size="13">The pod gets a sidecar (injection, restart needed)</text>
-  <text x="300" y="438" text-anchor="middle" fill="#333" font-size="13">CPU and memory in every pod</text>
-  <text x="300" y="458" text-anchor="middle" fill="#333" font-size="13">Needs nothing special from the cluster</text>
+  <text x="300" y="400" text-anchor="middle" fill="#555" font-size="12">Every pod has its own Envoy next to the service.</text>
+  <text x="300" y="468" text-anchor="middle" fill="#1d3b66" font-size="14" font-weight="bold">One Envoy in every pod: layer 4 and layer 7</text>
+  <text x="300" y="489" text-anchor="middle" fill="#333" font-size="13">The pod gets a sidecar (injection, restart needed)</text>
+  <text x="300" y="507" text-anchor="middle" fill="#333" font-size="13">CPU and memory in every pod</text>
+  <text x="300" y="525" text-anchor="middle" fill="#333" font-size="13">Needs nothing special from the cluster</text>
 
   <!-- Right: ambient -->
-  <rect x="630" y="55" width="540" height="420" rx="10" fill="#fbf8ff" stroke="#7a4fa5" stroke-width="2"/>
+  <rect x="630" y="55" width="540" height="480" rx="10" fill="#fbf8ff" stroke="#7a4fa5" stroke-width="2"/>
   <text x="900" y="86" text-anchor="middle" font-size="17" font-weight="bold" fill="#4b2d73">Ambient mode: theory only</text>
 
   <!-- one namespace as a coloured area across both nodes: all pods and the waypoint are inside -->
@@ -56,38 +56,66 @@
   <text x="678" y="171" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e3a">namespace</text>
   <text x="678" y="186" text-anchor="middle" font-size="12" font-weight="bold" fill="#1b5e3a">shop</text>
 
-  <rect x="722" y="104" width="210" height="196" rx="8" fill="none" stroke="#777" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <rect x="722" y="104" width="210" height="188" rx="8" fill="none" stroke="#777" stroke-width="1.5" stroke-dasharray="6 4"/>
   <text x="732" y="118" font-size="12" fill="#444">Node 1</text>
-  <rect x="942" y="104" width="210" height="196" rx="8" fill="none" stroke="#777" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <rect x="942" y="104" width="210" height="188" rx="8" fill="none" stroke="#777" stroke-width="1.5" stroke-dasharray="6 4"/>
   <text x="952" y="118" font-size="12" fill="#444">Node 2</text>
   <rect x="737" y="132" width="180" height="40" rx="7" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
-  <text x="745" y="146" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <text x="745" y="146" font-size="11" fill="#1d3b66" font-weight="bold">Pod A</text>
   <rect x="782" y="147" width="100" height="21" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
-  <text x="832" y="162" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">Service only</text>
+  <text x="832" y="162" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">no sidecar</text>
   <rect x="737" y="180" width="180" height="40" rx="7" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
-  <text x="745" y="194" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <text x="745" y="194" font-size="11" fill="#1d3b66" font-weight="bold">Pod B</text>
   <rect x="782" y="195" width="100" height="21" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
-  <text x="832" y="210" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">Service only</text>
+  <text x="832" y="210" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">no sidecar</text>
   <rect x="957" y="132" width="180" height="40" rx="7" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
-  <text x="965" y="146" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
+  <text x="965" y="146" font-size="11" fill="#1d3b66" font-weight="bold">Pod C</text>
   <rect x="1002" y="147" width="100" height="21" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
-  <text x="1052" y="162" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">Service only</text>
+  <text x="1052" y="162" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">no sidecar</text>
   <rect x="957" y="180" width="180" height="40" rx="7" fill="#f3e8fb" stroke="#7a4fa5" stroke-width="2" stroke-dasharray="7 4"/>
-  <text x="965" y="194" font-size="11" fill="#4b2d73" font-weight="bold">Pod</text>
-  <rect x="987" y="195" width="130" height="21" rx="5" fill="#7a4fa5" stroke="#4b2d73" stroke-width="2"/>
-  <text x="1052" y="210" text-anchor="middle" font-weight="bold" fill="#fff" font-size="12">waypoint (layer 7)</text>
+  <text x="965" y="194" font-size="11" fill="#4b2d73" font-weight="bold">waypoint pod</text>
+  <rect x="987" y="199" width="130" height="19" rx="5" fill="#7a4fa5" stroke="#4b2d73" stroke-width="2"/>
+  <text x="1052" y="213" text-anchor="middle" font-weight="bold" fill="#fff" font-size="12">waypoint (layer 7)</text>
   <rect x="737" y="246" width="180" height="38" rx="6" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
   <text x="827" y="270" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">ztunnel (layer 4)</text>
   <rect x="957" y="246" width="180" height="38" rx="6" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
   <text x="1047" y="270" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">ztunnel (layer 4)</text>
-  <path d="M919,266 L955,266" stroke="#1a5fb4" stroke-width="3" fill="none" marker-end="url(#ab)"/>
-  <text x="937" y="283" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="11">mTLS</text>
-  <path d="M919,254 L953,212" stroke="#7a4fa5" stroke-width="2.5" stroke-dasharray="6 4" fill="none" marker-end="url(#ap)"/>
-  <path d="M1047,222 L1047,244" stroke="#7a4fa5" stroke-width="2.5" stroke-dasharray="6 4" fill="none" marker-end="url(#ap)"/>
-  <text x="900" y="326" text-anchor="middle" fill="#4b2d73" font-size="12" font-weight="bold">dashed: the path through the waypoint of the namespace</text>
-  <text x="900" y="348" text-anchor="middle" fill="#555" font-size="12">The waypoint is a pod in its namespace; Kubernetes can run it on any node.</text>
-  <text x="900" y="395" text-anchor="middle" fill="#4b2d73" font-size="14" font-weight="bold">One ztunnel per node, optional waypoint per namespace</text>
-  <text x="900" y="418" text-anchor="middle" fill="#333" font-size="13">Pods stay unchanged (no restart), less overhead</text>
-  <text x="900" y="438" text-anchor="middle" fill="#333" font-size="13">Routing and retries (layer 7) only with a waypoint</text>
-  <text x="900" y="458" text-anchor="middle" fill="#333" font-size="13">Needs Istio CNI on every node (a privileged component)</text>
+  <!-- the way of one call, left to right, without and with a waypoint; the ztunnel always comes first -->
+  <rect x="640" y="298" width="522" height="152" rx="6" fill="#ffffff" stroke="#c9b3e0" stroke-width="1.5"/>
+  <text x="900" y="315" text-anchor="middle" fill="#4b2d73" font-size="12" font-weight="bold">The way of a call from Pod B to Pod C (one direction)</text>
+  <text x="650" y="335" text-anchor="start" fill="#1a5fb4" font-size="11" font-weight="bold">Without a waypoint</text>
+  <rect x="646" y="342" width="64" height="28" rx="6" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="678.0" y="361" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d3b66">Pod B</text>
+  <rect x="726" y="342" width="80" height="28" rx="6" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="766.0" y="361" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">ztunnel 1</text>
+  <rect x="994" y="342" width="80" height="28" rx="6" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="1034.0" y="361" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">ztunnel 2</text>
+  <rect x="1090" y="342" width="64" height="28" rx="6" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="1122.0" y="361" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d3b66">Pod C</text>
+  <path d="M712,356 L724,356" stroke="#7a4fa5" stroke-width="1.5" fill="none" marker-end="url(#ap)"/>
+  <path d="M808,356 L992,356" stroke="#7a4fa5" stroke-width="1.5" fill="none" marker-end="url(#ap)"/>
+  <path d="M1076,356 L1088,356" stroke="#7a4fa5" stroke-width="1.5" fill="none" marker-end="url(#ap)"/>
+  <text x="900" y="335" text-anchor="middle" fill="#4b2d73" font-size="11" font-weight="bold">HBONE</text>
+  <text x="650" y="389" text-anchor="start" fill="#7a4fa5" font-size="11" font-weight="bold">With a waypoint</text>
+  <rect x="646" y="396" width="64" height="28" rx="6" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="678.0" y="415" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d3b66">Pod B</text>
+  <rect x="726" y="396" width="80" height="28" rx="6" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="766.0" y="415" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">ztunnel 1</text>
+  <rect x="854" y="396" width="92" height="28" rx="6" fill="#7a4fa5" stroke="#4b2d73" stroke-width="2"/>
+  <text x="900.0" y="415" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">waypoint pod</text>
+  <rect x="994" y="396" width="80" height="28" rx="6" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="1034.0" y="415" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">ztunnel 2</text>
+  <rect x="1090" y="396" width="64" height="28" rx="6" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="1122.0" y="415" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d3b66">Pod C</text>
+  <path d="M712,410 L724,410" stroke="#7a4fa5" stroke-width="1.5" fill="none" marker-end="url(#ap)"/>
+  <path d="M808,410 L852,410" stroke="#7a4fa5" stroke-width="1.5" fill="none" marker-end="url(#ap)"/>
+  <path d="M948,410 L992,410" stroke="#7a4fa5" stroke-width="1.5" fill="none" marker-end="url(#ap)"/>
+  <path d="M1076,410 L1088,410" stroke="#7a4fa5" stroke-width="1.5" fill="none" marker-end="url(#ap)"/>
+  <text x="830" y="389" text-anchor="middle" fill="#4b2d73" font-size="11" font-weight="bold">HBONE</text>
+  <text x="970" y="389" text-anchor="middle" fill="#4b2d73" font-size="11" font-weight="bold">HBONE</text>
+  <text x="900" y="442" text-anchor="middle" fill="#4b2d73" font-size="12">All HBONE tunnels are encrypted (mTLS). The ztunnel always comes first.</text>
+  <text x="900" y="468" text-anchor="middle" fill="#4b2d73" font-size="14" font-weight="bold">One ztunnel per node, optional waypoint per namespace</text>
+  <text x="900" y="489" text-anchor="middle" fill="#333" font-size="13">Pods stay unchanged (no restart), less overhead</text>
+  <text x="900" y="507" text-anchor="middle" fill="#333" font-size="13">Routing and retries (layer 7) only with a waypoint</text>
+  <text x="900" y="525" text-anchor="middle" fill="#333" font-size="13">Needs Istio CNI on every node (a privileged component)</text>
 </svg>
