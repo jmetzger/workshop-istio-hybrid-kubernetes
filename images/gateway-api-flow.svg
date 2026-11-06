@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="1200" height="520" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
+  </defs>
+  <rect width="1200" height="520" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Kubernetes Gateway API: GatewayClass, Gateway and HTTPRoute</text>
+
+  <rect x="20" y="170" width="140" height="64" rx="6" fill="#ece9fb" stroke="#7a6fd0" stroke-width="2"/>
+  <text x="90" y="198" text-anchor="middle" font-weight="bold" fill="#3a3180">Client</text>
+  <text x="90" y="217" text-anchor="middle" fill="#3a3180" font-size="12">browser, curl</text>
+  <path d="M162,202 L218,202" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#ao)"/>
+  <text x="190" y="192" text-anchor="middle" fill="#8a4500" font-size="11">HTTP(S)</text>
+
+  <rect x="220" y="160" width="220" height="84" rx="6" fill="#e3f1df" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="330" y="188" text-anchor="middle" font-weight="bold" fill="#1f5f1f">Gateway</text>
+  <text x="330" y="208" text-anchor="middle" fill="#1f5f1f" font-size="12">gateway.networking.k8s.io</text>
+  <text x="330" y="226" text-anchor="middle" fill="#1f5f1f" font-size="12">listeners: port, host, TLS</text>
+
+  <rect x="220" y="340" width="220" height="84" rx="6" fill="#e3f1df" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="330" y="368" text-anchor="middle" font-weight="bold" fill="#1f5f1f">GatewayClass</text>
+  <text x="330" y="388" text-anchor="middle" fill="#1f5f1f" font-size="12">names the implementation:</text>
+  <text x="330" y="406" text-anchor="middle" fill="#1f5f1f" font-size="12">istio, envoy, traefik, ...</text>
+  <path d="M330,338 L330,246" stroke="#555" stroke-width="2" stroke-dasharray="6 4" fill="none" marker-end="url(#ag)"/>
+  <text x="342" y="296" fill="#555" font-size="12">Gateway is an instance of</text>
+  <text x="342" y="312" fill="#555" font-size="12">a GatewayClass</text>
+
+  <!-- HTTPRoute -->
+  <rect x="540" y="80" width="220" height="84" rx="6" fill="#e3f1df" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="650" y="108" text-anchor="middle" font-weight="bold" fill="#1f5f1f">HTTPRoute</text>
+  <text x="650" y="128" text-anchor="middle" fill="#1f5f1f" font-size="12">routing rules</text>
+  <text x="650" y="146" text-anchor="middle" fill="#1f5f1f" font-size="12">parentRefs: [ the Gateway ]</text>
+  <path d="M538,140 L442,185" stroke="#555" stroke-width="2" stroke-dasharray="6 4" fill="none" marker-end="url(#ag)"/>
+  <text x="470" y="140" fill="#555" font-size="12">attached to</text>
+
+  <rect x="540" y="230" width="220" height="104" rx="6" fill="#f1eee4" stroke="#8a8670" stroke-width="2"/>
+  <text x="650" y="256" text-anchor="middle" fill="#444" font-size="12">backendRef: web-v1</text>
+  <text x="650" y="274" text-anchor="middle" fill="#444" font-size="12" font-weight="bold">weight: 80</text>
+  <text x="650" y="298" text-anchor="middle" fill="#444" font-size="12">backendRef: web-v2</text>
+  <text x="650" y="316" text-anchor="middle" fill="#444" font-size="12" font-weight="bold">weight: 20</text>
+  <path d="M650,166 L650,228" stroke="#555" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+
+  <!-- Services -->
+  <rect x="540" y="400" width="220" height="64" rx="6" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="650" y="426" text-anchor="middle" font-weight="bold" fill="#0b5247">Service web-v1</text>
+  <text x="650" y="446" text-anchor="middle" fill="#0b5247" font-size="12">selector: version=v1</text>
+  <rect x="820" y="400" width="220" height="64" rx="6" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="930" y="426" text-anchor="middle" font-weight="bold" fill="#0b5247">Service web-v2</text>
+  <text x="930" y="446" text-anchor="middle" fill="#0b5247" font-size="12">selector: version=v2</text>
+  <path d="M600,336 L600,398" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#ao)"/>
+  <text x="590" y="372" text-anchor="end" fill="#8a4500" font-weight="bold" font-size="13">80 %</text>
+  <path d="M740,336 L900,398" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#ao)"/>
+  <text x="830" y="360" fill="#8a4500" font-weight="bold" font-size="13">20 %</text>
+
+  <!-- note -->
+  <rect x="840" y="80" width="330" height="130" rx="6" fill="#fbe9e7" stroke="#bf5b4b" stroke-width="2"/>
+  <text x="1005" y="110" text-anchor="middle" font-weight="bold" fill="#7a2c20">No DestinationRule needed for the split</text>
+  <text x="1005" y="136" text-anchor="middle" fill="#7a2c20" font-size="12">The weights sit directly in the backendRefs of</text>
+  <text x="1005" y="154" text-anchor="middle" fill="#7a2c20" font-size="12">the HTTPRoute. The price: one Service per</text>
+  <text x="1005" y="172" text-anchor="middle" fill="#7a2c20" font-size="12">version, instead of one Service plus subsets.</text>
+  <text x="1005" y="194" text-anchor="middle" fill="#7a2c20" font-size="12">Other features still need Istio objects.</text>
+
+  <text x="600" y="500" text-anchor="middle" fill="#555" font-size="13">The Gateway opens the door, the HTTPRoute decides where traffic goes. Different people can own the two objects.</text>
+</svg>

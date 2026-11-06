@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" width="1200" height="500" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#777"/></marker>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a5fb4"/></marker>
+  </defs>
+  <rect width="1200" height="500" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Before and after: the same three services, without and with a service mesh</text>
+
+  <!-- Left: without -->
+  <rect x="30" y="55" width="540" height="420" rx="10" fill="#fafafa" stroke="#999" stroke-width="2"/>
+  <text x="300" y="86" text-anchor="middle" font-size="17" font-weight="bold" fill="#333">Without a service mesh</text>
+  <rect x="70" y="130" width="140" height="56" rx="6" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="140" y="163" text-anchor="middle" font-weight="bold" fill="#0b5247">Service A</text>
+  <rect x="390" y="130" width="140" height="56" rx="6" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="460" y="163" text-anchor="middle" font-weight="bold" fill="#0b5247">Service B</text>
+  <rect x="230" y="300" width="140" height="56" rx="6" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="300" y="333" text-anchor="middle" font-weight="bold" fill="#0b5247">Service C</text>
+  <path d="M212,158 L388,158" stroke="#777" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#ag)"/>
+  <path d="M170,188 L260,298" stroke="#777" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#ag)"/>
+  <path d="M430,188 L340,298" stroke="#777" stroke-width="2.5" stroke-dasharray="7 5" fill="none" marker-end="url(#ag)"/>
+  <text x="300" y="148" text-anchor="middle" fill="#555" font-size="12">direct traffic</text>
+  <text x="300" y="396" text-anchor="middle" fill="#8a2a2a" font-size="13" font-weight="bold">Every service brings its own retries, timeouts,</text>
+  <text x="300" y="416" text-anchor="middle" fill="#8a2a2a" font-size="13" font-weight="bold">TLS and metrics in its own code.</text>
+  <text x="300" y="446" text-anchor="middle" fill="#555" font-size="12">Traffic is plain by default, nobody sees the whole picture.</text>
+
+  <!-- Right: with -->
+  <rect x="630" y="55" width="540" height="420" rx="10" fill="#f3f8ff" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="900" y="86" text-anchor="middle" font-size="17" font-weight="bold" fill="#1d3b66">With a service mesh (sidecar pattern)</text>
+
+  <rect x="650" y="110" width="220" height="100" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="660" y="128" font-size="12" fill="#1d3b66" font-weight="bold">Pod A</text>
+  <rect x="665" y="140" width="90" height="46" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="710" y="168" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="13">Service A</text>
+  <rect x="775" y="140" width="80" height="46" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="815" y="168" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">Envoy</text>
+  <path d="M757,163 L773,163" stroke="#555" stroke-width="2" marker-end="url(#ag)"/>
+
+  <rect x="920" y="110" width="220" height="100" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="930" y="128" font-size="12" fill="#1d3b66" font-weight="bold">Pod B</text>
+  <rect x="935" y="140" width="80" height="46" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="975" y="168" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">Envoy</text>
+  <rect x="1035" y="140" width="90" height="46" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="1080" y="168" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="13">Service B</text>
+  <path d="M1017,163 L1033,163" stroke="#555" stroke-width="2" marker-end="url(#ag)"/>
+
+  <rect x="785" y="320" width="220" height="100" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="795" y="338" font-size="12" fill="#1d3b66" font-weight="bold">Pod C</text>
+  <rect x="800" y="350" width="90" height="46" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="845" y="378" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="13">Service C</text>
+  <rect x="910" y="350" width="80" height="46" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="950" y="378" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">Envoy</text>
+  <path d="M892,373 L908,373" stroke="#555" stroke-width="2" marker-end="url(#ag)"/>
+
+  <path d="M857,163 L933,163" stroke="#1a5fb4" stroke-width="3" fill="none" marker-end="url(#ab)"/>
+  <text x="895" y="150" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="13">mTLS</text>
+  <path d="M835,188 L925,348" stroke="#1a5fb4" stroke-width="3" fill="none" marker-end="url(#ab)"/>
+  <text x="858" y="268" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="13">mTLS</text>
+  <path d="M975,188 L962,348" stroke="#1a5fb4" stroke-width="3" fill="none" marker-end="url(#ab)"/>
+  <text x="992" y="268" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="13">mTLS</text>
+
+  <text x="900" y="452" text-anchor="middle" fill="#1d3b66" font-size="13" font-weight="bold">The application code does not change. Envoy next to every service</text>
+  <text x="900" y="470" text-anchor="middle" fill="#1d3b66" font-size="13" font-weight="bold">takes over retries, TLS, metrics and routing.</text>
+</svg>

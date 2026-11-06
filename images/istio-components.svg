@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1a5fb4"/></marker>
+    <marker id="ap" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6a3fa0"/></marker>
+  </defs>
+  <rect width="1200" height="640" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Istio in sidecar mode: control plane and data plane</text>
+
+  <!-- Control plane -->
+  <rect x="40" y="55" width="1120" height="190" rx="10" fill="#f3f8ff" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="60" y="80" font-weight="bold" font-size="16" fill="#1d3b66">Control plane (namespace istio-system)</text>
+  <rect x="440" y="100" width="320" height="120" rx="8" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="600" y="130" text-anchor="middle" fill="#fff" font-weight="bold" font-size="18">istiod</text>
+  <text x="600" y="156" text-anchor="middle" fill="#dbe8fb" font-size="13">Service discovery (Services, Endpoints)</text>
+  <text x="600" y="176" text-anchor="middle" fill="#dbe8fb" font-size="13">Configuration (VirtualService, DestinationRule, ...)</text>
+  <text x="600" y="196" text-anchor="middle" fill="#dbe8fb" font-size="13">Certificate authority (mTLS certificates)</text>
+
+  <rect x="60" y="110" width="280" height="100" rx="6" fill="#fff" stroke="#999" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="200" y="136" text-anchor="middle" font-weight="bold" fill="#333">Kubernetes API server</text>
+  <text x="200" y="160" text-anchor="middle" fill="#555" font-size="12">Services, Endpoints, Istio objects</text>
+  <text x="200" y="178" text-anchor="middle" fill="#555" font-size="12">istiod watches them</text>
+  <path d="M342,160 L438,160" stroke="#555" stroke-width="2" marker-end="url(#ag)"/>
+
+  <!-- Prometheus -->
+  <rect x="880" y="110" width="250" height="100" rx="6" fill="#f2ecfa" stroke="#6a3fa0" stroke-width="2"/>
+  <text x="1005" y="140" text-anchor="middle" font-weight="bold" fill="#3d2266">Prometheus (and Grafana, Kiali)</text>
+  <text x="1005" y="164" text-anchor="middle" fill="#3d2266" font-size="12">collects the metrics of the proxies</text>
+  <text x="1005" y="182" text-anchor="middle" fill="#3d2266" font-size="12">(not istiod)</text>
+
+  <!-- Data plane -->
+  <rect x="40" y="320" width="1120" height="290" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="60" y="345" font-weight="bold" font-size="16" fill="#1f5f1f">Data plane (your namespaces)</text>
+
+  <rect x="80" y="380" width="300" height="130" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="92" y="400" font-size="12" font-weight="bold" fill="#1d3b66">Pod 1</text>
+  <rect x="96" y="415" width="130" height="75" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="161" y="446" text-anchor="middle" fill="#fff" font-weight="bold">Envoy</text>
+  <text x="161" y="466" text-anchor="middle" fill="#dbe8fb" font-size="11">in container istio-proxy</text>
+  <rect x="250" y="415" width="115" height="75" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="307" y="458" text-anchor="middle" fill="#0b5247" font-weight="bold">Service A</text>
+  <path d="M228,452 L248,452" stroke="#555" stroke-width="2" marker-end="url(#ag)"/>
+
+  <rect x="450" y="380" width="300" height="130" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="462" y="400" font-size="12" font-weight="bold" fill="#1d3b66">Pod 2</text>
+  <rect x="466" y="415" width="130" height="75" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="531" y="446" text-anchor="middle" fill="#fff" font-weight="bold">Envoy</text>
+  <text x="531" y="466" text-anchor="middle" fill="#dbe8fb" font-size="11">in container istio-proxy</text>
+  <rect x="620" y="415" width="115" height="75" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="677" y="458" text-anchor="middle" fill="#0b5247" font-weight="bold">Service B</text>
+  <path d="M598,452 L618,452" stroke="#555" stroke-width="2" marker-end="url(#ag)"/>
+
+  <rect x="820" y="380" width="300" height="130" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="832" y="400" font-size="12" font-weight="bold" fill="#1d3b66">Pod 3</text>
+  <rect x="836" y="415" width="130" height="75" rx="5" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
+  <text x="901" y="446" text-anchor="middle" fill="#fff" font-weight="bold">Envoy</text>
+  <text x="901" y="466" text-anchor="middle" fill="#dbe8fb" font-size="11">in container istio-proxy</text>
+  <rect x="990" y="415" width="115" height="75" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
+  <text x="1047" y="458" text-anchor="middle" fill="#0b5247" font-weight="bold">Service C</text>
+  <path d="M968,452 L988,452" stroke="#555" stroke-width="2" marker-end="url(#ag)"/>
+
+  <!-- istiod -> envoys: config push -->
+  <path d="M520,222 L190,413" stroke="#1a5fb4" stroke-width="2.5" fill="none" marker-end="url(#ab)"/>
+  <path d="M600,222 L540,413" stroke="#1a5fb4" stroke-width="2.5" fill="none" marker-end="url(#ab)"/>
+  <path d="M690,222 L905,413" stroke="#1a5fb4" stroke-width="2.5" fill="none" marker-end="url(#ab)"/>
+  <rect x="260" y="270" width="230" height="40" rx="4" fill="#fff" stroke="#1a5fb4"/>
+  <text x="375" y="287" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="12">istiod pushes configuration (xDS)</text>
+  <text x="375" y="303" text-anchor="middle" fill="#1a5fb4" font-size="12">and certificates, port 15012</text>
+
+  <!-- envoy <-> envoy mTLS -->
+  <path d="M161,492 L161,540 L901,540 L901,492" stroke="#1a5fb4" stroke-width="3" fill="none" marker-start="url(#ab)" marker-end="url(#ab)"/>
+  <path d="M531,540 L531,492" stroke="#1a5fb4" stroke-width="3" fill="none" marker-end="url(#ab)"/>
+  <rect x="505" y="548" width="52" height="22" rx="4" fill="#fff"/>
+  <text x="531" y="564" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="14">mTLS</text>
+  <text x="600" y="596" text-anchor="middle" fill="#1a5fb4" font-size="12">Service-to-service traffic goes from Envoy to Envoy, encrypted and authenticated</text>
+
+  <!-- metrics to prometheus -->
+  <path d="M950,413 L950,212" stroke="#6a3fa0" stroke-width="2" stroke-dasharray="6 4" fill="none" marker-end="url(#ap)"/>
+  <text x="962" y="300" fill="#6a3fa0" font-size="12">metrics are scraped</text>
+  <text x="962" y="316" fill="#6a3fa0" font-size="12">from every sidecar</text>
+</svg>

@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 440" width="1200" height="440" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+  <rect width="1200" height="440" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Should we use a service mesh? A rule of thumb, not a law</text>
+
+  <rect x="20" y="170" width="170" height="70" rx="6" fill="#e8f0fe" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="105" y="200" text-anchor="middle" font-weight="bold" fill="#1d3b66">Use a service</text>
+  <text x="105" y="220" text-anchor="middle" font-weight="bold" fill="#1d3b66">mesh?</text>
+  <path d="M192,205 L248,205" stroke="#555" stroke-width="2" marker-end="url(#ag)"/>
+
+  <rect x="250" y="170" width="170" height="70" rx="6" fill="#e8f0fe" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="335" y="200" text-anchor="middle" font-weight="bold" fill="#1d3b66">How many</text>
+  <text x="335" y="220" text-anchor="middle" font-weight="bold" fill="#1d3b66">services?</text>
+
+  <!-- fewer than 10 -->
+  <path d="M380,168 L380,90 L518,90" stroke="#555" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+  <text x="392" y="82" fill="#555" font-size="13">fewer than 10</text>
+  <rect x="520" y="55" width="200" height="70" rx="6" fill="#ffd9d6" stroke="#c0504d" stroke-width="2"/>
+  <text x="620" y="82" text-anchor="middle" font-weight="bold" fill="#6b1a17">Overhead too high</text>
+  <text x="620" y="104" text-anchor="middle" fill="#6b1a17" font-size="12">plain Kubernetes is enough</text>
+
+  <!-- 10 to 20 -->
+  <path d="M422,205 L518,205" stroke="#555" stroke-width="2" marker-end="url(#ag)"/>
+  <text x="430" y="196" fill="#555" font-size="13">10 to 20</text>
+  <rect x="520" y="170" width="200" height="70" rx="6" fill="#e8f0fe" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="620" y="200" text-anchor="middle" font-weight="bold" fill="#1d3b66">Is security</text>
+  <text x="620" y="220" text-anchor="middle" font-weight="bold" fill="#1d3b66">important?</text>
+
+  <path d="M722,190 L798,160" stroke="#555" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+  <text x="745" y="165" fill="#555" font-size="13">yes</text>
+  <rect x="800" y="125" width="200" height="70" rx="6" fill="#d4edda" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="900" y="152" text-anchor="middle" font-weight="bold" fill="#1f5f1f">Recommended</text>
+  <text x="900" y="174" text-anchor="middle" fill="#1f5f1f" font-size="12">worth the effort</text>
+
+  <path d="M722,225 L798,255" stroke="#555" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+  <text x="745" y="256" fill="#555" font-size="13">no</text>
+  <rect x="800" y="225" width="200" height="70" rx="6" fill="#fff3cd" stroke="#b58900" stroke-width="2"/>
+  <text x="900" y="252" text-anchor="middle" font-weight="bold" fill="#6b5200">Weigh it up</text>
+  <text x="900" y="274" text-anchor="middle" fill="#6b5200" font-size="12">decide case by case</text>
+
+  <!-- more than 20 -->
+  <path d="M380,242 L380,330 L518,330" stroke="#555" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+  <text x="392" y="322" fill="#555" font-size="13">more than 20</text>
+  <rect x="520" y="295" width="200" height="70" rx="6" fill="#d4edda" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="620" y="322" text-anchor="middle" font-weight="bold" fill="#1f5f1f">Recommended</text>
+  <text x="620" y="344" text-anchor="middle" fill="#1f5f1f" font-size="12">worth the effort</text>
+
+  <rect x="800" y="320" width="370" height="70" rx="6" fill="#fafafa" stroke="#999" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="985" y="347" text-anchor="middle" fill="#333" font-weight="bold" font-size="13">Before you start: plan the resources</text>
+  <text x="985" y="368" text-anchor="middle" fill="#555" font-size="12">every sidecar needs CPU and memory</text>
+
+  <text x="600" y="425" text-anchor="middle" fill="#555" font-size="13">Compliance needs, many teams and mixed languages count as much as the number of services.</text>
+</svg>
