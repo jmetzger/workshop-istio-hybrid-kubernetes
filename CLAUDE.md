@@ -42,7 +42,8 @@ Format der Übungen: Skill `workshop-training`.
 ## Offen / nächste Schritte
 
 - **Abschnitt `debugging/`** (Agenda-Zeile "Debugging Istio"): `01-logs-and-log-levels.md` und `02-controlz.md` sind geschrieben, alle Befehle am Lab getestet (Level setzen und zurücksetzen mit `ads:debug` bei `istiod` und `http:debug` bei Envoy, ControlZ per Port-Forward). Noch offen, jeweils nach Test am Lab: `istioctl proxy-config` (was sieht der Envoy), `istioctl analyze`, typische Fehlerbilder (`503`), die Annotationen `sidecar.istio.io/logLevel` auf einem Pod und eine Helm-Änderung von `global.logging.level` auf dem Cluster.
-- **Zustand des Labs:** `istiod` hat `ISTIO_DUAL_STACK=true` (Rest vom Test der optionalen Dual-Stack-Variante). Ein frisches Lab hat das nicht. Soll das Lab wieder dem Ausgangszustand entsprechen, mit `helm upgrade --reuse-values` zurücknehmen.
+- **Zustand des Labs (2026-11-06):** `istiod` hat **kein** `ISTIO_DUAL_STACK` (Helm-Revision 8), nur `PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION` sowie `ISTIO_META_DNS_CAPTURE` und `ISTIO_META_DNS_AUTO_ALLOCATE`: der Stand nach der IPv6-only-Übung. Die optionale Dual-Stack-Übung setzt `ISTIO_DUAL_STACK` zusätzlich.
+- **Helm-Falle:** `helm upgrade --reuse-values --set key=null` entfernt einen Wert **nicht** (Revision 7 war wirkungslos). Funktioniert hat: `helm get values -o yaml > v.yaml`, die Zeilen streichen, `helm upgrade -f v.yaml` ohne `--reuse-values`. Danach prüfen: Deployment-Env, ConfigMap `istio`, ControlZ `/envj/`, `proxy-status`, ein Aufruf durch einen Sidecar.
 - `fundamentals/01`: Tabelle unter der Vergleichsgrafik Sidecar/Ambient kürzen? Noch nicht entschieden.
 - Offene Telekom-Frage: Auto-Registrierung oder manuelle `WorkloadEntry`? Steht in keinem Transkript (Vorbereitungsrepo, `allgemeine-fragen-in-der-schulung.md`).
 - Gateway-API-CRDs im Lab für die Gateway-API-Beispiele von Tag 1: noch nicht geprüft.
