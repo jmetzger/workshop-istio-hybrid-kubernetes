@@ -4,6 +4,30 @@ Diese Datei ist **kein Teilnehmer-Material** (Deutsch, nur für die Arbeit mit C
 Die deutschen Vorbereitungsnotizen (Telekom-Gespräche, Messungen, Probleme, Agenda-Entwurf) liegen im Repo `~/projects/02-training/vorbereitung/training-istio-telekom`.
 Format der Übungen: Skill `workshop-training`. Stand dieser Datei: 2026-11-06.
 
+## Wiederaufnahme: Stand 2026-11-06 abends und nächste Schritte
+
+**Stand:** Alles ist gepusht (Workshop-Repo, Vorbereitungsrepo, Skills-Repo). Das Lab läuft noch (6 Server von `tln1`, etwa 0,2 EUR/h, Abbau noch nicht entschieden). `a-vm1` ist sauber (ohne IPv4, nicht im Mesh), `istiod` ohne `ISTIO_DUAL_STACK`. Heute fertig geworden: IPv6-only-Übung `virtual-machines/01` und optionale Dual-Stack-Übung `02`, `fundamentals` 01 bis 07 mit Grafiken, `debugging/` 01 und 02, `cleanup` entfernt das Sidecar-Paket, `_README.md` steht in `.gitignore`, `accept_ra` ist aus `prep.sh` gestrichen, Frage 5 (Namespaces der VMs) steht in der Fragenliste im Vorbereitungsrepo.
+
+**Jochen macht erst nächste Woche weiter** (morgen eine andere Schulung).
+
+**Nächster Schritt 1: Theorie und Übung auf getrennte Seiten** (Jochens Wunsch, Entscheidung 2026-11-06, noch nicht umgesetzt):
+- Pro Thema **zwei Seiten**: (1) **Theorie**, ohne Befehle, steht zuerst. (2) **Übung**: erst eine kurze **Erklärung der Übung** ("What we do"), dann die Schritte.
+- Namen: Die Theorie bekommt eine neue `00-…`-Seite (so ist es in `virtual-machines/` schon). Die Übungsseiten **behalten ihren Namen** (Links sind in Umlauf). In der Agenda steht die Theorie vor der Übung.
+- Befehle und Ausgaben werden nur **verschoben, nicht geändert**. Dann ist kein neuer Labtest nötig. Danach prüfen: alle Links, Agenda, `Previous:`/`Next:`.
+- **Erledigt als Muster (2026-11-06): `virtual-machines/01`.** Theorie neu in `virtual-machines/00-how-a-vm-joins-the-mesh.md` (ohne "Background", Befehle und Ausgaben unverändert verschoben, endet mit `Next:` auf die Übung), die Übung `01-add-a-vm-to-the-mesh.md` hat jetzt: Titel, Bild, Attention, Verweis auf die Theorie, **"What we do"** (Tabelle der Teile und eine Liste der Schritte), **"Before you start"**, "How to do this exercise", **"The steps"** (Schritt 8 "Check on the VM" ist nicht Teil des Skripts) und "Clean up". Agenda: Theorie steht vor der Übung. Alle 20 Befehlsblöcke der alten Seite sind erhalten (per Skript verglichen).
+- **Noch zu trennen, nach demselben Muster** (heute vermischt: Abschnitt "Background" oder Erklärtext direkt vor den Schritten): `virtual-machines/02` (290 Zeilen, wiederholt viel von `01`: zuerst klären, ob es die neue Theorieseite mitbenutzt, statt alles zu kopieren), `virtual-machines/00-workloadgroup-workloadentry-endpointslice` (Theorie und Schritte), `multi-cluster/01` und `02`, `ingress-gateway/01`, `explore-the-lab/01`, `debugging/01` und `02` (Theorie und "Try it"), `fundamentals/06` und `07` (Theorie und "Look at it yourself").
+
+**Nächster Schritt 2: `debugging/` ausbauen**, jeweils nach Test am Lab: `istioctl proxy-config` (was sieht der Envoy), `istioctl analyze`, typische Fehlerbilder (`503`), die Pod-Annotationen für das Log-Level auf einem Pod, eine Helm-Änderung von `global.logging.level` auf dem Cluster.
+
+**Offen, Jochen entscheidet:**
+- Lab abbauen oder behalten (Kosten). Für Tests wird es gebraucht.
+- Zwei echte VMs in einem Namespace im Lab verbinden (`add-vm.sh`, etwa 0,03 bis 0,09 EUR/h je Server), damit Frage 5 eine Messung bekommt.
+- `fundamentals/01`: Tabelle unter der Vergleichsgrafik Sidecar/Ambient kürzen?
+- Kein Muss: ob und wie sich `15010` (Klartext-xDS) abschalten lässt, nicht geprüft.
+- Gateway-API-CRDs im Lab für die Gateway-API-Beispiele von Tag 1: noch nicht geprüft.
+
+**Offene Telekom-Fragen** (Vorbereitungsrepo, `allgemeine-fragen-in-der-schulung.md`): Auto-Registrierung oder manuelle `WorkloadEntry` (Frage 1), Adressfamilien der VMs (Frage 2, F13/F14), Namespaces der VMs (Frage 5).
+
 ## Aufbau des Repos
 
 `fundamentals/` 01 bis 07 (Erklärseiten mit Grafiken, kurz), `explore-the-lab/`, `ingress-gateway/`, `multi-cluster/`, `virtual-machines/` (`01` IPv6 only, `02` Dual Stack optional), `debugging/` (`01` Logs und Log-Level, `02` ControlZ), `images/` (SVG). Die Agenda steht in der `README.md`.
@@ -63,16 +87,6 @@ Format der Übungen: Skill `workshop-training`. Stand dieser Datei: 2026-11-06.
 - **DNS capture** (`15053`) wird beim Anlegen des Pods gelesen. Pods, die davor gestartet sind, lauschen nicht.
 - **Ambient (nur Theorie):** Weg mit Waypoint ist ztunnel → Waypoint → ztunnel, beide Strecken HBONE (mTLS, Port `15008`). Quelle: istio.io, "Ambient data plane". Waypoint ist ein Pod seines Namespace.
 - **Quellenlage Log-Level:** Die Istio-Doku nennt Level und Wege (Seite *Component Logging*), gibt aber **keine Best-Practice-Empfehlung** zu Log-Leveln. *Observability Best Practices* behandeln nur Prometheus-Metriken. Für Access Logs empfiehlt die Doku die Telemetry-API (auch pro Namespace oder Workload). Praxistipps stammen aus **einer** Anbieter-Blogreihe (oneuptime.com), zweitrangig: Faustregeln auf den Seiten sind deshalb als unsere Erfahrung gekennzeichnet.
-
-## Offen / nächste Schritte
-
-- **`debugging/` weiter ausbauen**, jeweils nach Test am Lab: `istioctl proxy-config` (was sieht der Envoy), `istioctl analyze`, typische Fehlerbilder (`503`), Pod-Annotationen für das Log-Level, eine Helm-Änderung von `global.logging.level` auf dem Cluster.
-- **Entschieden: keine Seite "How our lab is built"** (2026-11-06). Seine Fragen zum Aufbau des Clusters waren privates Interesse, kein Kursmaterial. Der Abschnitt "Wie das Cluster auf IPv6 only gebaut ist" oben ist nur Hintergrund für Claude.
-- `fundamentals/01`: Tabelle unter der Vergleichsgrafik Sidecar/Ambient kürzen? Noch nicht entschieden.
-- Optional für die Sicherheitsfrage: ob und wie sich `15010` (Klartext-xDS) abschalten lässt, nicht geprüft.
-- Offene Telekom-Frage: Auto-Registrierung oder manuelle `WorkloadEntry`? Steht in keinem Transkript (Vorbereitungsrepo, `allgemeine-fragen-in-der-schulung.md`). Hat die Telekom-VM neben IPv6 auch IPv4 (F13/F14)?
-- Gateway-API-CRDs im Lab für die Gateway-API-Beispiele von Tag 1: noch nicht geprüft.
-- Lab abbauen oder behalten: Entscheidung steht aus.
 
 ## Arbeitsweise mit Jochen
 

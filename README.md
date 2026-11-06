@@ -28,6 +28,7 @@ All material in this repository is in English.
       
   1. Virtual machines in the mesh
      * [WorkloadGroup, WorkloadEntry and EndpointSlice: who is who](virtual-machines/00-workloadgroup-workloadentry-endpointslice.md)
+     * [How a VM joins the mesh](virtual-machines/00-how-a-vm-joins-the-mesh.md)
      * [Add a virtual machine to the mesh (IPv6 only, VM without IPv4)](virtual-machines/01-add-a-vm-to-the-mesh.md)
      * [Ports of istiod and of the sidecar on the VM](virtual-machines/00-ports-of-sidecar-and-istiod.md)
      * (Optional) [Add a virtual machine to the mesh with IPv4 and IPv6 (dual stack)](virtual-machines/02-add-a-vm-to-the-mesh-dual-stack-optional.md)
