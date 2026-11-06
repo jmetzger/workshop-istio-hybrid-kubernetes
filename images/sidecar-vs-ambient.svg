@@ -66,21 +66,20 @@
   <text x="945" y="149" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
   <rect x="980" y="151" width="110" height="24" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
   <text x="1035" y="168" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">Service only</text>
-  <rect x="935" y="190" width="200" height="44" rx="8" fill="#e8f4f8" stroke="#4a6fa5" stroke-width="2"/>
-  <text x="945" y="204" font-size="11" fill="#1d3b66" font-weight="bold">Pod</text>
-  <rect x="980" y="206" width="110" height="24" rx="5" fill="#e0f2f1" stroke="#0f7b6c" stroke-width="2"/>
-  <text x="1035" y="223" text-anchor="middle" font-weight="bold" fill="#0b5247" font-size="12">Service only</text>
+  <rect x="935" y="190" width="200" height="44" rx="8" fill="#f3e8fb" stroke="#7a4fa5" stroke-width="2" stroke-dasharray="7 4"/>
+  <text x="945" y="204" font-size="11" fill="#4b2d73" font-weight="bold">Pod</text>
+  <rect x="970" y="206" width="150" height="24" rx="5" fill="#7a4fa5" stroke="#4b2d73" stroke-width="2"/>
+  <text x="1045" y="223" text-anchor="middle" font-weight="bold" fill="#fff" font-size="12">waypoint (layer 7)</text>
   <rect x="665" y="250" width="200" height="40" rx="6" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
   <text x="765" y="275" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">ztunnel (layer 4)</text>
   <rect x="935" y="250" width="200" height="40" rx="6" fill="#1a5fb4" stroke="#0e3d7a" stroke-width="2"/>
   <text x="1035" y="275" text-anchor="middle" font-weight="bold" fill="#fff" font-size="13">ztunnel (layer 4)</text>
   <path d="M867,270 L933,270" stroke="#1a5fb4" stroke-width="3" fill="none" marker-end="url(#ab)"/>
-  <text x="900" y="256" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="12">mTLS</text>
-  <rect x="740" y="322" width="320" height="34" rx="6" fill="#f3e8fb" stroke="#7a4fa5" stroke-width="2" stroke-dasharray="7 4"/>
-  <text x="900" y="344" text-anchor="middle" fill="#4b2d73" font-weight="bold" font-size="13">waypoint proxy (layer 7, optional)</text>
-  <path d="M790,292 L800,320" stroke="#7a4fa5" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#ap)"/>
-  <path d="M1010,292 L1000,320" stroke="#7a4fa5" stroke-width="2" stroke-dasharray="5 4" fill="none" marker-end="url(#ap)"/>
-  <text x="900" y="374" text-anchor="middle" fill="#555" font-size="12">The pods have no proxy. One ztunnel serves all pods of its node.</text>
+  <text x="900" y="289" text-anchor="middle" fill="#1a5fb4" font-weight="bold" font-size="12">mTLS</text>
+  <path d="M867,258 L933,216" stroke="#7a4fa5" stroke-width="2.5" stroke-dasharray="6 4" fill="none" marker-end="url(#ap)"/>
+  <path d="M1035,236 L1035,248" stroke="#7a4fa5" stroke-width="2.5" stroke-dasharray="6 4" fill="none" marker-end="url(#ap)"/>
+  <text x="900" y="338" text-anchor="middle" fill="#4b2d73" font-size="12" font-weight="bold">dashed: the path through the optional waypoint</text>
+  <text x="900" y="374" text-anchor="middle" fill="#555" font-size="12">The waypoint is an ordinary pod: Kubernetes can run it on any node.</text>
   <text x="900" y="395" text-anchor="middle" fill="#4b2d73" font-size="14" font-weight="bold">One ztunnel per node, optional waypoint per namespace</text>
   <text x="900" y="418" text-anchor="middle" fill="#333" font-size="13">Pods stay unchanged (no restart), less overhead</text>
   <text x="900" y="438" text-anchor="middle" fill="#333" font-size="13">Routing and retries (layer 7) only with a waypoint</text>
