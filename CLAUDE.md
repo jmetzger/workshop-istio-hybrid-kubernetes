@@ -6,7 +6,7 @@ Format der Übungen: Skill `workshop-training`. Stand dieser Datei: 2026-11-06.
 
 ## Wiederaufnahme: Stand 2026-11-06 abends und nächste Schritte
 
-**Stand:** Alles ist gepusht (Workshop-Repo, Vorbereitungsrepo, Skills-Repo). Das Lab läuft noch (6 Server von `tln1`, etwa 0,2 EUR/h, Abbau noch nicht entschieden). `a-vm1` ist sauber (ohne IPv4, nicht im Mesh), `istiod` ohne `ISTIO_DUAL_STACK`. Heute fertig geworden: IPv6-only-Übung `virtual-machines/01` und optionale Dual-Stack-Übung `02`, `fundamentals` 01 bis 07 mit Grafiken, `debugging/` 01 und 02, `cleanup` entfernt das Sidecar-Paket, `_README.md` steht in `.gitignore`, `accept_ra` ist aus `prep.sh` gestrichen, Frage 5 (Namespaces der VMs) steht in der Fragenliste im Vorbereitungsrepo.
+**Stand:** Alles ist gepusht (Workshop-Repo, Vorbereitungsrepo, Skills-Repo). **Das Lab ist abgebaut** (2026-11-06 21:18, auf Jochens Wunsch: 0 Server, 0 Firewalls, 0 Primary-IPs, keine DNS-Einträge mehr). Das Arbeitsverzeichnis `~/ipv6-clusters/tk-test/` und der Hetzner-Schlüssel `training-tk-test` bleiben. **Neuaufbau nächste Woche** (siehe Abschnitt "Lab für Tests"). Heute fertig geworden: IPv6-only-Übung `virtual-machines/01` und optionale Dual-Stack-Übung `02`, `fundamentals` 01 bis 07 mit Grafiken, `debugging/` 01 und 02, `cleanup` entfernt das Sidecar-Paket, `_README.md` steht in `.gitignore`, `accept_ra` ist aus `prep.sh` gestrichen, Frage 5 (Namespaces der VMs) steht in der Fragenliste im Vorbereitungsrepo.
 
 **Jochen macht erst nächste Woche weiter** (morgen eine andere Schulung).
 
@@ -20,7 +20,7 @@ Format der Übungen: Skill `workshop-training`. Stand dieser Datei: 2026-11-06.
 **Nächster Schritt 2: `debugging/` ausbauen**, jeweils nach Test am Lab: `istioctl proxy-config` (was sieht der Envoy), `istioctl analyze`, typische Fehlerbilder (`503`), die Pod-Annotationen für das Log-Level auf einem Pod, eine Helm-Änderung von `global.logging.level` auf dem Cluster.
 
 **Offen, Jochen entscheidet:**
-- Lab abbauen oder behalten (Kosten). Für Tests wird es gebraucht.
+- Lab ist abgebaut. Für weitere Labtests (Debugging-Ausbau, zwei echte VMs) zuerst neu aufbauen.
 - Zwei echte VMs in einem Namespace im Lab verbinden (`add-vm.sh`, etwa 0,03 bis 0,09 EUR/h je Server), damit Frage 5 eine Messung bekommt.
 - `fundamentals/01`: Tabelle unter der Vergleichsgrafik Sidecar/Ambient kürzen?
 - Kein Muss: ob und wie sich `15010` (Klartext-xDS) abschalten lässt, nicht geprüft.
@@ -55,7 +55,8 @@ Format der Übungen: Skill `workshop-training`. Stand dieser Datei: 2026-11-06.
 
 - Training `tk-test`, Teilnehmer `tln1`, aufgebaut mit dem Skill `training-hetzner-ipv6-cluster` (Skripte **aus dem Root des Vorbereitungsrepos** starten, dort liegen die Tokens). Zwei Cluster `cluster-a`, `cluster-b`, je ein Worker und eine VM, Istio 1.29.9, Kubernetes IPv6 single stack.
 - Bastion `client-istio-telekom.do.t3isp.de`. Tests laufen als `tln1` (`su - tln1`). Technik: `source …/scripts/lib.sh; init tk-test; B_write <ziel> tln1 755 < skript; bssh "su - tln1 -c 'bash skript'"`. **Testskripte danach vom Bastion löschen**, nichts in `/home/tln1` liegen lassen.
-- **Kosten:** 6 Server, etwa 0,2 EUR/h. Abbau nur nach Bestätigung des Users (`destroy.sh tk-test tln1`, vorher ohne `--yes` die Liste zeigen). Hängt ein Server: `hcloud server reset <name>`.
+- **Neuaufbau** (Lab ist seit 2026-11-06 abgebaut): aus dem **Root des Vorbereitungsrepos** `LAB_TYPE=cpx22 LAB_LOCATION=fsn1 ~/.claude/skills/training-hetzner-ipv6-cluster/scripts/create-all.sh tk-test tln1`. Dauert etwa 15 bis 20 Minuten, am besten im Hintergrund laufen lassen (`setsid nohup … &`, Log mitlesen; ein im Vordergrund gestarteter Lauf wurde einmal beendet). Danach prüft `create-all.sh` selbst (`verify.sh`). Frisches Lab: `istiod` ohne `PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION` und ohne `ISTIO_DUAL_STACK` (Schritt 2 der VM-Übung setzt die Autoregistrierung), VMs ohne IPv4, `current-context` der Kubeconfig von `tln1` zeigt nach dem Abbau ins Leere, der Neuaufbau setzt ihn neu. Auf dem Bastion liegt noch `/home/tln1/virtual-machines/` mit dem Skript und der Echo-Datei (Stand `60de44a`, vor Neuaufbau mit dem Repo abgleichen). Die Hetzner-Grenze ist 160 vCPUs (11 Teilnehmer möglich).
+- **Kosten und Abbau:** 6 Server kosten etwa 0,2 EUR/h. Abbau nur nach Bestätigung des Users (`destroy.sh tk-test tln1`, vorher ohne `--yes` die Liste zeigen, danach bei Hetzner und DNS prüfen). Hängt ein Server: `hcloud server reset <name>`.
 - **Zustand (2026-11-06):** `istiod` hat **kein** `ISTIO_DUAL_STACK` (Helm-Revision 8), nur `PILOT_ENABLE_WORKLOAD_ENTRY_AUTOREGISTRATION` sowie `ISTIO_META_DNS_CAPTURE` und `ISTIO_META_DNS_AUTO_ALLOCATE`: der Stand nach der IPv6-only-Übung. Die optionale Dual-Stack-Übung setzt `ISTIO_DUAL_STACK` zusätzlich.
 - **VMs haben standardmäßig keine IPv4** (Skill: `vm-ipv4.sh <training> on|off|status`, Netplan-Drop-in `99-vm-no-ipv4.yaml`). Die Übung `virtual-machines/01` läuft so. `02` (Dual Stack) ist optional und schaltet IPv4 auf der VM an und am Ende wieder aus.
 - **`vm-in-the-mesh.sh cleanup`** setzt die VM auf den Stand vor der Übung zurück: Dienste stoppen, Paket `istio-sidecar` entfernen (`apt-get purge`), `/etc/istio`, `/etc/certs`, `/var/lib/istio`, `/var/run/secrets/{tokens,istio}`, Echo-Datei und Benutzer `istio-proxy` löschen. 2026-11-06 getestet: cleanup, ganze Übung (3x `HTTP 200`), cleanup. Vorher blieb das Paket installiert.
