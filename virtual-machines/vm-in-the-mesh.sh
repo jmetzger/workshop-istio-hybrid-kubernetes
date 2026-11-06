@@ -60,7 +60,7 @@ kubectl --context $CTX_A delete namespace vm --ignore-not-found
 kubectl --context $CTX_B delete namespace vm --ignore-not-found
 kubectl --context $CTX_A delete deploy client --ignore-not-found
 kubectl --context $CTX_B delete deploy client --ignore-not-found
-ssh $VM "systemctl stop istio vm-echo 2>/dev/null; sed -i '/istiod.istio-system.svc/d' /etc/hosts; rm -rf /root/vmfiles /var/lib/istio/envoy/cluster.env /etc/certs/root-cert.pem /var/run/secrets/tokens/istio-token"
+ssh $VM "systemctl stop istio vm-echo 2>/dev/null; DEBIAN_FRONTEND=noninteractive apt-get purge -y istio-sidecar >/dev/null 2>&1; sed -i '/istiod.istio-system.svc/d' /etc/hosts; rm -rf /root/vmfiles /root/vm-echo-server.py /tmp/istio-sidecar.deb /etc/istio /etc/certs /var/lib/istio /var/run/secrets/tokens /var/run/secrets/istio; userdel istio-proxy 2>/dev/null; true"
 rm -rf vmfiles
 EOF
   printf '\n%sDone.%s\n' "$G" "$N"
