@@ -8,6 +8,7 @@ All material in this repository is in English.
 ## Agenda
 
   1. Fundamentals: service mesh and Istio
+     * [The big picture: several clusters and virtual machines in one mesh](fundamentals/00-the-big-picture-multi-cluster-and-vms.md)
      * [What is a service mesh, and what is Istio? Sidecar and ambient](fundamentals/01-what-is-a-service-mesh.md)
      * [Why a service mesh?](fundamentals/02-why-a-service-mesh.md)
      * [Challenges and benefits](fundamentals/03-challenges-and-benefits.md)

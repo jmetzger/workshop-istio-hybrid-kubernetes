@@ -39,4 +39,5 @@ Why sidecar here: you work as a tenant and you cannot install a privileged compo
 * In sidecar mode every pod has an Envoy next to the application.
 * The mesh works at the network level, so it works for every language.
 
+Previous: [The big picture: several clusters and virtual machines in one mesh](00-the-big-picture-multi-cluster-and-vms.md)
 Next: [Why a service mesh?](02-why-a-service-mesh.md)
