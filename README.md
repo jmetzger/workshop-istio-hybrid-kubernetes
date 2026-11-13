@@ -1,4 +1,4 @@
-# Istio Hybrid: Multi-Cluster and VMs in a Service Mesh
+f# Istio Hybrid: Multi-Cluster and VMs in a Service Mesh
 
 Workshop on Istio in sidecar mode with the classic Istio APIs (VirtualService, DestinationRule, ServiceEntry, Gateway):
 several Kubernetes clusters and virtual machines in one shared mesh, on an IPv6-only network.
@@ -7,8 +7,7 @@ All material in this repository is in English.
 
 ## Agenda
 
-  1. Fundamentals: service mesh and Istio
-     * [The big picture: several clusters and virtual machines in one mesh](fundamentals/00-the-big-picture-multi-cluster-and-vms.md)
+  1. Fundamentals: service mesh and Istio   
      * [What is a service mesh, and what is Istio? Sidecar and ambient](fundamentals/01-what-is-a-service-mesh.md)
      * [Why a service mesh?](fundamentals/02-why-a-service-mesh.md)
      * [Challenges and benefits](fundamentals/03-challenges-and-benefits.md)
@@ -16,6 +15,9 @@ All material in this repository is in English.
      * [Istio ingress gateway vs. Kubernetes Gateway API](fundamentals/05-ingress-gateway-vs-gateway-api.md)
      * [Ports of istiod and of the sidecar (sidecar mode)](fundamentals/06-ports-of-istiod-and-the-sidecar.md)
      * [How the sidecar gets into the pod (sidecar injection)](fundamentals/07-sidecar-injection.md)
+
+  1. Several Cluster and virtual machines in one mesh
+     * [The big picture: several clusters and virtual machines in one mesh](fundamentals/00-the-big-picture-multi-cluster-and-vms.md)
   
   1. Explore the lab
      * [Look around the lab: nodes, pods, sidecar, `istioctl proxy-status`](explore-the-lab/01-look-around.md)
