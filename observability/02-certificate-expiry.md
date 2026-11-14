@@ -104,3 +104,4 @@ If the time shown is in the past, the VM cannot open new connections in the mesh
 The alerts in the last column are ideas, not tested rules.
 
 Previous: [Monitoring: Prometheus, Grafana, Kiali](01-prometheus-grafana-kiali.md)
+Next: [Memory of the sidecars: many services, and the Sidecar object](03-sidecar-memory-and-the-sidecar-object.md)

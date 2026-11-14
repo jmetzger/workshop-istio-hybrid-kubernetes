@@ -59,8 +59,10 @@ All material in this repository is in English.
      * [See the traffic: access logs instead of tcpdump](debugging/03-access-logs-instead-of-tcpdump.md)
 
   1. Monitoring
+     * [What Istio costs: CPU and memory of the sidecars and of istiod](observability/00-what-istio-costs.md)
      * [Prometheus, Grafana, Kiali, and what Istio costs](observability/01-prometheus-grafana-kiali.md)
      * [Make the expiry of certificates visible](observability/02-certificate-expiry.md)
+     * [Memory of the sidecars: many services, and the Sidecar object](observability/03-sidecar-memory-and-the-sidecar-object.md)
 
   1. Upgrade
      * [Upgrade Istio: control plane first, then the proxies](upgrade/01-upgrade-istio-in-place.md)
