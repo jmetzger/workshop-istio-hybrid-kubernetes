@@ -64,6 +64,8 @@ kubectl --context $CTX_A -n istio-system scale deploy istiod --replicas=1
 kubectl --context $CTX_A -n istio-system rollout status deploy/istiod
 ```
 
+Wait until the VM shows up in `proxy-status` again before you go on. The new `istiod` starts with an empty list, and the proxies connect one after the other.
+
 ## Stage 2: the certificate authority of cluster a is gone
 
 ```
@@ -97,14 +99,14 @@ HTTP 000
 The VM is connected to `istiod`, but only with two of five types, and no call works in either direction. The log on the VM says why:
 
 ```
-ssh $VM "tail -4 /var/log/istio/istio.log"
+ssh $VM "tail -4 /var/log/istio/istio.log" | cut -c1-160
 ```
 
 ```
-warn	ca	ca request failed, starting attempt 1 in 104.856341ms
-warn	ca	ca request failed, starting attempt 2 in 196.422897ms
-warn	ca	ca request failed, starting attempt 3 in 364.440266ms
-warn	ca	ca request failed, starting attempt 4 in 839.208215ms
+2026-11-14T10:42:23.796712Z	error	citadelclient	failed to sign CSR: create certificate: rpc error: code = Unavailable desc = connection error: desc = "transport
+2026-11-14T10:42:23.797509Z	info	citadelclient	recreated connection
+2026-11-14T10:42:23.797572Z	error	cache	resource:default failed to sign: create certificate: rpc error: code = Unavailable desc = connection error: desc = "tran
+2026-11-14T10:42:23.797620Z	warn	sds	failed to warm certificate: failed to generate workload certificate: create certificate: rpc error: code = Unavailable desc
 ```
 
 Without a certificate Envoy cannot build its listeners. The same happens to a pod: a pod that starts now stays in `Init:1/2`.
@@ -125,10 +127,10 @@ default           Cert Chain     ACTIVE     false          262c8b885c7214f468fce
 ROOTCA            CA             ACTIVE     true           622ad438aac119a3c725647160f33603ba53e4f7     2026-12-14T09:31:53Z     2026-11-14T09:31:53Z
 ```
 
-`VALID CERT` is `false`: the certificate has expired. Now call a service that the pod `client` has not called yet:
+`VALID CERT` is `false`: the certificate has expired. Now call a service that the pod `client` has not called before:
 
 ```
-kubectl --context $CTX_A exec deploy/client -c curl -- curl -s -m 5 http://details.default.svc.cluster.local:9080/details/0
+kubectl --context $CTX_A exec deploy/client -c curl -- curl -s -m 5 http://reviews.default.svc.cluster.local:9080/reviews/0
 ```
 
 ```
@@ -146,6 +148,8 @@ That is an `HTTP 503`. What we measured seven minutes after the certificates had
 | pod `client` to `ratings`, first call | new | `HTTP 503` |
 | VM to `details`, first call | new | `HTTP 503` |
 
+If you get an answer instead of the error, the pod `client` has called this service before and still has an open connection to it. Try `details` (`/details/0`) or `ratings` (`/ratings/0`). In a second run in our lab `details` answered `HTTP 200` for exactly this reason, and `reviews` gave `HTTP 503`.
+
 **An expired certificate does not cut connections that are open.** Our explanation: the sidecars reuse them, and a certificate is only checked when a connection is built. So the outage shows up late and in pieces: one service still answers, another one does not. That is what makes it hard to find.
 
 Switch the certificate authority on again:
@@ -155,7 +159,7 @@ kubectl --context $CTX_A -n cert-manager scale deploy cert-manager-istio-csr --r
 kubectl --context $CTX_A -n cert-manager rollout status deploy/cert-manager-istio-csr
 ```
 
-The pods recover by themselves. In our lab every call answered `HTTP 200` again 30 seconds later, and `VALID CERT` was `true`. A pod always has a valid token, because Kubernetes replaces it (from our own knowledge, not measured here).
+The pods recover by themselves. In our lab every call answered `HTTP 200` again 30 seconds later, and within a minute `VALID CERT` was `true` again. A pod always has a valid token, because Kubernetes replaces it (from our own knowledge, not measured here).
 
 The VM is different. It recovers by itself only if it still has a valid proof of identity: a certificate that has not expired, or a token that is still valid (the token from the VM exercise is valid for one hour). If both have expired, the log on the VM shows
 
@@ -175,7 +179,7 @@ Token from: cluster-a (valid for 1h)
 The VM is registered with cluster-a already: token replaced, no restart
 ```
 
-The sidecar does not have to restart. The agent reads the token file again at its next attempt. In our lab the VM had a new certificate 9 seconds later (the log shows `generated new workload certificate`), and both calls answered `HTTP 200` again.
+The sidecar does not have to restart. The agent reads the token file again at its next attempt. In our lab the VM had a new certificate 5 to 9 seconds later (the log shows `generated new workload certificate`). Give it up to a minute: after that the VM is in `proxy-status` with 5 types again and both calls answer `HTTP 200`.
 
 ## Stage 3: the control plane of cluster a is gone, the VM moves to cluster b
 
@@ -389,15 +393,31 @@ What we measured:
 
 | Time | What happened on the VM |
 |---|---|
-| 09:29 | the token arrives, valid until 09:39 |
-| 09:33, 09:38 | the agent renews the certificate (`generated new workload certificate`) |
-| 09:43 | the renewal fails (`failed to sign`), the agent tries again every 10 to 50 seconds |
-| 09:48 | the certificate expires (`cert expired, using token instead`) |
-| 09:50 | VM to `details` (first call): `HTTP 503`. VM to `productpage` and pod to VM (called all the time): still `HTTP 200` |
+| 10:55 | the token arrives, valid until 11:05 |
+| 10:58, 11:03 | the agent renews the certificate (`generated new workload certificate`) |
+| 11:08 | the renewal fails (`failed to sign ... Unauthenticated`), the agent tries again every 10 to 50 seconds |
+| 11:13 | the certificate expires (`cert expired, using token instead`) |
 
-Twenty minutes instead of two hours, and the same picture as in stage 2: the VM is still in `proxy-status`, old connections work, new ones fail.
+Twenty minutes instead of two hours. Now test, four minutes after the certificate has expired. First a service the VM has not called before, then the two checks you know:
 
-Repair it: switch the setting on again and give the VM a fresh token. In our lab the VM had a new certificate 7 seconds later, without a restart, and VM to `details` answered `HTTP 200`.
+```
+ssh $VM 'curl -s -m 8 -o /dev/null -w "HTTP %{http_code}\n" http://ratings.default.svc.cluster.local:9080/ratings/0'
+ssh $VM 'curl -s -m 8 -o /dev/null -w "HTTP %{http_code}\n" http://productpage.default.svc.cluster.local:9080/productpage'
+kubectl --context $CTX_A exec deploy/client -c curl -- curl -s -m 8 -o /dev/null -w "HTTP %{http_code}\n" http://diameter-adapter.vm.svc.cluster.local:8000/
+istioctl --context $CTX_A proxy-status | grep -E "NAME|vm"
+```
+
+```
+HTTP 503
+HTTP 200
+HTTP 503
+NAME                                                    CLUSTER       ISTIOD                     VERSION     SUBSCRIBED TYPES
+v6-tln2-a-vm1.vm                                        cluster-a     istiod-bcfc6b467-bmmnw     1.29.9      5 (CDS,LDS,EDS,RDS,NDS)
+```
+
+The same picture as in stage 2: the VM is still in `proxy-status` with all five types, the call to `productpage` (we had called it every two minutes) still works, and a new connection fails. `proxy-status` does not show an expired certificate.
+
+Repair it: switch the setting on again and give the VM a fresh token. In our lab the VM had a new certificate a few seconds later, without a restart, and half a minute later the call to `ratings` answered `HTTP 200`.
 
 ```
 helm --kube-context $CTX_A -n cert-manager upgrade cert-manager-istio-csr oci://quay.io/jetstack/charts/cert-manager-istio-csr --version v0.19.1 --reuse-values --set app.server.authenticators.enableClientCert=true --wait
