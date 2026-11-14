@@ -179,7 +179,7 @@ diameter-adapter-2a01-4f8-c014-77c2--1-net1   10s   2a01:4f8:c014:77c2::1
 
 The VM is connected to `istiod`, and the `WorkloadEntry` holds the IPv6 address of the VM. This does not show yet that traffic works.
 
-The certificate of the VM lies in `/etc/certs`. It comes from cert-manager, is valid for one hour and carries the identity of the service account:
+The certificate of the VM lies in `/etc/certs`. It comes from cert-manager, is valid for ten minutes in our lab and carries the identity of the service account:
 
 ```
 ssh $VM "openssl x509 -noout -issuer -dates -ext subjectAltName -in /etc/certs/cert-chain.pem"
@@ -187,8 +187,8 @@ ssh $VM "openssl x509 -noout -issuer -dates -ext subjectAltName -in /etc/certs/c
 
 ```
 issuer=O = Lab, CN = Intermediate CA tln2 a
-notBefore=Nov 13 15:30:46 2026 GMT
-notAfter=Nov 13 16:30:46 2026 GMT
+notBefore=Nov 14 10:07:42 2026 GMT
+notAfter=Nov 14 10:17:42 2026 GMT
 X509v3 Subject Alternative Name: 
     URI:spiffe://cluster.local/ns/vm/sa/diameter-adapter
 ```

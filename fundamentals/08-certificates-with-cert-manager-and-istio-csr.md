@@ -20,7 +20,7 @@ Every sidecar needs a certificate for mTLS. By default `istiod` signs it. In our
 |---|---|---|
 | The sidecar asks | `istiod`, port `15012` | `istio-csr`, port `443` (`CA_ADDR`) |
 | Who signs | `istiod` with its own key (or the `Secret cacerts`) | the `Issuer` of cert-manager |
-| Lifetime of a workload certificate | 24 hours (Istio default, not measured here) | 1 hour (measured) |
+| Lifetime of a workload certificate | 24 hours (Istio default, not measured here) | 1 hour by default (measured). **Our lab: 10 minutes** (measured), set with `app.server.maxCertificateDuration` in the Helm chart of istio-csr |
 | A certificate request is visible in the cluster | no | yes, as a `CertificateRequest` (istio-csr deletes it after it is done) |
 | The root certificate comes to the pods | from `istiod`, as `ConfigMap istio-ca-root-cert` | from `istio-csr`, as `ConfigMap istio-ca-root-cert` |
 
@@ -42,7 +42,7 @@ For Istio it makes no difference who signs in the end: `istio-csr` always create
 ## Why this matters for debugging
 
 * **Two things can fail now.** Without `istiod` a sidecar gets no new configuration. Without `istio-csr` or cert-manager it gets no new certificate.
-* **One hour.** A sidecar renews its certificate long before it expires. If the CA is gone for longer than the rest of the lifetime, mTLS breaks. With one hour this happens much sooner than with 24 hours.
+* **A short lifetime.** A sidecar renews its certificate after half of its lifetime. If the CA is gone for longer than the rest of the lifetime, the certificate expires and new mTLS connections fail. With one hour this happens much sooner than with 24 hours. Our lab uses 10 minutes on purpose: you see a renewal every 5 minutes, and an outage of the CA shows its effect within minutes.
 * **A VM needs a second address.** It must reach `istiod` **and** `istio-csr`. We come back to this in the VM exercise.
 
 ## Look at it yourself
@@ -99,16 +99,16 @@ kubectl get pod -l app=productpage -o yaml | grep -A1 "name: CA_ADDR"
         value: cert-manager-istio-csr.cert-manager.svc:443
 ```
 
-The certificate of the sidecar. Look at `NOT BEFORE` and `NOT AFTER`: one hour.
+The certificate of the sidecar. Look at `NOT BEFORE` and `NOT AFTER`: ten minutes. Run the command again after five minutes: the sidecar has a new certificate already.
 
 ```
 istioctl proxy-config secret deploy/productpage-v1
 ```
 
 ```
-RESOURCE NAME     TYPE           STATUS     VALID CERT     SERIAL NUMBER                               NOT AFTER                NOT BEFORE
-default           Cert Chain     ACTIVE     true           312c2f497e0bed7093b6c74acf7d9b9b4753cd7     2026-11-13T15:21:15Z     2026-11-13T14:21:15Z
-ROOTCA            CA             ACTIVE     true           89a0d077dbd1e088b8c29b084ebec75c8585111     2026-12-13T14:18:24Z     2026-11-13T14:18:24Z
+RESOURCE NAME     TYPE           STATUS     VALID CERT     SERIAL NUMBER                                NOT AFTER                NOT BEFORE
+default           Cert Chain     ACTIVE     true           3c86c8408d15841d9f5fa1ab6a843ff50774d4de     2026-11-14T10:17:45Z     2026-11-14T10:07:45Z
+ROOTCA            CA             ACTIVE     true           622ad438aac119a3c725647160f33603ba53e4f7     2026-12-14T09:31:53Z     2026-11-14T09:31:53Z
 ```
 
 Who signed it, and for which identity:

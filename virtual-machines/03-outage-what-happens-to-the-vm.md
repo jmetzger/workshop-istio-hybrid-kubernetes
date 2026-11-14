@@ -9,13 +9,13 @@ The VM is registered with cluster a. You take away parts of cluster a, one after
 | Stage | What is gone | Question |
 |---|---|---|
 | 1 | `istiod` of cluster a | Does traffic still work? |
-| 2 | `istio-csr` of cluster a (the certificate authority) | What happens when the sidecar on the VM restarts? |
+| 2 | `istio-csr` of cluster a (the certificate authority) | What happens when the sidecar on the VM restarts? What happens when certificates expire? |
 | 3 | both, the VM moves to cluster b | What does the VM need for that? |
-| 4 | nothing, but time passes | Why does a VM drop out of the mesh after a while? |
+| 4 | nothing, but time passes | Why does a VM drop out of the mesh after a while? (optional, 25 minutes) |
 
 Prerequisite: the exercises [Connect cluster a and cluster b](../multi-cluster/00-connect-the-two-clusters.md) and [Add a virtual machine to the mesh](01-add-a-vm-to-the-mesh.md). The VM is in the mesh, and the test pod `client` runs in both clusters.
 
-Measured in our lab: Istio 1.29.9, IPv6 only, cert-manager with istio-csr, certificates valid for one hour.
+Measured in our lab: Istio 1.29.9, IPv6 only, cert-manager with istio-csr. Two settings of istio-csr differ from its defaults: certificates are valid for **ten minutes** (default: one hour), so that you see the effect of an outage within minutes, and istio-csr accepts the current certificate as proof of identity (`enableClientCert=true`, see stage 4).
 
 All commands run on your bastion host as your lab user.
 
@@ -111,6 +111,43 @@ Without a certificate Envoy cannot build its listeners. The same happens to a po
 
 **Read `proxy-status` carefully:** a line with fewer types than usual (`2 (CDS,EDS)` instead of `5`) is a proxy without a certificate.
 
+### Wait until the certificates expire
+
+Leave the certificate authority switched off until ten minutes have passed since you switched it off. No sidecar can renew its certificate now. Look at a pod:
+
+```
+istioctl --context $CTX_A proxy-config secret deploy/productpage-v1
+```
+
+```
+RESOURCE NAME     TYPE           STATUS     VALID CERT     SERIAL NUMBER                                NOT AFTER                NOT BEFORE
+default           Cert Chain     ACTIVE     false          262c8b885c7214f468fce79bc3381f9b61ff0ab0     2026-11-14T10:00:21Z     2026-11-14T09:50:21Z
+ROOTCA            CA             ACTIVE     true           622ad438aac119a3c725647160f33603ba53e4f7     2026-12-14T09:31:53Z     2026-11-14T09:31:53Z
+```
+
+`VALID CERT` is `false`: the certificate has expired. Now call a service that the pod `client` has not called yet:
+
+```
+kubectl --context $CTX_A exec deploy/client -c curl -- curl -s -m 5 http://details.default.svc.cluster.local:9080/details/0
+```
+
+```
+upstream connect error or disconnect/reset before headers. retried and the latest reset reason: connection termination
+```
+
+That is an `HTTP 503`. What we measured seven minutes after the certificates had expired (in this run the sidecar on the VM had not been restarted, so the VM still had its expired certificate):
+
+| Call | Connection | Result |
+|---|---|---|
+| pod `client` to `productpage`, called every 25 seconds during the outage | open already | `HTTP 200` |
+| pod `client` to the VM, called every 25 seconds | open already | `HTTP 200` |
+| VM to `productpage`, called every 25 seconds | open already | `HTTP 200` |
+| pod `client` to `details`, first call | new | `HTTP 503` |
+| pod `client` to `ratings`, first call | new | `HTTP 503` |
+| VM to `details`, first call | new | `HTTP 503` |
+
+**An expired certificate does not cut connections that are open.** Our explanation: the sidecars reuse them, and a certificate is only checked when a connection is built. So the outage shows up late and in pieces: one service still answers, another one does not. That is what makes it hard to find.
+
 Switch the certificate authority on again:
 
 ```
@@ -118,7 +155,27 @@ kubectl --context $CTX_A -n cert-manager scale deploy cert-manager-istio-csr --r
 kubectl --context $CTX_A -n cert-manager rollout status deploy/cert-manager-istio-csr
 ```
 
-The VM recovers by itself (the log shows `generated new workload certificate`), and both calls answer `HTTP 200` again.
+The pods recover by themselves. In our lab every call answered `HTTP 200` again 30 seconds later, and `VALID CERT` was `true`. A pod always has a valid token, because Kubernetes replaces it (from our own knowledge, not measured here).
+
+The VM is different. It recovers by itself only if it still has a valid proof of identity: a certificate that has not expired, or a token that is still valid (the token from the VM exercise is valid for one hour). If both have expired, the log on the VM shows
+
+```
+warn	cert expired, using token instead
+error	cache	resource:default failed to sign: create certificate: rpc error: code = Unauthenticated desc = request authenticate failure
+```
+
+and the VM stays out, although the certificate authority is back. Then give it a fresh token:
+
+```
+~/virtual-machines/vm-refresh-token.sh
+```
+
+```
+Token from: cluster-a (valid for 1h)
+The VM is registered with cluster-a already: token replaced, no restart
+```
+
+The sidecar does not have to restart. The agent reads the token file again at its next attempt. In our lab the VM had a new certificate 9 seconds later (the log shows `generated new workload certificate`), and both calls answered `HTTP 200` again.
 
 ## Stage 3: the control plane of cluster a is gone, the VM moves to cluster b
 
@@ -184,8 +241,8 @@ kubectl --context $CTX_B get svc -A | grep -- -lb
 ```
 
 ```
-cert-manager     istio-csr-lb                      LoadBalancer   fd00:10:96::f:f97    2a01:4f8:c014:8eb1::2:3   443:31420/TCP                                6s
-istio-system     istiod-lb                         LoadBalancer   fd00:10:96::5:a7b    2a01:4f8:c014:8eb1::2:2   15012:30318/TCP                              6s
+cert-manager     istio-csr-lb                      LoadBalancer   fd00:10:96::8:c24b   2a01:4f8:c014:8eb1::2:3   443:31172/TCP                                9s
+istio-system     istiod-lb                         LoadBalancer   fd00:10:96::c:4e5c   2a01:4f8:c014:8eb1::2:2   15012:30276/TCP                              9s
 ```
 
 ### Take the control plane of cluster a away
@@ -222,10 +279,10 @@ ssh $VM "openssl x509 -noout -issuer -dates -in /etc/certs/cert-chain.pem"
 
 ```
 NAME                                                    CLUSTER       ISTIOD                      VERSION     SUBSCRIBED TYPES
-v6-tln2-a-vm1.vm                                        cluster-b     istiod-6bbfdb896b-spbrm     1.29.9      5 (CDS,LDS,EDS,RDS,NDS)
+v6-tln2-a-vm1.vm                                        cluster-b     istiod-6bbfdb896b-v4t6j     1.29.9      5 (CDS,LDS,EDS,RDS,NDS)
 issuer=O = Lab, CN = Intermediate CA tln2 b
-notBefore=Nov 13 15:45:57 2026 GMT
-notAfter=Nov 13 16:45:57 2026 GMT
+notBefore=Nov 14 10:11:48 2026 GMT
+notAfter=Nov 14 10:21:48 2026 GMT
 ```
 
 The pods of cluster a still reach the VM, although their own control plane is down (`HTTP 200`): both intermediate CAs have the same root.
@@ -252,14 +309,14 @@ kubectl --context $CTX_A -n istio-system rollout status deploy/istiod
 ```
 
 ```
-Token from: cluster-a
+Token from: cluster-a (valid for 1h)
 The VM was registered with cluster-b: point it to cluster-a (2a01:4f8:c013:ff3b::2:2, 2a01:4f8:c013:ff3b::2:3), set the cluster ID and restart the sidecar
 ```
 
 The VM is back at cluster a. Run the script again: nothing changes, only the token is replaced.
 
 ```
-Token from: cluster-a
+Token from: cluster-a (valid for 1h)
 The VM is registered with cluster-a already: token replaced, no restart
 ```
 
@@ -267,7 +324,7 @@ Now take the control plane of cluster a away again (the two `scale ... --replica
 
 ```
 cluster-a: control plane not ready, trying the next cluster
-Token from: cluster-b
+Token from: cluster-b (valid for 1h)
 The VM was registered with cluster-a: point it to cluster-b (2a01:4f8:c014:8eb1::2:2, 2a01:4f8:c014:8eb1::2:3), set the cluster ID and restart the sidecar
 ```
 
@@ -275,7 +332,7 @@ Check with the three commands from the top (use `$CTX_B` for `proxy-status`). At
 
 ## Stage 4: time passes
 
-Nothing is broken, and still a VM can drop out of the mesh. We measured it in our lab:
+Nothing is broken, and still a VM can drop out of the mesh. We measured it with the default settings of istio-csr (certificates valid for one hour, only a token is accepted):
 
 | Time | What happened on the VM |
 |---|---|
@@ -290,18 +347,62 @@ The reason is in the log of istio-csr:
 failed to authenticate request ... invalid bearer token, service account token has expired
 ```
 
-The token that `istioctl` wrote at the beginning is valid for one hour, and nobody replaces it. With the default settings, istio-csr accepts **only a token** as proof of identity. So a VM can renew its certificate only as long as it has a valid token.
+The token that `istioctl` wrote at the beginning is valid for one hour, and nobody replaces it. A pod gets a fresh token from Kubernetes all the time, a VM does not. With the default settings, istio-csr accepts **only a token** as proof of identity. So a VM can renew its certificate only as long as it has a valid token.
 
-Two ways out:
+Two ways out, and you need both:
 
-| Way | How | Trade-off |
+| Way | How | What it does not solve |
 |---|---|---|
-| Replace the token regularly | an automation job like `vm-refresh-token.sh`, more often than once per hour | the VM depends on the job |
-| Let the VM prove its identity with its current certificate | istio-csr setting `app.server.authenticators.enableClientCert=true` | a VM that was offline longer than the lifetime of its certificate still needs a token |
+| Let the VM prove its identity with its current certificate | istio-csr setting `app.server.authenticators.enableClientCert=true` | a VM whose certificate has expired (stage 2) still needs a token |
+| Bring a fresh token to the VM | an automation job like `vm-refresh-token.sh` | the VM depends on the job |
 
-We measured the second way, too: with `enableClientCert=true` the VM renewed its certificate 30 minutes after its token had expired, and stayed in the mesh. **Your lab is built with this setting**, so that your VM survives the training days. Look at it with `helm -n cert-manager get values cert-manager-istio-csr -a | grep -A1 authenticators`.
+`enableClientCert=true` is what Istio does when `istiod` is the certificate authority. istio-csr has the setting since version 0.11, and it is off by default. We measured it: with the setting the VM renewed its certificate for 17 hours without a valid token, and it survived a restart of the sidecar. **Your lab is built with this setting.** Look at it:
 
-A fresh token is enough, the sidecar does not have to restart: the agent reads the file again at its next attempt (measured with `istiod` as the certificate authority).
+```
+helm --kube-context $CTX_A -n cert-manager get values cert-manager-istio-csr -a | grep -E -A1 "authenticators|maxCertificateDuration"
+```
+
+```
+    authenticators:
+      enableClientCert: true
+--
+    maxCertificateDuration: 10m
+    serving:
+```
+
+### Try it yourself (optional, 25 minutes)
+
+Switch the setting off, give the VM a token that is valid for ten minutes only, and watch.
+
+```
+helm --kube-context $CTX_A -n cert-manager upgrade cert-manager-istio-csr oci://quay.io/jetstack/charts/cert-manager-istio-csr --version v0.19.1 --reuse-values --set app.server.authenticators.enableClientCert=false --wait
+DURATION=10m ~/virtual-machines/vm-refresh-token.sh
+```
+
+Look at the log of the VM every few minutes:
+
+```
+ssh $VM "grep -E 'generated new workload|failed to sign|cert expired' /var/log/istio/istio.log | tail -3 | cut -c1-150"
+```
+
+What we measured:
+
+| Time | What happened on the VM |
+|---|---|
+| 09:29 | the token arrives, valid until 09:39 |
+| 09:33, 09:38 | the agent renews the certificate (`generated new workload certificate`) |
+| 09:43 | the renewal fails (`failed to sign`), the agent tries again every 10 to 50 seconds |
+| 09:48 | the certificate expires (`cert expired, using token instead`) |
+| 09:50 | VM to `details` (first call): `HTTP 503`. VM to `productpage` and pod to VM (called all the time): still `HTTP 200` |
+
+Twenty minutes instead of two hours, and the same picture as in stage 2: the VM is still in `proxy-status`, old connections work, new ones fail.
+
+Repair it: switch the setting on again and give the VM a fresh token. In our lab the VM had a new certificate 7 seconds later, without a restart, and VM to `details` answered `HTTP 200`.
+
+```
+helm --kube-context $CTX_A -n cert-manager upgrade cert-manager-istio-csr oci://quay.io/jetstack/charts/cert-manager-istio-csr --version v0.19.1 --reuse-values --set app.server.authenticators.enableClientCert=true --wait
+~/virtual-machines/vm-refresh-token.sh
+```
 
 ## Why the VM has only one cluster in /etc/hosts
 
@@ -316,7 +417,9 @@ But the agent does **not** take the first line of the file. With both control pl
 | VM missing in `proxy-status`, traffic still works | `istiod` not reachable. This is an early warning | `istioctl proxy-status` |
 | VM in `proxy-status` with `2 (CDS,EDS)`, `HTTP 503` | no certificate: certificate authority not reachable, or the token is not accepted | `/var/log/istio/istio.log` on the VM |
 | `Unauthenticated` in the log of the VM | token expired, or token from another cluster than the one the VM talks to | log of istio-csr, `ISTIO_META_CLUSTER_ID` in `cluster.env`, `/etc/hosts` |
-| Everything worked for two hours, then `HTTP 503` | the token from the setup has expired and the certificate could not be renewed | `openssl x509 -noout -dates -in /etc/certs/cert-chain.pem` on the VM |
+| Everything worked for a while (two hours with the defaults of istio-csr), then `HTTP 503` | the token from the setup has expired and the certificate could not be renewed | `openssl x509 -noout -dates -in /etc/certs/cert-chain.pem` on the VM |
+| Some calls answer, others give `HTTP 503`, nothing was changed | a certificate has expired: open connections still work, new ones fail | `istioctl proxy-config secret`, column `VALID CERT` |
+| The certificate authority is back, the pods recover, the VM does not | certificate and token of the VM have both expired | `cert expired, using token instead` in the log of the VM. Fresh token, no restart |
 
 ## Clean up
 

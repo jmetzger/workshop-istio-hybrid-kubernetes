@@ -9,9 +9,9 @@ A mesh has several certificates with very different lifetimes. You look at each 
 | root CA | 30 days | **nobody** | every workload certificate becomes invalid: the whole mesh stops |
 | intermediate CA of a cluster | 30 days | **nobody** | no new workload certificates in this cluster |
 | certificate of `istiod` | 1 hour | cert-manager | proxies cannot connect to `istiod` |
-| workload certificate (sidecar, gateway, VM) | 1 hour | the agent in the sidecar | this workload drops out of the mesh |
+| workload certificate (sidecar, gateway, VM) | 10 minutes (1 hour is the default of istio-csr) | the agent in the sidecar, after half of the lifetime | new connections of this workload fail, connections that are open keep working |
 
-The last column is what follows from the chain of trust. We did not let a root or an intermediate CA expire in our lab; for a workload certificate on a VM we measured it.
+The last column is what follows from the chain of trust. We did not let a root or an intermediate CA expire in our lab; for workload certificates of pods and of a VM we measured it.
 
 The short ones renew themselves. The dangerous ones are the long ones, because nobody renews them and nobody looks at them for months.
 
@@ -25,11 +25,11 @@ istioctl proxy-config secret deploy/productpage-v1
 
 ```
 RESOURCE NAME     TYPE           STATUS     VALID CERT     SERIAL NUMBER                                NOT AFTER                NOT BEFORE
-default           Cert Chain     ACTIVE     true           2424d12790a7e085a47402f062cc44b93e1fef8c     2026-11-13T16:45:18Z     2026-11-13T15:45:18Z
-ROOTCA            CA             ACTIVE     true           1df340f6da967124abca2b0e744b523aa5774535     2026-12-13T15:42:37Z     2026-11-13T15:42:37Z
+default           Cert Chain     ACTIVE     true           3c86c8408d15841d9f5fa1ab6a843ff50774d4de     2026-11-14T10:17:45Z     2026-11-14T10:07:45Z
+ROOTCA            CA             ACTIVE     true           622ad438aac119a3c725647160f33603ba53e4f7     2026-12-14T09:31:53Z     2026-11-14T09:31:53Z
 ```
 
-`default` is the workload certificate (one hour), `ROOTCA` is the root (30 days in our lab). The intermediate CA is missing in this table. It is in the chain that the sidecar presents:
+`default` is the workload certificate (ten minutes), `ROOTCA` is the root (30 days in our lab). The intermediate CA is missing in this table. It is in the chain that the sidecar presents:
 
 ```
 istioctl proxy-config secret deploy/productpage-v1 -o json | jq -r ".dynamicActiveSecrets[0].secret.tlsCertificate.certificateChain.inlineBytes" | base64 -d > chain.pem
@@ -39,11 +39,11 @@ rm chain.pem
 
 ```
 subject=O = 
-notAfter=Nov 13 16:45:18 2026 GMT
-subject=O = Lab, CN = Intermediate CA tln4 a
-notAfter=Dec 13 15:42:39 2026 GMT
-subject=O = Lab, CN = Lab Root CA tln4
-notAfter=Dec 13 15:42:37 2026 GMT
+notAfter=Nov 14 10:17:45 2026 GMT
+subject=O = Lab, CN = Intermediate CA tln2 a
+notAfter=Dec 14 09:31:54 2026 GMT
+subject=O = Lab, CN = Lab Root CA tln2
+notAfter=Dec 14 09:31:53 2026 GMT
 ```
 
 Three certificates: workload, intermediate CA, root.
@@ -57,8 +57,8 @@ kubectl get cm istio-ca-root-cert -o jsonpath="{.data.root-cert\.pem}" | openssl
 ```
 
 ```
-subject=O = Lab, CN = Lab Root CA tln4
-notAfter=Dec 13 15:42:37 2026 GMT
+subject=O = Lab, CN = Lab Root CA tln2
+notAfter=Dec 14 09:31:53 2026 GMT
 ```
 
 ## Step 3: The certificate of istiod
@@ -89,7 +89,7 @@ On a VM the certificate is a file:
 ssh a-vm1 "openssl x509 -noout -enddate -in /etc/certs/cert-chain.pem"
 ```
 
-If the time shown is in the past, the VM is out of the mesh. See [Outage: what happens to the VM](../virtual-machines/03-outage-what-happens-to-the-vm.md).
+If the time shown is in the past, the VM cannot open new connections in the mesh. For a pod, `istioctl proxy-config secret` shows `false` in the column `VALID CERT`. See [Outage: what happens to the VM](../virtual-machines/03-outage-what-happens-to-the-vm.md).
 
 ## What to watch, and how
 
@@ -99,7 +99,7 @@ If the time shown is in the past, the VM is out of the mesh. See [Outage: what h
 | certificate of `istiod` | `certmanager_certificate_expiration_timestamp_seconds` | less than half of the lifetime left: the renewal is late |
 | workload certificates | `istioctl proxy-config secret`, on a VM the file | a workload is missing in `istioctl proxy-status` |
 
-**A trap:** Envoy has a metric `envoy_server_days_until_first_cert_expiring`. It counts whole days. With certificates that live one hour it always shows `0` in our lab, so it is useless for an alert here.
+**A trap:** Envoy has a metric `envoy_server_days_until_first_cert_expiring`. It counts whole days. With certificates that live one hour it always showed `0` in our lab (and ten minutes are less than a day, too), so it is useless for an alert here.
 
 The alerts in the last column are ideas, not tested rules.
 
