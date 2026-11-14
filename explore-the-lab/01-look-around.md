@@ -1,19 +1,21 @@
 # Look around the lab
 
-## Background
+## What we do
 
 Your lab already has Istio installed in sidecar mode. Nothing is left for you to install. In this exercise you look at what is running, and you learn the one command you will use all week: `istioctl proxy-status`.
 
-The lab consists of:
+Your lab consists of:
 
 | Part | What it is |
 |---|---|
-| Kubernetes cluster | one control-plane node and one worker node, IPv6 only |
-| Istio | control plane `istiod` in the namespace `istio-system`, sidecar mode |
-| Namespace `app` | two pods, `web` and `client`, both with a sidecar |
-| Namespace `vm` | a virtual machine (`diameter-adapter`) that is part of the mesh |
+| Two Kubernetes clusters, `cluster-a` and `cluster-b` | each with one control-plane node and one worker node, IPv6 only |
+| Istio | control plane `istiod` in the namespace `istio-system` of each cluster, sidecar mode |
+| Bookinfo | the sample application, in the namespace `default` of each cluster, every pod with a sidecar |
+| Two virtual machines, `a-vm1` and `b-vm1` | plain Ubuntu, not part of the mesh yet. You add one on day 2 |
 
-All commands below run on your bastion host.
+The file `~/server-overview.md` on your bastion host lists all servers, addresses and contexts of your lab.
+
+All commands below run on your bastion host as your lab user. The default context is `cluster-a`.
 
 ## Step 1: Look at the nodes
 
@@ -21,44 +23,46 @@ All commands below run on your bastion host.
 kubectl get nodes -o wide
 ```
 
-Expected output (addresses differ in your lab):
-
 ```
-NAME    STATUS   ROLES           AGE   VERSION    INTERNAL-IP
-h6-cp   Ready    control-plane   ...   v1.35.10   2a01:4f8:c016:aa79::1
-h6-w    Ready    <none>          ...   v1.35.10   2a01:4f8:c016:17b5::1
+NAME           STATUS   ROLES           AGE     VERSION    INTERNAL-IP             EXTERNAL-IP 
+v6-tln4-a-cp   Ready    control-plane   5m19s   v1.35.10   2a01:4f8:c016:7a12::1   <none>      
+v6-tln4-a-w1   Ready    <none>          4m57s   v1.35.10   2a01:4f8:c016:4db6::1   <none>      
 ```
 
-Note that the node addresses are IPv6 addresses. There is no IPv4 address inside the cluster.
+(Names and addresses differ in your lab, the output is cut on the right.) The node addresses are IPv6 addresses. Kubernetes knows no IPv4 address in this cluster.
 
 ## Step 2: Look at the pods in the mesh
 
 ```
-kubectl get pods -n app -o wide
+kubectl get pods -o wide
 ```
 
 ```
-NAME     READY   STATUS    RESTARTS   AGE   IP
-client   2/2     Running   0          ...   2a01:4f8:c016:aa79::1:e5c6
-web      2/2     Running   0          ...   2a01:4f8:c016:aa79::1:e5c5
+NAME                              READY   STATUS    RESTARTS   AGE   IP                           NODE        
+details-v1-6cc9f5cc44-6qf76       2/2     Running   0          93s   2a01:4f8:c016:4db6::1:c60a   v6-tln4-a-w1
+productpage-v1-7f885b46fc-nmwps   2/2     Running   0          93s   2a01:4f8:c016:4db6::1:c60f   v6-tln4-a-w1
+ratings-v1-77b8b6df5b-zph29       2/2     Running   0          93s   2a01:4f8:c016:4db6::1:c60b   v6-tln4-a-w1
+reviews-v1-fdbf79cd8-9zv55        2/2     Running   0          93s   2a01:4f8:c016:4db6::1:c60e   v6-tln4-a-w1
+reviews-v2-674c6d8b4-rcfxg        2/2     Running   0          93s   2a01:4f8:c016:4db6::1:c60c   v6-tln4-a-w1
+reviews-v3-7b775c7568-h9q2w       2/2     Running   0          93s   2a01:4f8:c016:4db6::1:c60d   v6-tln4-a-w1
 ```
 
-Both pods show `2/2`, although each pod has only one application container. The second container is the Istio sidecar (Envoy). Each pod has its own IPv6 address, there is no NAT between pods.
+Every pod shows `2/2`, although each pod has only one application container. The second container is the Istio sidecar (Envoy). Each pod has its own IPv6 address from the network of its node, there is no NAT between pods.
 
 ## Step 3: Find the sidecar
 
 ```
-kubectl get pod web -n app -o jsonpath='{.spec.containers[*].name}'
+kubectl get pod -l app=productpage -o jsonpath='{.items[0].spec.containers[*].name}'; echo
 ```
 
 ```
-web
+productpage
 ```
 
 The sidecar is not in this list. In this lab (Kubernetes 1.35) Istio runs the sidecar as a native sidecar: a container in `initContainers` that has `restartPolicy: Always`.
 
 ```
-kubectl get pod web -n app -o jsonpath='{.spec.initContainers[*].name}'
+kubectl get pod -l app=productpage -o jsonpath='{.items[0].spec.initContainers[*].name}'; echo
 ```
 
 ```
@@ -74,13 +78,17 @@ istioctl proxy-status
 ```
 
 ```
-NAME           CLUSTER        ISTIOD                     VERSION     SUBSCRIBED TYPES
-client.app     cluster-h6     istiod-8ff6d656c-v555p     1.29.9      5 (CDS,LDS,EDS,RDS,NDS)
-h6-vm.vm       cluster-h6     istiod-8ff6d656c-v555p     1.29.9      5 (CDS,LDS,EDS,RDS,NDS)
-web.app        cluster-h6     istiod-8ff6d656c-v555p     1.29.9      5 (CDS,LDS,EDS,RDS,NDS)
+NAME                                                    CLUSTER       ISTIOD                      VERSION     SUBSCRIBED TYPES
+details-v1-6cc9f5cc44-6qf76.default                     cluster-a     istiod-66dbd576c8-k4456     1.29.9      4 (CDS,LDS,EDS,RDS)
+istio-ingressgateway-5dc49cc6bf-57hqg.istio-ingress     cluster-a     istiod-66dbd576c8-k4456     1.29.9      4 (CDS,LDS,EDS,RDS)
+productpage-v1-7f885b46fc-nmwps.default                 cluster-a     istiod-66dbd576c8-k4456     1.29.9      4 (CDS,LDS,EDS,RDS)
+ratings-v1-77b8b6df5b-zph29.default                     cluster-a     istiod-66dbd576c8-k4456     1.29.9      4 (CDS,LDS,EDS,RDS)
+reviews-v1-fdbf79cd8-9zv55.default                      cluster-a     istiod-66dbd576c8-k4456     1.29.9      4 (CDS,LDS,EDS,RDS)
+reviews-v2-674c6d8b4-rcfxg.default                      cluster-a     istiod-66dbd576c8-k4456     1.29.9      4 (CDS,LDS,EDS,RDS)
+reviews-v3-7b775c7568-h9q2w.default                     cluster-a     istiod-66dbd576c8-k4456     1.29.9      4 (CDS,LDS,EDS,RDS)
 ```
 
-This is the list of all proxies that are currently connected to `istiod`. Read it column by column:
+This is the list of all proxies that are currently connected to `istiod`: the six pods of Bookinfo and the ingress gateway. Read it column by column:
 
 | Column | Meaning |
 |---|---|
@@ -98,46 +106,31 @@ The abbreviations are the kinds of configuration Envoy receives from `istiod`:
 | LDS | listeners: on which ports does it listen |
 | EDS | endpoints: which addresses are behind a service |
 | RDS | routes: how are requests distributed |
-| NDS | name table: used by the DNS proxy, for example on the VM |
+| NDS | name table: used by the DNS proxy, for example on a VM (you see it on day 2) |
 
-Look for the VM: `h6-vm.vm` is in the list, so the virtual machine is part of the mesh like any pod.
-
-## Step 5: See the VM as a mesh member
+## Step 5: The same in cluster b
 
 ```
-kubectl get workloadentry -n vm
+kubectl --context cluster-b get pods
+istioctl --context cluster-b proxy-status
 ```
 
-```
-NAME                                          AGE   ADDRESS
-diameter-adapter-2a01-4f8-c016-dab1--1-net1   ...   2a01:4f8:c016:dab1::1
-```
+The same picture: its own `istiod`, its own Bookinfo. The column `CLUSTER` says `cluster-b`.
 
-A `WorkloadEntry` is how Istio describes a workload that is not a pod. This one was created automatically when the VM connected.
+## Step 6: Watch a proxy appear and disappear
 
-## Step 6: Call the VM from a pod
+Start a new pod in the namespace `default` (it has sidecar injection):
 
 ```
-kubectl exec -n app client -c client -- curl -s http://diameter-adapter.vm.svc.cluster.local:8000/ | head -1
+kubectl run extra --image=nginx:1.27
+kubectl wait --for=condition=Ready pod/extra --timeout=120s
+istioctl proxy-status | grep -E "NAME|extra"
 ```
 
 ```
-VM diameter-adapter (IPv6), client=::6
+NAME                                                    CLUSTER       ISTIOD                      VERSION     SUBSCRIBED TYPES
+extra.default                                           cluster-a     istiod-66dbd576c8-k4456     1.29.9      4 (CDS,LDS,EDS,RDS)
 ```
-
-The request goes from the sidecar of `client` to the sidecar of the VM, encrypted with mutual TLS. The program on the VM answers.
-
-## Step 7: Watch a proxy appear and disappear
-
-Start a new pod in a namespace with sidecar injection:
-
-```
-kubectl run extra -n app --image=nginx:1.27
-kubectl wait -n app --for=condition=Ready pod/extra --timeout=120s
-istioctl proxy-status
-```
-
-`extra.app` is now in the list.
 
 Now start a pod in a namespace without sidecar injection and compare:
 
@@ -146,17 +139,23 @@ kubectl create namespace plain
 kubectl run plain-web -n plain --image=nginx:1.27
 kubectl wait -n plain --for=condition=Ready pod/plain-web --timeout=120s
 kubectl get pod plain-web -n plain
-istioctl proxy-status
+istioctl proxy-status | grep -c plain
+```
+
+```
+NAME        READY   STATUS    RESTARTS   AGE
+plain-web   1/1     Running   0          1s
+0
 ```
 
 The pod shows `1/1` and does not appear in `proxy-status`. It is not part of the mesh.
 
-**Take-away:** `proxy-status` shows who is connected to `istiod`. It does not show whether everything works. A VM can be in the list and still not receive traffic, for example if its WorkloadEntry is missing. Later in the training you will use this list to find a VM that dropped out of the mesh.
+**Take-away:** `proxy-status` shows who is connected to `istiod`. It does not show whether everything works. Later in the training you will use this list to find a VM that dropped out of the mesh.
 
 ## Clean up
 
 ```
-kubectl delete pod extra -n app
+kubectl delete pod extra
 kubectl delete namespace plain
 ```
 
@@ -167,4 +166,5 @@ kubectl delete namespace plain
 | Which proxies are connected to istiod? | `istioctl proxy-status` |
 | Is this pod in the mesh? | `READY 2/2` and the pod is in `proxy-status` |
 | Where is the sidecar container? | `initContainers`, name `istio-proxy` |
-| Which non-pod workloads exist? | `kubectl get workloadentry -A` |
+
+Next: [How Istio is installed in the lab](02-how-istio-is-installed.md)

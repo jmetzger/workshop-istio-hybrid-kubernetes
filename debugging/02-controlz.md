@@ -66,3 +66,5 @@ The environment page shows **all** environment variables of `istiod`. Look at th
 `istioctl dashboard` can open more than ControlZ (listed in our lab: `controlz`, `envoy`, `grafana`, `istiod-debug`, `jaeger`, `kiali`, `prometheus`, `proxy`, `skywalking`, `zipkin`). We only used `controlz`.
 
 Previous: [Logs and log levels](01-logs-and-log-levels.md)
+
+Next: [See the traffic: access logs instead of tcpdump](03-access-logs-instead-of-tcpdump.md)

@@ -1,7 +1,5 @@
 # Check the link between two clusters
 
-## Background
-
 Two clusters form one mesh when each `istiod` can read the services and endpoints of the other cluster. For this, every cluster holds a **remote secret**: a small kubeconfig that gives its `istiod` read access to the API server of the other cluster.
 
 If a remote secret is missing or broken, nothing fails loudly. The other cluster is simply not part of the mesh, and traffic stays local. The command that shows this is:
@@ -12,28 +10,29 @@ istioctl remote-clusters
 
 In this exercise you read the output, break the link on purpose, see what happens, and repair it.
 
-All commands run on your bastion host. Replace the contexts with the ones of your two clusters:
+Prerequisite: the two clusters are connected (exercise [Connect cluster a and cluster b](00-connect-the-two-clusters.md)).
+
+All commands run on your bastion host as your lab user:
 
 ```
-export CTX_A=<context of cluster A>
-export CTX_B=<context of cluster B>
+export CTX_A=cluster-a
+export CTX_B=cluster-b
+export SAMPLES=https://raw.githubusercontent.com/istio/istio/1.29.9/samples
 ```
-
-The cluster names in the outputs below (`cluster-h6`, `cluster-h6b`) are the names in our test lab. Yours may differ.
 
 ## Step 1: Prepare a test service in both clusters
 
-`helloworld` runs in version v1 only in cluster A and in version v2 only in cluster B. Cluster A also gets a client pod (`sleep`). The sample files come from the Istio release folder (`istio-1.29.9/samples`).
+`helloworld` runs in version v1 only in cluster A and in version v2 only in cluster B. Cluster A also gets a client pod (`sleep`). The sample files come from the Istio repository (release 1.29.9).
 
 ```
 for CTX in $CTX_A $CTX_B; do
   kubectl --context $CTX create namespace helloworld
   kubectl --context $CTX label namespace helloworld istio-injection=enabled
-  kubectl --context $CTX apply -n helloworld -f samples/helloworld/helloworld.yaml -l service=helloworld
+  kubectl --context $CTX apply -n helloworld -f $SAMPLES/helloworld/helloworld.yaml -l service=helloworld
 done
-kubectl --context $CTX_A apply -n helloworld -f samples/helloworld/helloworld.yaml -l version=v1
-kubectl --context $CTX_B apply -n helloworld -f samples/helloworld/helloworld.yaml -l version=v2
-kubectl --context $CTX_A apply -n helloworld -f samples/sleep/sleep.yaml
+kubectl --context $CTX_A apply -n helloworld -f $SAMPLES/helloworld/helloworld.yaml -l version=v1
+kubectl --context $CTX_B apply -n helloworld -f $SAMPLES/helloworld/helloworld.yaml -l version=v2
+kubectl --context $CTX_A apply -n helloworld -f $SAMPLES/sleep/sleep.yaml
 kubectl --context $CTX_A wait -n helloworld --for=condition=Ready pod --all --timeout=180s
 kubectl --context $CTX_B wait -n helloworld --for=condition=Ready pod --all --timeout=180s
 ```
@@ -45,9 +44,9 @@ istioctl --context $CTX_A remote-clusters
 ```
 
 ```
-NAME            SECRET                                           STATUS     ISTIOD
-cluster-h6                                                       synced     istiod-7b66fbd84c-g682b
-cluster-h6b     istio-system/istio-remote-secret-cluster-h6b     synced     istiod-7b66fbd84c-g682b
+NAME          SECRET                                         STATUS     ISTIOD
+cluster-a                                                    synced     istiod-66dbd576c8-mrtbz
+cluster-b     istio-system/istio-remote-secret-cluster-b     synced     istiod-66dbd576c8-mrtbz
 ```
 
 Read it column by column:
@@ -76,8 +75,8 @@ kubectl --context $CTX_A exec -n helloworld deploy/sleep -c sleep -- sh -c 'for 
 ```
 
 ```
-     22 version: v1
-     18 version: v2
+     17 version: v1
+     23 version: v2
 ```
 
 Answers come from both clusters. The client sidecar knows an endpoint in each cluster:
@@ -88,8 +87,8 @@ istioctl --context $CTX_A proxy-config endpoints deploy/sleep.helloworld --clust
 
 ```
 ENDPOINT                            STATUS      OUTLIER CHECK     CLUSTER
-2a01:4f8:c016:17b5::1:9133:5000     HEALTHY     OK                outbound|5000||helloworld.helloworld.svc.cluster.local
-2a01:4f8:c016:a758::1:a845:5000     HEALTHY     OK                outbound|5000||helloworld.helloworld.svc.cluster.local
+2a01:4f8:c013:2b1d::1:e290:5000     HEALTHY     OK                outbound|5000||helloworld.helloworld.svc.cluster.local
+2a01:4f8:c015:c588::1:6311:5000     HEALTHY     OK                outbound|5000||helloworld.helloworld.svc.cluster.local
 ```
 
 Two addresses from two different networks: one pod in each cluster.
@@ -99,7 +98,7 @@ Two addresses from two different networks: one pod in each cluster.
 Remove the secret in cluster A that gives it access to cluster B. Use the secret name from the `SECRET` column of step 2:
 
 ```
-kubectl --context $CTX_A -n istio-system delete secret istio-remote-secret-cluster-h6b
+kubectl --context $CTX_A -n istio-system delete secret istio-remote-secret-cluster-b
 ```
 
 Wait ten seconds and look again:
@@ -109,8 +108,8 @@ istioctl --context $CTX_A remote-clusters
 ```
 
 ```
-NAME           SECRET     STATUS     ISTIOD
-cluster-h6                synced     istiod-7b66fbd84c-g682b
+NAME          SECRET     STATUS     ISTIOD
+cluster-a                synced     istiod-66dbd576c8-mrtbz
 ```
 
 The line for cluster B is gone. There is no error message anywhere. Repeat the calls of step 3:
@@ -128,11 +127,11 @@ All 40 answers come from v1 and the client knows only one endpoint. Cluster B is
 A remote secret for cluster B is created **in cluster B** (it needs the address and a reader account of that cluster) and applied **in cluster A**:
 
 ```
-istioctl --context $CTX_B create-remote-secret --name=cluster-h6b | kubectl --context $CTX_A apply -f -
+istioctl --context $CTX_B create-remote-secret --name=cluster-b | kubectl --context $CTX_A apply -f -
 ```
 
 ```
-secret/istio-remote-secret-cluster-h6b created
+secret/istio-remote-secret-cluster-b created
 ```
 
 The `--name` is the cluster name of B (the first column of step 2). After ten seconds:
@@ -141,7 +140,7 @@ The `--name` is the cluster name of B (the first column of step 2). After ten se
 istioctl --context $CTX_A remote-clusters
 ```
 
-Both lines are back and say `synced`. Repeat the calls of step 3: answers from v1 and v2 again (for example 23 and 17).
+Both lines are back and say `synced`. Repeat the calls of step 3: answers from v1 and v2 again (for example 19 and 21).
 
 ## Clean up
 
@@ -160,3 +159,5 @@ kubectl --context $CTX_B delete namespace helloworld
 | How do I join a cluster? | `istioctl create-remote-secret` in the other cluster, applied here |
 
 Keep the difference in mind: `remote-clusters` shows the link between the **control planes**, `proxy-status` shows which **proxies** are connected to each `istiod`.
+
+Previous: [Connect cluster a and cluster b](00-connect-the-two-clusters.md)

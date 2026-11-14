@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 830" width="1200" height="830" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="po" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
+    <marker id="pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#777"/></marker>
+  </defs>
+  <rect width="1200" height="830" fill="#ffffff"/>
+  <text x="600" y="36" text-anchor="middle" font-size="22" font-weight="bold" fill="#222">How a sidecar gets its certificate: cert-manager with istio-csr</text>
+
+  <!-- Cluster -->
+  <rect x="20" y="58" width="1160" height="515" rx="12" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2.5"/>
+  <text x="40" y="82" font-size="15" font-weight="bold" fill="#3b8a3b">Kubernetes cluster</text>
+
+  <!-- istiod -->
+  <rect x="50" y="100" width="300" height="66" rx="8" fill="#ffffff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="200" y="127" text-anchor="middle" font-size="15" font-weight="bold" fill="#3b8a3b">istiod</text>
+  <text x="200" y="149" text-anchor="middle" font-size="12" fill="#444">is no CA any more, only sends configuration</text>
+  <line x1="200" y1="166" x2="200" y2="218" stroke="#777" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#pg)"/>
+  <text x="212" y="197" font-size="12" fill="#666">configuration (xDS)</text>
+
+  <!-- Pod -->
+  <rect x="50" y="220" width="300" height="230" rx="10" fill="#eef3fa" stroke="#4a6fa5" stroke-width="2.5"/>
+  <text x="200" y="244" text-anchor="middle" font-size="14" font-weight="bold" fill="#1a5fb4">Pod</text>
+  <rect x="70" y="256" width="260" height="40" rx="6" fill="#ffffff" stroke="#4a6fa5" stroke-width="1.5"/>
+  <text x="200" y="281" text-anchor="middle" font-size="13" fill="#333">application</text>
+  <rect x="70" y="308" width="260" height="126" rx="6" fill="#ffffff" stroke="#1a5fb4" stroke-width="2"/>
+  <text x="200" y="329" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a5fb4">Sidecar (istio-proxy)</text>
+  <rect x="84" y="342" width="116" height="78" rx="5" fill="#eef3fa" stroke="#4a6fa5" stroke-width="1.5"/>
+  <text x="142" y="367" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a5fb4">pilot-agent</text>
+  <text x="142" y="387" text-anchor="middle" font-size="11" fill="#444">creates key and</text>
+  <text x="142" y="402" text-anchor="middle" font-size="11" fill="#444">request (CSR)</text>
+  <rect x="210" y="342" width="106" height="78" rx="5" fill="#eef3fa" stroke="#4a6fa5" stroke-width="1.5"/>
+  <text x="263" y="367" text-anchor="middle" font-size="13" font-weight="bold" fill="#1a5fb4">Envoy</text>
+  <text x="263" y="387" text-anchor="middle" font-size="11" fill="#444">uses the</text>
+  <text x="263" y="402" text-anchor="middle" font-size="11" fill="#444">certificate (mTLS)</text>
+  <circle cx="84" cy="342" r="12" fill="#d9730d"/><text x="84" y="347" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">1</text>
+
+  <!-- istio-csr -->
+  <rect x="480" y="270" width="250" height="130" rx="8" fill="#ffffff" stroke="#555" stroke-width="2.5"/>
+  <text x="605" y="298" text-anchor="middle" font-size="16" font-weight="bold" fill="#222">istio-csr</text>
+  <text x="605" y="321" text-anchor="middle" font-size="12" fill="#444">takes the request,</text>
+  <text x="605" y="338" text-anchor="middle" font-size="12" fill="#444">checks the sender,</text>
+  <text x="605" y="355" text-anchor="middle" font-size="12" fill="#444">returns the certificate</text>
+  <text x="605" y="383" text-anchor="middle" font-size="11" fill="#777">address in the sidecar: CA_ADDR, port 443</text>
+
+  <!-- 2 und 6 -->
+  <line x1="350" y1="322" x2="478" y2="322" stroke="#d9730d" stroke-width="3" marker-end="url(#po)"/>
+  <circle cx="414" cy="300" r="12" fill="#d9730d"/><text x="414" y="305" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">2</text>
+  <line x1="480" y1="376" x2="352" y2="376" stroke="#d9730d" stroke-width="3" marker-end="url(#po)"/>
+  <circle cx="414" cy="400" r="12" fill="#d9730d"/><text x="414" y="405" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">6</text>
+
+  <!-- Kubernetes API -->
+  <rect x="480" y="478" width="250" height="70" rx="8" fill="#ffffff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="605" y="506" text-anchor="middle" font-size="14" font-weight="bold" fill="#3b8a3b">Kubernetes API</text>
+  <text x="605" y="528" text-anchor="middle" font-size="12" fill="#444">Whose token is this?</text>
+  <line x1="605" y1="400" x2="605" y2="476" stroke="#d9730d" stroke-width="3" marker-end="url(#po)"/>
+  <circle cx="580" cy="438" r="12" fill="#d9730d"/><text x="580" y="443" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">3</text>
+  <text x="620" y="443" font-size="12" fill="#444">TokenReview</text>
+
+  <!-- CertificateRequest -->
+  <rect x="820" y="100" width="320" height="76" rx="8" fill="#ffffff" stroke="#555" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="980" y="130" text-anchor="middle" font-size="14" font-weight="bold" fill="#222">CertificateRequest</text>
+  <text x="980" y="153" text-anchor="middle" font-size="12" fill="#444">object in the cluster, one per request</text>
+  <line x1="700" y1="270" x2="822" y2="178" stroke="#d9730d" stroke-width="3" marker-end="url(#po)"/>
+  <circle cx="742" cy="206" r="12" fill="#d9730d"/><text x="742" y="211" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">4</text>
+
+  <!-- cert-manager -->
+  <rect x="820" y="270" width="320" height="100" rx="8" fill="#ffffff" stroke="#555" stroke-width="2.5"/>
+  <text x="980" y="300" text-anchor="middle" font-size="16" font-weight="bold" fill="#222">cert-manager</text>
+  <text x="980" y="324" text-anchor="middle" font-size="12" fill="#444">sees the CertificateRequest and</text>
+  <text x="980" y="341" text-anchor="middle" font-size="12" fill="#444">has it signed by the Issuer</text>
+  <line x1="980" y1="176" x2="980" y2="268" stroke="#d9730d" stroke-width="3" marker-end="url(#po)"/>
+  <circle cx="955" cy="222" r="12" fill="#d9730d"/><text x="955" y="227" text-anchor="middle" font-size="13" font-weight="bold" fill="#fff">5</text>
+
+  <!-- Issuer -->
+  <rect x="820" y="436" width="320" height="118" rx="8" fill="#fff8ef" stroke="#d9730d" stroke-width="2"/>
+  <text x="980" y="462" text-anchor="middle" font-size="14" font-weight="bold" fill="#222">Issuer: who signs</text>
+  <text x="980" y="485" text-anchor="middle" font-size="12" fill="#444">type ca: CA key as a Secret in the cluster (our lab)</text>
+  <text x="980" y="503" text-anchor="middle" font-size="12" fill="#444">or: Vault, a company PKI</text>
+  <text x="980" y="531" text-anchor="middle" font-size="12" font-weight="bold" fill="#b3261e">does not work: ACME (Let's Encrypt)</text>
+  <line x1="980" y1="370" x2="980" y2="434" stroke="#d9730d" stroke-width="3" marker-end="url(#po)"/>
+  <text x="994" y="407" font-size="12" fill="#444">sign</text>
+
+  <!-- Ablauf -->
+  <text x="40" y="606" font-size="15" font-weight="bold" fill="#222">The steps</text>
+  <g font-size="13" fill="#333">
+    <text x="40" y="632"><tspan font-weight="bold" fill="#d9730d">1</tspan>  The pilot-agent creates a private key and a certificate request (CSR). The key never leaves the pod.</text>
+    <text x="40" y="656"><tspan font-weight="bold" fill="#d9730d">2</tspan>  It sends the request together with the token of its service account to istio-csr (not to istiod).</text>
+    <text x="40" y="680"><tspan font-weight="bold" fill="#d9730d">3</tspan>  istio-csr asks the Kubernetes API whose token this is. The certificate is issued for exactly this service account.</text>
+    <text x="40" y="704"><tspan font-weight="bold" fill="#d9730d">4</tspan>  istio-csr creates a CertificateRequest object in the cluster for the request.</text>
+    <text x="40" y="728"><tspan font-weight="bold" fill="#d9730d">5</tspan>  cert-manager has the request signed by the Issuer and writes the certificate into the object.</text>
+    <text x="40" y="752"><tspan font-weight="bold" fill="#d9730d">6</tspan>  istio-csr returns the certificate to the sidecar, Envoy uses it for mTLS. Before it expires, everything repeats.</text>
+  </g>
+  <line x1="40" y1="772" x2="1160" y2="772" stroke="#ccc" stroke-width="1"/>
+  <text x="40" y="797" font-size="13" fill="#333"><tspan font-weight="bold">For comparison, without istio-csr:</tspan> step 2 goes to istiod. istiod checks the token and signs itself (intermediate CA in the Secret cacerts). Steps 4 and 5 do not exist.</text>
+  <text x="40" y="817" font-size="12" fill="#777">Measured in our lab (Istio 1.29.9, sidecar mode, cert-manager v1.21.3, istio-csr v0.19.1): the certificate is valid for one hour.</text>
+</svg>

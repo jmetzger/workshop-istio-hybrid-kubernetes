@@ -2,7 +2,7 @@
 
 ![The way of a request: caller, cloud firewall, MetalLB address, Service istio-ingressgateway, gateway pod, Bookinfo](/images/ingress-gateway-ipv6.svg)
 
-## Background
+## What we do
 
 Your lab has an Istio ingress gateway in the namespace `istio-ingress`. It is a normal Kubernetes Service of type `LoadBalancer`, IPv6 single stack. Two things make it reachable from other clusters and from outside the lab:
 
@@ -13,7 +13,13 @@ Your lab has an Istio ingress gateway in the namespace `istio-ingress`. It is a 
 
 In this exercise you publish the demo application Bookinfo through this gateway and call it from different places.
 
-All commands run on your bastion host, in cluster A. The sample files come from the Istio release folder (`istio-1.29.9/samples`).
+All commands run on your bastion host as your lab user, in cluster a. The sample files come from the Istio repository (release 1.29.9):
+
+```
+export SAMPLES=https://raw.githubusercontent.com/istio/istio/1.29.9/samples
+```
+
+**In your lab Bookinfo is already deployed and published** (step 2 and 3 were done by the setup with the same files). Run the two steps anyway to see what they are: `kubectl apply` answers `unchanged`.
 
 ## Step 1: Look at the gateway Service
 
@@ -46,7 +52,7 @@ Port 80 of the Service leads to port **8080** of the gateway pod. The gateway po
 
 ```
 kubectl label namespace default istio-injection=enabled --overwrite
-kubectl apply -f samples/bookinfo/platform/kube/bookinfo.yaml
+kubectl apply -f $SAMPLES/bookinfo/platform/kube/bookinfo.yaml
 kubectl wait --for=condition=Ready pod --all -n default --timeout=300s
 ```
 
@@ -59,7 +65,7 @@ kubectl get pods -n default
 ## Step 3: Publish it with a Gateway and a VirtualService
 
 ```
-kubectl apply -f samples/bookinfo/networking/bookinfo-gateway.yaml
+kubectl apply -f $SAMPLES/bookinfo/networking/bookinfo-gateway.yaml
 kubectl get gateway,virtualservice -n default
 ```
 
@@ -135,6 +141,6 @@ The endpoint list is fine in that case, only the port is wrong. That is why this
 Keep Bookinfo, the next exercises use it. If you want to remove it:
 
 ```
-kubectl delete -f samples/bookinfo/networking/bookinfo-gateway.yaml
-kubectl delete -f samples/bookinfo/platform/kube/bookinfo.yaml
+kubectl delete -f $SAMPLES/bookinfo/networking/bookinfo-gateway.yaml
+kubectl delete -f $SAMPLES/bookinfo/platform/kube/bookinfo.yaml
 ```

@@ -70,3 +70,5 @@ kubectl delete namespace inj-test
 ```
 
 Previous: [Ports of istiod and of the sidecar](06-ports-of-istiod-and-the-sidecar.md)
+
+Next: [Who signs the certificates: cert-manager with istio-csr](08-certificates-with-cert-manager-and-istio-csr.md)

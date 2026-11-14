@@ -4,6 +4,14 @@ Diese Datei ist **kein Teilnehmer-Material** (Deutsch, nur für die Arbeit mit C
 Die deutschen Vorbereitungsnotizen (Telekom-Gespräche, Messungen, Probleme, Agenda-Entwurf) liegen im Repo `~/projects/02-training/vorbereitung/training-istio-telekom`.
 Format der Übungen: Skill `workshop-training`. Stand dieser Datei: 2026-11-06.
 
+## Wiederaufnahme: Stand 2026-11-13 abends (gilt vor dem Abschnitt vom 2026-11-06 darunter)
+
+- **Lab wie beim Kunden mit cert-manager als CA** (`istio-csr`, Skill-Schalter `ISTIO_CA=csr` in `config.env`), Cluster beim Aufbau getrennt (`ISTIO_LINK=ca`), die Teilnehmer verbinden sie selbst. Messungen: Vorbereitungsrepo `netztest-hetzner/ergebnis-cert-manager.md`.
+- **Neue und neu gemessene Seiten** (Lab `tk-test`, `tln2` und frisch gebautes `tln4`): `fundamentals/08`, `explore-the-lab/01` und `02`, `traffic-management/00` und `01`, `security/01`, `outage/01`, `multi-cluster/00` bis `02`, `virtual-machines/01` und `03`, `observability/01` und `02`, `debugging/03`. Skripte: `vm-in-the-mesh.sh` (erkennt istio-csr), `vm-refresh-token.sh` (AWX-Ersatz).
+- **Gemessene Fakten mit cert-manager:** Workload-Zertifikat 1 h, Erneuerung nach 30 min. istio-csr akzeptiert standardmäßig nur ein Token: eine VM fällt etwa 2 h nach dem Beitritt aus dem Mesh (Token gilt 1 h). `proxy-status` mit `2 (CDS,EDS)` = Proxy ohne Zertifikat. Ein Token passt nur zum Cluster, der es ausgestellt hat. Mit zwei Adressen in `/etc/hosts` nimmt der Agent nicht die erste Zeile (RFC 6724), deshalb trägt `vm-refresh-token.sh` nur einen Cluster ein. `ghcr.io` hat kein IPv6 (Prometheus-Addon: Image von `quay.io`). Access-Log ist im Lab aus (Telemetry-API schaltet es ein). `proxy-status` hat in 1.29 keine Spalte `SYNCED`.
+- **Die Übungsdateien auf dem Bastion kommen aus dem Git-Stand `HEAD`** (`workshop-files.sh`): erst committen, dann das Lab bauen oder `workshop-files.sh` erneut aufrufen.
+- **Offen:** Health-Checks, Upgrade, Debugging auf der VM, `fundamentals/07` am neuen Lab nachmessen, Theorie/Übung trennen (Abschnitt unten) für die alten Seiten.
+
 ## Wiederaufnahme: Stand 2026-11-06 abends und nächste Schritte
 
 **Stand:** Alles ist gepusht (Workshop-Repo, Vorbereitungsrepo, Skills-Repo). **Das Lab ist abgebaut** (2026-11-06 21:18, auf Jochens Wunsch: 0 Server, 0 Firewalls, 0 Primary-IPs, keine DNS-Einträge mehr). Das Arbeitsverzeichnis `~/ipv6-clusters/tk-test/` und der Hetzner-Schlüssel `training-tk-test` bleiben. **Neuaufbau nächste Woche** (siehe Abschnitt "Lab für Tests"). Heute fertig geworden: IPv6-only-Übung `virtual-machines/01` und optionale Dual-Stack-Übung `02`, `fundamentals` 01 bis 07 mit Grafiken, `debugging/` 01 und 02, `cleanup` entfernt das Sidecar-Paket, `_README.md` steht in `.gitignore`, `accept_ra` ist aus `prep.sh` gestrichen, Frage 5 (Namespaces der VMs) steht in der Fragenliste im Vorbereitungsrepo.

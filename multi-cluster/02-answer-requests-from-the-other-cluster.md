@@ -1,6 +1,6 @@
 # Answer requests with pods from the other cluster
 
-## Background
+## What we do
 
 In the previous exercise you checked the link between two clusters. Now you see what the link is good for: a request that enters cluster B can be answered by pods that run in cluster A, without a gateway between the clusters. The pods talk directly over IPv6, protected by mTLS.
 
@@ -17,12 +17,15 @@ What makes this work:
 | The pods of both clusters can reach each other (routed IPv6 network, same Istio `network`) | step 2 |
 | The service exists in both clusters (same name, same namespace) | Bookinfo from the exercise "Expose Bookinfo through the ingress gateway over IPv6" |
 
-Prerequisite: Bookinfo runs in **both** clusters and is published through both gateways (do the ingress gateway exercise in cluster A and in cluster B).
+Prerequisite: the two clusters are connected (exercise [Connect cluster a and cluster b](00-connect-the-two-clusters.md)). Bookinfo runs in both clusters and is published through both gateways (prepared in your lab).
+
+All commands run on your bastion host as your lab user:
 
 ```
-export CTX_A=<context of cluster A>
-export CTX_B=<context of cluster B>
-export GATEWAY_B=<external address of the ingress gateway in cluster B>
+export CTX_A=cluster-a
+export CTX_B=cluster-b
+export GATEWAY_B=$(kubectl --context $CTX_B -n istio-ingress get svc istio-ingressgateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+echo $GATEWAY_B
 ```
 
 ## Step 1: Compare the root certificates
@@ -48,15 +51,15 @@ Expected output: six endpoints, three from the network of each cluster (addresse
 
 ```
 ENDPOINT                            STATUS      OUTLIER CHECK     CLUSTER
-2a01:4f8:c016:a758::1:9110:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
-2a01:4f8:c016:a758::1:9111:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
-2a01:4f8:c016:a758::1:9112:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
-2a01:4f8:c016:aa79::1:a84e:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
-2a01:4f8:c016:aa79::1:a853:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
-2a01:4f8:c016:aa79::1:a854:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+2a01:4f8:c013:2b1d::1:e28b:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+2a01:4f8:c013:2b1d::1:e28d:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+2a01:4f8:c013:2b1d::1:e28e:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+2a01:4f8:c015:c588::1:630c:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+2a01:4f8:c015:c588::1:630d:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
+2a01:4f8:c015:c588::1:630f:9080     HEALTHY     OK                outbound|9080||reviews.default.svc.cluster.local
 ```
 
-The first three belong to cluster A, the last three to cluster B. Compare with the pod addresses:
+In our lab the first three belong to cluster a, the last three to cluster b. Compare with the pod addresses:
 
 ```
 kubectl --context $CTX_A get pods -l app=reviews -o wide

@@ -60,7 +60,7 @@ kubectl --context $CTX_A delete namespace vm --ignore-not-found
 kubectl --context $CTX_B delete namespace vm --ignore-not-found
 kubectl --context $CTX_A delete deploy client --ignore-not-found
 kubectl --context $CTX_B delete deploy client --ignore-not-found
-ssh $VM "systemctl stop istio vm-echo 2>/dev/null; DEBIAN_FRONTEND=noninteractive apt-get purge -y istio-sidecar >/dev/null 2>&1; sed -i '/istiod.istio-system.svc/d' /etc/hosts; rm -rf /root/vmfiles /root/vm-echo-server.py /tmp/istio-sidecar.deb /etc/istio /etc/certs /var/lib/istio /var/run/secrets/tokens /var/run/secrets/istio; userdel istio-proxy 2>/dev/null; true"
+ssh $VM "systemctl stop istio vm-echo 2>/dev/null; DEBIAN_FRONTEND=noninteractive apt-get purge -y istio-sidecar >/dev/null 2>&1; sed -i '/istiod.istio-system.svc/d; /cert-manager-istio-csr.cert-manager.svc/d' /etc/hosts; rm -rf /root/vmfiles /root/vm-echo-server.py /tmp/istio-sidecar.deb /etc/istio /etc/certs /var/lib/istio /var/run/secrets/tokens /var/run/secrets/istio; userdel istio-proxy 2>/dev/null; true"
 rm -rf vmfiles
 EOF
   printf '\n%sDone.%s\n' "$G" "$N"
@@ -87,6 +87,10 @@ if [ -n "${VM_IP4:-}" ] && [ "$DUAL_STACK" != 1 ]; then
   printf '\n%s!! %s has the IPv4 address %s. For IPv6 only switch it off first (ask the trainer), or run the dual stack variant: DUAL_STACK=1 ./vm-in-the-mesh.sh%s\n' "$B" "$VM" "$VM_IP4" "$N" >&2
   exit 1
 fi
+# Who signs the certificates? If istio-csr runs in the cluster, cert-manager is the CA and the VM needs a second address.
+CSR=0
+kubectl --context "$CTX_A" -n cert-manager get svc cert-manager-istio-csr > /dev/null 2>&1 && CSR=1
+export CSR
 if [ -z "${VM_IP4:-}" ] && [ "$DUAL_STACK" = 1 ]; then
   printf '\n%s!! DUAL_STACK=1 needs a VM with an IPv4 address, but %s has none. Switch IPv4 on first (ask the trainer), or run without DUAL_STACK.%s\n' "$B" "$VM" "$N" >&2
   exit 1
@@ -167,6 +171,54 @@ EOF
 fi
 
 # ---------------------------------------------------------------------------
+if [ "$CSR" = 1 ]; then
+  step "Make the certificate authority reachable for the VM" \
+    "In this lab istiod does not sign certificates: cert-manager does, and the sidecar asks istio-csr (CA_ADDR)." \
+    "The VM is outside the cluster, so istio-csr gets a fixed LoadBalancer address, too (port 443)." \
+    "Without it the VM connects to istiod, but never gets a certificate."
+  if kubectl --context "$CTX_A" -n cert-manager get svc istio-csr-lb > /dev/null 2>&1; then
+    echo "Already done in this lab, nothing to do."
+    export CSR_ADDR=$(kubectl --context "$CTX_A" -n cert-manager get svc istio-csr-lb -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+    echo "Address of istio-csr for the VM: $CSR_ADDR"
+    pause
+  else
+    go <<'EOF'
+export CP_NODE=$(kubectl --context $CTX_A get node -l node-role.kubernetes.io/control-plane -o jsonpath='{.items[0].metadata.name}')
+export CSR_ADDR=${ISTIOD_ADDR%:*}:3
+echo "Address of istio-csr for the VM: $CSR_ADDR"
+kubectl --context $CTX_A apply -f - <<YAML
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata: {name: istio-csr-vip, namespace: metallb-system}
+spec: {addresses: ["$CSR_ADDR/128"], autoAssign: false}
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata: {name: istio-csr-vip, namespace: metallb-system}
+spec:
+  ipAddressPools: [istio-csr-vip]
+  nodeSelectors: [{matchLabels: {kubernetes.io/hostname: $CP_NODE}}]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: istio-csr-lb
+  namespace: cert-manager
+  annotations: {metallb.io/loadBalancerIPs: "$CSR_ADDR", metallb.io/address-pool: istio-csr-vip}
+spec:
+  type: LoadBalancer
+  ipFamilyPolicy: SingleStack
+  ipFamilies: [IPv6]
+  selector: {app: cert-manager-istio-csr}
+  ports: [{name: grpc, port: 443, targetPort: 6443}]
+YAML
+sleep 5
+kubectl --context $CTX_A -n cert-manager get svc istio-csr-lb
+EOF
+  fi
+fi
+
+# ---------------------------------------------------------------------------
 step "Create the objects for the VM" \
   "Namespace, service account and service (in both clusters), plus the WorkloadGroup (only cluster a)." \
   "The WorkloadGroup is the template for the VM. The Service finds the VM by the label app=diameter-adapter." \
@@ -237,6 +289,7 @@ EOF
 step "Install the sidecar on the VM and start it" \
   "Everything below runs on the VM (through ssh): install the package, put the files in place, start the sidecar" \
   "and the application. The VM has IPv6 only, so the files from istioctl are all the sidecar needs."
+[ "$CSR" != 1 ] || echo "cert-manager is the CA: we also add the address of istio-csr to /etc/hosts and CA_ADDR to cluster.env."
 [ "$DUAL_STACK" != 1 ] || echo "Dual stack variant: we also add ISTIO_SVC_IP (the address to register) and DUAL_STACK (IPv6 iptables rules) to cluster.env."
 sidecar_cmds() {
   cat <<'EOF'
@@ -256,6 +309,11 @@ EOF
   if [ "$DUAL_STACK" = 1 ]; then cat <<'EOF'
 echo "ISTIO_SVC_IP='$VM_IP'" >> /var/lib/istio/envoy/cluster.env
 echo "DUAL_STACK='true'" >> /var/lib/istio/envoy/cluster.env
+EOF
+  fi
+  if [ "$CSR" = 1 ]; then cat <<'EOF'
+echo "$CSR_ADDR cert-manager-istio-csr.cert-manager.svc" >> /etc/hosts
+echo "CA_ADDR='cert-manager-istio-csr.cert-manager.svc:443'" >> /var/lib/istio/envoy/cluster.env
 EOF
   fi
   cat <<'EOF'

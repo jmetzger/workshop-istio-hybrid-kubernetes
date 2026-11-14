@@ -6,6 +6,8 @@
 
 Theory first: [How a VM joins the mesh](00-how-a-vm-joins-the-mesh.md). This page is the exercise.
 
+Prerequisite: the two clusters are connected (exercise [Connect cluster a and cluster b](../multi-cluster/00-connect-the-two-clusters.md)). Otherwise the last test (cluster b calls the VM) fails.
+
 ## What we do
 
 We bring one virtual machine into the mesh with the Istio sidecar. Afterwards a pod calls the VM through a normal `Service`, with mTLS, and the VM calls a service in the cluster.
@@ -16,11 +18,12 @@ We bring one virtual machine into the mesh with the Istio sidecar. Afterwards a 
 | Namespace, service account, workload group, service | `vm`, `diameter-adapter` |
 | Application on the VM | a small Python echo server on port 8000 (`vm-echo-server.py`) |
 | Address of `istiod` for the VM | a fixed `LoadBalancer` address (`istiod-lb`, port 15012) |
+| Address of the certificate authority for the VM | a second fixed `LoadBalancer` address (`istio-csr-lb`, port 443), because in our lab cert-manager signs the certificates (see [cert-manager with istio-csr](../fundamentals/08-certificates-with-cert-manager-and-istio-csr.md)) |
 
 The exercise has eight steps:
 
 1. **Settings:** contexts, the name and the IPv6 address of the VM.
-2. **Make `istiod` ready for VMs:** auto-registration, DNS proxy and a fixed address for `istiod`.
+2. **Make `istiod` and the certificate authority ready for VMs:** auto-registration, DNS proxy, a fixed address for `istiod` and one for `istio-csr`.
 3. **Create the objects for the VM:** namespace, service account, `WorkloadGroup` and `Service`.
 4. **Create the files for the VM:** `istioctl` writes the files the VM needs.
 5. **Install the sidecar on the VM and start it.**
@@ -89,11 +92,24 @@ kubectl --context $CTX_A -n istio-system get svc istiod-lb
 ```
 
 ```
-NAME        TYPE           CLUSTER-IP          EXTERNAL-IP               PORT(S)
-istiod-lb   LoadBalancer   fd00:10:96::d:ec63  2a01:4f8:1c17:5cbc::2:2   15012:32132/TCP
+NAME        TYPE           CLUSTER-IP           EXTERNAL-IP               PORT(S)           AGE
+istiod-lb   LoadBalancer   fd00:10:96::1:846d   2a01:4f8:c013:ff3b::2:2   15012:32516/TCP   60s
 ```
 
 The VM uses the EXTERNAL-IP. The cluster IP (`fd00:...`) exists only inside the cluster.
+
+**The certificate authority.** In our lab `istiod` does not sign certificates: the sidecar asks `istio-csr` (cert-manager). The VM must reach it, too. The script sees that `istio-csr` runs in the cluster and creates a second Service, `istio-csr-lb`, with the next fixed address (port 443):
+
+```
+kubectl --context $CTX_A -n cert-manager get svc istio-csr-lb
+```
+
+```
+NAME           TYPE           CLUSTER-IP           EXTERNAL-IP               PORT(S)         AGE
+istio-csr-lb   LoadBalancer   fd00:10:96::a:6242   2a01:4f8:c013:ff3b::2:3   443:32150/TCP   54s
+```
+
+Without this address the VM connects to `istiod`, but it never gets a certificate. The script shows this part as its own step.
 
 ### Step 3: Create the objects for the VM
 
@@ -134,6 +150,18 @@ What the five files are and what is in them: [What the VM gets from `istioctl`](
 
 The script logs in to the VM and does this: install `istio-sidecar.deb` (the download goes over IPv6), copy the files to the places the sidecar reads them from, start the sidecar and the echo server.
 
+`istioctl` does not know about cert-manager. So the script adds two lines by hand: the address of `istio-csr` in `/etc/hosts`, and `CA_ADDR` in `cluster.env` (where the sidecar asks for its certificate). Afterwards the VM has:
+
+```
+ssh $VM "grep -E 'istiod|istio-csr' /etc/hosts; grep CA_ADDR /var/lib/istio/envoy/cluster.env"
+```
+
+```
+2a01:4f8:c013:ff3b::2:2 istiod.istio-system.svc
+2a01:4f8:c013:ff3b::2:3 cert-manager-istio-csr.cert-manager.svc
+CA_ADDR='cert-manager-istio-csr.cert-manager.svc:443'
+```
+
 ### Step 6: Is the VM in the mesh?
 
 ```
@@ -142,14 +170,28 @@ kubectl --context $CTX_A get workloadentry -n vm
 ```
 
 ```
-NAME                 CLUSTER     ISTIOD                    VERSION   SUBSCRIBED TYPES
-v6-tln1-a-vm1.vm     cluster-a   istiod-59c4f47fc9-b2vwb   1.29.9    5 (CDS,LDS,EDS,RDS,NDS)
+NAME                 CLUSTER       ISTIOD                     VERSION     SUBSCRIBED TYPES
+v6-tln2-a-vm1.vm     cluster-a     istiod-bcfc6b467-f22j7     1.29.9      5 (CDS,LDS,EDS,RDS,NDS)
 
-NAME                                         AGE   ADDRESS
-diameter-adapter-2a01-4f8-c013-541--1-net1   10s   2a01:4f8:c013:541::1
+NAME                                          AGE   ADDRESS
+diameter-adapter-2a01-4f8-c014-77c2--1-net1   10s   2a01:4f8:c014:77c2::1
 ```
 
 The VM is connected to `istiod`, and the `WorkloadEntry` holds the IPv6 address of the VM. This does not show yet that traffic works.
+
+The certificate of the VM lies in `/etc/certs`. It comes from cert-manager, is valid for one hour and carries the identity of the service account:
+
+```
+ssh $VM "openssl x509 -noout -issuer -dates -ext subjectAltName -in /etc/certs/cert-chain.pem"
+```
+
+```
+issuer=O = Lab, CN = Intermediate CA tln2 a
+notBefore=Nov 13 15:30:46 2026 GMT
+notAfter=Nov 13 16:30:46 2026 GMT
+X509v3 Subject Alternative Name: 
+    URI:spiffe://cluster.local/ns/vm/sa/diameter-adapter
+```
 
 ### Step 7: Test in three directions
 
@@ -207,4 +249,4 @@ Every port shows twice in our lab; what matters is `[::]`, the IPv6 wildcard add
 ./vm-in-the-mesh.sh cleanup
 ```
 
-The script deletes the namespace `vm` in both clusters and the two test pods. On the VM it stops the sidecar and the echo server and removes the sidecar package, its files and the echo server. The VM is back in the state before the exercise. The settings of `istiod` stay.
+The script deletes the namespace `vm` in both clusters and the two test pods. On the VM it stops the sidecar and the echo server and removes the sidecar package, its files and the echo server. The VM is back in the state before the exercise. The settings of `istiod` and the two `LoadBalancer` Services stay.
