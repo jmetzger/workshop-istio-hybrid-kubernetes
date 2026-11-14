@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 430" width="1200" height="430" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <rect width="1200" height="430" fill="#ffffff"/>
+  <text x="600" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">What Istio costs, and what drives it</text>
+
+  <!-- Sidecar -->
+  <rect x="30" y="60" width="440" height="300" rx="8" fill="#eef4fc" stroke="#1a5fb4" stroke-width="2"/>
+  <text x="50" y="92" font-size="18" font-weight="bold" fill="#1d3b66">Sidecar</text>
+  <text x="50" y="114" fill="#1d3b66">once per pod</text>
+  <g>
+    <rect x="50" y="132" width="120" height="74" rx="6" fill="#ffffff" stroke="#4a6fa5" stroke-width="1.5"/>
+    <rect x="58" y="142" width="48" height="54" rx="4" fill="#f2f2f2" stroke="#999"/>
+    <text x="82" y="174" text-anchor="middle" font-size="12" fill="#333">app</text>
+    <rect x="112" y="142" width="50" height="54" rx="4" fill="#1a5fb4"/>
+    <text x="137" y="174" text-anchor="middle" font-size="12" fill="#ffffff">proxy</text>
+    <rect x="182" y="132" width="120" height="74" rx="6" fill="#ffffff" stroke="#4a6fa5" stroke-width="1.5"/>
+    <rect x="190" y="142" width="48" height="54" rx="4" fill="#f2f2f2" stroke="#999"/>
+    <text x="214" y="174" text-anchor="middle" font-size="12" fill="#333">app</text>
+    <rect x="244" y="142" width="50" height="54" rx="4" fill="#1a5fb4"/>
+    <text x="269" y="174" text-anchor="middle" font-size="12" fill="#ffffff">proxy</text>
+    <rect x="314" y="132" width="120" height="74" rx="6" fill="#ffffff" stroke="#4a6fa5" stroke-width="1.5"/>
+    <rect x="322" y="142" width="48" height="54" rx="4" fill="#f2f2f2" stroke="#999"/>
+    <text x="346" y="174" text-anchor="middle" font-size="12" fill="#333">app</text>
+    <rect x="376" y="142" width="50" height="54" rx="4" fill="#1a5fb4"/>
+    <text x="401" y="174" text-anchor="middle" font-size="12" fill="#ffffff">proxy</text>
+  </g>
+  <text x="50" y="240" font-weight="bold" fill="#222">Memory</text>
+  <text x="50" y="261" fill="#333">grows with the number of services it knows</text>
+  <text x="50" y="294" font-weight="bold" fill="#222">CPU</text>
+  <text x="50" y="315" fill="#333">grows with the traffic</text>
+  <text x="50" y="345" font-size="13" fill="#1d3b66">500 pods are 500 sidecars: this part adds up</text>
+
+  <!-- istiod -->
+  <rect x="495" y="60" width="330" height="300" rx="8" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="515" y="92" font-size="18" font-weight="bold" fill="#1f5f1f">istiod</text>
+  <text x="515" y="114" fill="#1f5f1f">once per cluster (or a few replicas)</text>
+  <rect x="515" y="132" width="150" height="74" rx="6" fill="#3b8a3b"/>
+  <text x="590" y="174" text-anchor="middle" font-size="13" fill="#ffffff">control plane</text>
+  <text x="515" y="240" font-weight="bold" fill="#222">Memory</text>
+  <text x="515" y="261" fill="#333">grows with the amount of configuration</text>
+  <text x="515" y="294" font-weight="bold" fill="#222">CPU</text>
+  <text x="515" y="315" fill="#333">goes up when something changes</text>
+  <text x="515" y="345" font-size="13" fill="#1f5f1f">new pods, new services, new rules</text>
+
+  <!-- Gateway -->
+  <rect x="850" y="60" width="320" height="300" rx="8" fill="#fdf3e7" stroke="#d9730d" stroke-width="2"/>
+  <text x="870" y="92" font-size="18" font-weight="bold" fill="#7a3f05">Ingress gateway</text>
+  <text x="870" y="114" fill="#7a3f05">once per gateway pod</text>
+  <rect x="870" y="132" width="150" height="74" rx="6" fill="#d9730d"/>
+  <text x="945" y="174" text-anchor="middle" font-size="13" fill="#ffffff">proxy</text>
+  <text x="870" y="240" font-weight="bold" fill="#222">Memory and CPU</text>
+  <text x="870" y="261" fill="#333">like a sidecar, but it only holds</text>
+  <text x="870" y="281" fill="#333">the routes it serves</text>
+
+  <text x="600" y="400" text-anchor="middle" fill="#555" font-size="13">By default every sidecar holds the configuration for all services of the mesh, also for those its pod never calls.</text>
+</svg>

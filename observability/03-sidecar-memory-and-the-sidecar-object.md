@@ -213,6 +213,7 @@ About 29 MiB per sidecar, with 500 services more in the mesh than at the start.
 | with the `Sidecar` object, pods restarted | 18 | about 29 MiB |
 
 * The memory of a sidecar grows with the number of services in the mesh, here by about 0.1 MiB per service. Multiply that by the number of your pods.
+* Each of the 500 services has one port and two endpoints. The sidecar holds one entry (cluster) per **port** of a service: one service with three ports added three entries in our lab. Count ports, not services.
 * The `Sidecar` object takes it away again. **You only see it after the pods are restarted.**
 * These are lab numbers (idle, small services with two endpoints each). Measure in your own environment with the same query.
 

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 410" width="1200" height="410" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <rect width="1200" height="410" fill="#ffffff"/>
+  <text x="600" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Memory of one sidecar grows with the number of services in the mesh</text>
+  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Our lab: Istio 1.29.9, 7 sidecars, no traffic. Memory per sidecar in MiB.</text>
+
+  <!-- grid: x = 430 + MiB * 6.8 -->
+  <g stroke="#e3e3e3" stroke-width="1">
+    <line x1="430" y1="80" x2="430" y2="318"/><line x1="566" y1="80" x2="566" y2="318"/><line x1="702" y1="80" x2="702" y2="318"/>
+    <line x1="838" y1="80" x2="838" y2="318"/><line x1="974" y1="80" x2="974" y2="318"/><line x1="1110" y1="80" x2="1110" y2="318"/>
+  </g>
+  <g fill="#777" font-size="12" text-anchor="middle">
+    <text x="430" y="336">0</text><text x="566" y="336">20</text><text x="702" y="336">40</text><text x="838" y="336">60</text><text x="974" y="336">80</text><text x="1110" y="336">100 MiB</text>
+  </g>
+
+  <g text-anchor="end" fill="#222">
+    <text x="415" y="113">14 services (lab as it is)</text>
+    <text x="415" y="169">114 services</text>
+    <text x="415" y="225">514 services</text>
+    <text x="415" y="274" font-weight="bold">514 services, with a Sidecar object</text>
+    <text x="415" y="292" font-size="12" fill="#555">sidecars only see their own namespace, pods restarted</text>
+  </g>
+
+  <path d="M430,90 h227.2 a4,4 0 0 1 4,4 v28 a4,4 0 0 1 -4,4 h-227.2 z" fill="#1a5fb4"/>
+  <path d="M430,146 h288.4 a4,4 0 0 1 4,4 v28 a4,4 0 0 1 -4,4 h-288.4 z" fill="#1a5fb4"/>
+  <path d="M430,202 h567.2 a4,4 0 0 1 4,4 v28 a4,4 0 0 1 -4,4 h-567.2 z" fill="#1a5fb4"/>
+  <path d="M430,258 h193.2 a4,4 0 0 1 4,4 v28 a4,4 0 0 1 -4,4 h-193.2 z" fill="#3b8a3b"/>
+
+  <g fill="#222" font-weight="bold">
+    <text x="671" y="113">34</text><text x="732" y="169">43</text><text x="1011" y="225">84</text><text x="637" y="281">29</text>
+  </g>
+
+  <rect x="430" y="352" width="14" height="14" rx="2" fill="#1a5fb4"/><text x="452" y="364" fill="#333" font-size="13">every sidecar knows the whole mesh (default)</text>
+  <rect x="760" y="352" width="14" height="14" rx="2" fill="#3b8a3b"/><text x="782" y="364" fill="#333" font-size="13">view limited with a Sidecar object</text>
+  <text x="600" y="390" text-anchor="middle" fill="#555" font-size="13">About 0.1 MiB per additional service port, in every sidecar. Each added service has one port and two endpoints.</text>
+</svg>
