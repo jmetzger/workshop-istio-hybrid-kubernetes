@@ -127,7 +127,18 @@ The same picture: its own `istiod`, its own Bookinfo. The column `CLUSTER` says 
 
 ## Step 6: Watch a proxy appear and disappear
 
-Start a new pod in the namespace `default` (it has sidecar injection):
+First look at the label that switches sidecar injection on:
+
+```
+kubectl get namespace default -L istio-injection
+```
+
+```
+NAME      STATUS   AGE   ISTIO-INJECTION
+default   Active   10m   enabled
+```
+
+The label `istio-injection=enabled` on the namespace tells Istio to add a sidecar to every new pod in it. Now start a new pod in `default`:
 
 ```
 kubectl run extra --image=nginx:1.27
@@ -144,6 +155,7 @@ Now start a pod in a namespace without sidecar injection and compare:
 
 ```
 kubectl create namespace plain
+kubectl get namespace plain -L istio-injection
 kubectl run plain-web -n plain --image=nginx:1.27
 kubectl wait -n plain --for=condition=Ready pod/plain-web --timeout=120s
 kubectl get pod plain-web -n plain
@@ -151,12 +163,15 @@ istioctl proxy-status | grep -c plain
 ```
 
 ```
+NAME    STATUS   AGE   ISTIO-INJECTION
+plain   Active   1s
+
 NAME        READY   STATUS    RESTARTS   AGE
 plain-web   1/1     Running   0          1s
 0
 ```
 
-The pod shows `1/1` and does not appear in `proxy-status`. It is not part of the mesh.
+The namespace has no `istio-injection` label. The pod shows `1/1` and does not appear in `proxy-status`. It is not part of the mesh.
 
 istioctl proxy-status | grep -E "plain-web"
 

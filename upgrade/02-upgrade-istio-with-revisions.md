@@ -17,7 +17,7 @@ The last line is from the Istio documentation (Canary Upgrades): "When using rev
 
 Measured in our lab in clusters that were **not** connected to another cluster and had no VM. Not tested: revisions while the two clusters are one mesh, and a VM (see "What to take away").
 
-The steps below use Helm, because the lab is installed with Helm. The same upgrade with `istioctl` is at the end of the page.
+The steps below use Helm, because the lab is installed with Helm.
 
 All commands run on your bastion host as your lab user.
 
@@ -304,128 +304,12 @@ sort ~/upgrade/calls.log | uniq -c
 
 In our lab: 182 calls, two of them without an answer (`000`, no answer within 4 seconds). Both fell into the 17 seconds in which the pods in `default` restarted. Installing the second `istiod`, moving the gateway and removing the old `istiod` cost no call. One replica of every deployment, two calls per second: this is a small test, not a proof for production load.
 
-## The same with istioctl
-
-This works only for an Istio that was installed with `istioctl`. For this measurement we installed Istio 1.29.9 in cluster b with `istioctl install -f istio-operator.yaml`, with the file shown on the [previous page](01-upgrade-istio-in-place.md). There the ingress gateway runs in `istio-system`.
-
-```
-export CTX=cluster-b
-cd ~/upgrade
-curl -6 -fsSL https://storage.googleapis.com/istio-release/releases/$NEW/istioctl-$NEW-linux-amd64.tar.gz | tar xz
-./istioctl --context $CTX x precheck
-```
-
-**istio-csr.** The same command as in step 3, for cluster b.
-
-**Install the second control plane.** `istioctl install` with `--set revision`, with the `istioctl` of the new version and the same file as the installation:
-
-```
-./istioctl --context $CTX install --set revision=$REV -f istio-operator.yaml -y
-kubectl --context $CTX -n istio-system get pods,svc -L istio.io/rev
-```
-
-```
-- Processing resources for Istio core.
-✔ Istio core installed ⛵️
-- Processing resources for Istiod.
-- Processing resources for Istiod. Waiting for Deployment/istio-system/istiod-1-30-8
-✔ Istiod installed 🧠
-- Processing resources for Ingress gateways.
-- Processing resources for Ingress gateways. Waiting for Deployment/istio-system/istio-ingressgat...
-✔ Ingress gateways installed 🛬
-- Pruning removed resources
-✔ Installation complete
-```
-
-```
-NAME                                        READY   STATUS        RESTARTS   AGE   REV
-pod/istio-ingressgateway-68d5c97887-rmlr5   1/1     Running       0          4s    1-30-8
-pod/istio-ingressgateway-859454d45b-s4zsl   1/1     Terminating   0          60s   default
-pod/istiod-1-30-8-58fdc64cfd-vh9m6          1/1     Running       0          6s    1-30-8
-pod/istiod-688cd9b6f-cgr6h                  1/1     Running       0          62s   default
-
-NAME                                  TYPE           CLUSTER-IP           EXTERNAL-IP               PORT(S)                                      AGE     REV
-service/istio-ingressgateway          LoadBalancer   fd00:10:96::e:6b59   2a01:4f8:c016:2c9c::2:1   15021:30475/TCP,80:31582/TCP,443:31819/TCP   4m38s   1-30-8
-service/istiod                        ClusterIP      fd00:10:96::9:a6c0   <none>                    15010/TCP,15012/TCP,443/TCP,15014/TCP        4m41s   default
-service/istiod-1-30-8                 ClusterIP      fd00:10:96::c:7e94   <none>                    15010/TCP,15012/TCP,443/TCP,15014/TCP        7s      1-30-8
-service/istiod-revision-tag-default   ClusterIP      fd00:10:96::2:5b96   <none>                    15010/TCP,15012/TCP,443/TCP,15014/TCP        4m1s    default
-```
-
-In our lab this took 9 seconds. **Different from Helm: the gateway is not a canary.** It is in the same file, so the command replaced it right away with a gateway of the new revision. If the gateway should stay on the old version for now, it must not be part of this file.
-
-**Move the namespace.** The same as in step 5:
-
-```
-kubectl --context $CTX label namespace default istio-injection- istio.io/rev=$REV
-kubectl --context $CTX rollout restart deploy -n default
-kubectl --context $CTX rollout status deploy/productpage-v1
-./istioctl --context $CTX proxy-status --revision $REV
-```
-
-```
-NAME                                                   CLUSTER       ISTIOD                             VERSION     SUBSCRIBED TYPES
-details-v1-d8849cbd6-mlqpq.default                     cluster-b     istiod-1-30-8-58fdc64cfd-vh9m6     1.30.8      4 (CDS,LDS,EDS,RDS)
-istio-ingressgateway-68d5c97887-rmlr5.istio-system     cluster-b     istiod-1-30-8-58fdc64cfd-vh9m6     1.30.8      4 (CDS,LDS,EDS,RDS)
-productpage-v1-75b756f86d-x6g6p.default                cluster-b     istiod-1-30-8-58fdc64cfd-vh9m6     1.30.8      4 (CDS,LDS,EDS,RDS)
-ratings-v1-6c79f46f4-gkwqh.default                     cluster-b     istiod-1-30-8-58fdc64cfd-vh9m6     1.30.8      4 (CDS,LDS,EDS,RDS)
-reviews-v1-5d95dd7fd6-r2qnl.default                    cluster-b     istiod-1-30-8-58fdc64cfd-vh9m6     1.30.8      4 (CDS,LDS,EDS,RDS)
-reviews-v2-6dfdb476db-jvswb.default                    cluster-b     istiod-1-30-8-58fdc64cfd-vh9m6     1.30.8      4 (CDS,LDS,EDS,RDS)
-reviews-v3-67b7644b78-hf46n.default                    cluster-b     istiod-1-30-8-58fdc64cfd-vh9m6     1.30.8      4 (CDS,LDS,EDS,RDS)
-```
-
-**Make the new revision the default and remove the old control plane.** The tag is one command here:
-
-```
-./istioctl --context $CTX tag set default --revision $REV --overwrite
-./istioctl --context $CTX uninstall --revision default -y
-./istioctl --context $CTX tag list
-./istioctl --context $CTX version
-```
-
-```
-Revision tag "default" created, referencing control plane revision "1-30-8". To enable injection using this
-revision tag, use 'kubectl label namespace <NAMESPACE> istio.io/rev=default'
-```
-
-```
-TAG     REVISION NAMESPACES
-default 1-30-8   
-```
-
-```
-client version: 1.30.8
-control plane version: 1.30.8
-data plane version: 1.30.8 (7 proxies)
-```
-
-Before it removed anything, `istioctl uninstall` printed "There are still 7 proxies pointing to the control plane revision default" and listed all seven proxies, although `proxy-status` showed them on the new `istiod`. We did not find out why. After the uninstall all seven were still connected, and a new pod in a namespace with `istio-injection=enabled` got its sidecar (`2/2`).
-
-**Did it cost requests?**
-
-```
-    187 200
-```
-
-187 calls, all `200`.
-
-## Helm or istioctl: what is different
-
-| | Helm | istioctl |
-|---|---|---|
-| Second control plane | `helm install istiod-$REV ... --set revision=$REV` (a second release) | `istioctl install --set revision=$REV -f ...` |
-| Custom resource definitions | own step (`istio-base`) | part of `istioctl install` |
-| Gateway | own step, when you decide (`--set revision=$REV`) | replaced at once, if it is in the same file |
-| Tag `default` | `helm template ... -s templates/revision-tags-mwc.yaml` and `kubectl apply` | `istioctl tag set default --revision $REV --overwrite` |
-| Remove the old control plane | `helm delete istiod`, then `istio-base` with `defaultRevision` | `istioctl uninstall --revision default` |
-| Move a namespace | label and restart | label and restart |
-
 ## What we measured
 
 | Run | Calls | Failed | When |
 |---|---|---|---|
 | Helm, first run (without step 3 at first) | 574 | 1 | while the pods in `default` restarted |
 | Helm, second run (the steps above) | 182 | 2 | while the pods in `default` restarted |
-| istioctl | 187 | 0 | |
 
 ## What to take away
 
