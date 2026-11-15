@@ -91,6 +91,11 @@ kubectl apply -f peerauthentication-strict.yml
 
 The same two calls:
 
+```
+kubectl -n plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "HTTP %{http_code}\n" http://details.default:9080/details/0
+kubectl exec deploy/client -c curl -- curl -s -o /dev/null -m 5 -w "HTTP %{http_code}\n" http://details.default:9080/details/0
+```
+
 
 
 ```
