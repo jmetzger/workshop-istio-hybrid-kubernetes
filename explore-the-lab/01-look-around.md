@@ -31,6 +31,8 @@ v6-tln4-a-w1   Ready    <none>          4m57s   v1.35.10   2a01:4f8:c016:4db6::1
 
 (Names and addresses differ in your lab, the output is cut on the right.) The node addresses are IPv6 addresses. Kubernetes knows no IPv4 address in this cluster.
 
+`EXTERNAL-IP` is empty because these clusters run without a cloud controller manager, and only a cloud controller manager sets the external address of a node. The public IPv6 address of each node shows up as `INTERNAL-IP`. This is normal for a cluster built with kubeadm and is not an error.
+
 ## Step 2: Look at the pods in the mesh
 
 ```
@@ -90,7 +92,11 @@ reviews-v2-674c6d8b4-rcfxg.default                      cluster-a     istiod-66d
 reviews-v3-7b775c7568-h9q2w.default                     cluster-a     istiod-66dbd576c8-k4456     1.29.9      4 (CDS,LDS,EDS,RDS)
 ```
 
-This is the list of all proxies that are currently connected to `istiod`: the six pods of Bookinfo and the ingress gateway. Read it column by column:
+This is the list of all proxies that are currently connected to `istiod`: the six pods of Bookinfo and the ingress gateway. How the list is made: `istioctl` does not ask the proxies. It asks the debug interface of `istiod`. `istiod` keeps a record of every open xDS connection. For each proxy it remembers which configuration it sent last (with a nonce) and whether the proxy has confirmed it (ACK). The table shows one line per proxy.
+
+A proxy that is not in the list is not connected to `istiod`. Be careful: a line in the list says that the proxy is connected, not that it is healthy or that its configuration is correct.
+
+Read it column by column:
 
 | Column | Meaning |
 |---|---|
