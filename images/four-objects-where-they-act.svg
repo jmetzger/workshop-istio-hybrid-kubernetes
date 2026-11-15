@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 780" width="1100" height="780" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="o" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
+  </defs>
+  <rect width="1100" height="780" fill="#ffffff"/>
+  <text x="550" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">The four objects: what they ask, where they act, how to debug them</text>
+
+  <rect x="30" y="55" width="1040" height="165" rx="8" fill="#e8f0fe" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="50" y="80" font-weight="bold" fill="#1d3b66">You write (kubectl apply). Each object answers one question:</text>
+  <rect x="37" y="95" width="245" height="106" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="159" y="116" text-anchor="middle" font-weight="bold" fill="#1d3b66">Gateway</text>
+  <text x="159" y="138" text-anchor="middle" fill="#333" font-size="12">Which port, protocol and host</text>
+  <text x="159" y="154" text-anchor="middle" fill="#333" font-size="12">name does the ingress gateway</text>
+  <text x="159" y="170" text-anchor="middle" fill="#333" font-size="12">open?</text>
+  <rect x="297" y="95" width="245" height="106" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="419" y="116" text-anchor="middle" font-weight="bold" fill="#1d3b66">VirtualService</text>
+  <text x="419" y="138" text-anchor="middle" fill="#333" font-size="12">A request for this host arrives:</text>
+  <text x="419" y="154" text-anchor="middle" fill="#333" font-size="12">where does it go?</text>
+  <text x="419" y="170" text-anchor="middle" fill="#333" font-size="12">(match, weight, timeout,</text>
+  <text x="419" y="186" text-anchor="middle" fill="#333" font-size="12">retry, fault)</text>
+  <rect x="557" y="95" width="245" height="106" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="679" y="116" text-anchor="middle" font-weight="bold" fill="#1d3b66">DestinationRule</text>
+  <text x="679" y="138" text-anchor="middle" fill="#333" font-size="12">The request goes to this service:</text>
+  <text x="679" y="154" text-anchor="middle" fill="#333" font-size="12">how do we talk to it?</text>
+  <text x="679" y="170" text-anchor="middle" fill="#333" font-size="12">(subsets, load balancing, TLS,</text>
+  <text x="679" y="186" text-anchor="middle" fill="#333" font-size="12">connection limits)</text>
+  <rect x="817" y="95" width="245" height="106" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="939" y="116" text-anchor="middle" font-weight="bold" fill="#1d3b66">ServiceEntry</text>
+  <text x="939" y="138" text-anchor="middle" fill="#333" font-size="12">Which hosts outside the mesh</text>
+  <text x="939" y="154" text-anchor="middle" fill="#333" font-size="12">are known to the mesh?</text>
+
+  <path d="M550,222 L550,252" stroke="#555" stroke-width="2" fill="none" marker-end="url(#g)"/>
+  <rect x="330" y="255" width="440" height="60" rx="8" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/>
+  <text x="550" y="281" text-anchor="middle" font-weight="bold" fill="#8a4500">istiod</text>
+  <text x="550" y="301" text-anchor="middle" fill="#555" font-size="12">reads the objects, translates them, sends the result to the proxies (xDS)</text>
+
+  <text x="30" y="372" fill="#555" font-size="13" font-weight="bold">A request:</text>
+  <text x="30" y="394" fill="#555" font-size="12">comes in from outside, goes through the gateway,</text>
+  <text x="30" y="410" fill="#555" font-size="12">then from productpage to reviews</text>
+
+  <rect x="30" y="455" width="300" height="130" rx="8" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="180" y="481" text-anchor="middle" font-weight="bold">Ingress gateway pod</text>
+  <text x="180" y="501" text-anchor="middle" fill="#555" font-size="12">its Envoy gets</text>
+  <text x="180" y="529" text-anchor="middle" fill="#8a4500" font-weight="bold">a listener</text>
+  <text x="180" y="549" text-anchor="middle" fill="#555" font-size="12">from the Gateway</text>
+
+  <rect x="400" y="455" width="340" height="130" rx="8" fill="#fff" stroke="#3b8a3b" stroke-width="3"/>
+  <text x="570" y="481" text-anchor="middle" font-weight="bold">productpage pod (the caller)</text>
+  <text x="570" y="501" text-anchor="middle" fill="#555" font-size="12">its Envoy gets</text>
+  <text x="570" y="525" text-anchor="middle" fill="#8a4500" font-weight="bold">a route, from the VirtualService</text>
+  <text x="570" y="545" text-anchor="middle" fill="#8a4500" font-weight="bold">a cluster, from the DestinationRule</text>
+  <text x="570" y="565" text-anchor="middle" fill="#8a4500" font-weight="bold">endpoints, from Service and ServiceEntry</text>
+
+  <rect x="810" y="455" width="260" height="130" rx="8" fill="#f7f7f7" stroke="#888" stroke-width="2"/>
+  <text x="940" y="481" text-anchor="middle" font-weight="bold">reviews pods</text>
+  <text x="940" y="501" text-anchor="middle" fill="#555" font-size="12">reviews-v1, reviews-v2, reviews-v3</text>
+  <text x="940" y="531" text-anchor="middle" fill="#555" font-size="13">nothing changes here</text>
+  <text x="940" y="551" text-anchor="middle" fill="#555" font-size="12">the rules act at the caller</text>
+
+  <path d="M470,317 L180,453" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#o)"/>
+  <path d="M550,317 L570,453" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#o)"/>
+  <text x="300" y="360" fill="#8a4500" font-size="12" transform="rotate(-25 300 360)">xDS</text>
+  <text x="585" y="380" fill="#8a4500" font-size="12">xDS</text>
+
+  <path d="M332,520 L398,520" stroke="#555" stroke-width="2" fill="none" marker-end="url(#g)"/>
+  <path d="M742,520 L808,520" stroke="#555" stroke-width="2" fill="none" marker-end="url(#g)"/>
+  <text x="365" y="510" text-anchor="middle" fill="#555" font-size="11">call</text>
+  <text x="775" y="510" text-anchor="middle" fill="#555" font-size="11">call</text>
+  <text x="550" y="620" text-anchor="middle" fill="#1d3b66" font-size="13" font-weight="bold">A VirtualService for reviews changes the Envoy of productpage, not the Envoy of reviews.</text>
+
+  <text x="30" y="655" font-weight="bold" fill="#1d3b66">When a call fails, look in this order:</text>
+  <rect x="30" y="672" width="330" height="80" rx="6" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+  <circle cx="54" cy="700" r="13" fill="#3b8a3b"/><text x="54" y="705" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
+  <text x="76" y="705" font-family="monospace" font-weight="bold" fill="#222" font-size="13">istioctl analyze</text>
+  <text x="46" y="734" fill="#333" font-size="12">Are the objects consistent?</text>
+  <path d="M362,712 L383,712" stroke="#555" stroke-width="2" fill="none" marker-end="url(#g)"/>
+  <rect x="385" y="672" width="330" height="80" rx="6" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+  <circle cx="409" cy="700" r="13" fill="#3b8a3b"/><text x="409" y="705" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+  <text x="431" y="705" font-family="monospace" font-weight="bold" fill="#222" font-size="13">istioctl proxy-status</text>
+  <text x="401" y="734" fill="#333" font-size="12">Is the proxy of the caller connected to istiod?</text>
+  <path d="M717,712 L738,712" stroke="#555" stroke-width="2" fill="none" marker-end="url(#g)"/>
+  <rect x="740" y="672" width="330" height="80" rx="6" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+  <circle cx="764" cy="700" r="13" fill="#3b8a3b"/><text x="764" y="705" text-anchor="middle" fill="#fff" font-weight="bold">3</text>
+  <text x="786" y="705" font-family="monospace" font-weight="bold" fill="#222" font-size="13">istioctl proxy-config</text>
+  <text x="756" y="725" fill="#333" font-size="12">routes, clusters, endpoints of the caller:</text>
+  <text x="756" y="741" fill="#333" font-size="12">what does Envoy really have?</text>
+</svg>
