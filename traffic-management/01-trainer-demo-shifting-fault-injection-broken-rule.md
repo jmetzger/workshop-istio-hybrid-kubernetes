@@ -117,7 +117,7 @@ kubectl exec deploy/client -c curl -- sh -c 'for i in $(seq 1 20); do curl -s ht
       4 reviews-v3
 ```
 
-What the Envoy of the **caller** got: a route with two weighted clusters, and one cluster per subset.
+What the Envoy of the **caller** got. The caller here is the test pod `client` (it plays the role of `productpage` in the picture on the previous page), so `deploy/client` means the Envoy sidecar of that pod. It got a route with two weighted clusters, and one cluster per subset.
 
 ```
 istioctl proxy-config routes deploy/client --name 9080 -o json | jq -c '.[0].virtualHosts[] | select(.name|startswith("reviews")) | .routes[0].route.weightedClusters.clusters[] | {name,weight}'
