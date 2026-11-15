@@ -1,5 +1,7 @@
 # mTLS between workloads: PERMISSIVE and STRICT
 
+![PERMISSIVE accepts mTLS and plain text, STRICT accepts only mTLS](/images/mtls-permissive-and-strict.svg)
+
 ## What we do
 
 Two sidecars talk mTLS to each other without any setting. But by default a workload also accepts plain text, from callers that have no sidecar (mode `PERMISSIVE`). In this exercise you see the difference, switch one namespace to `STRICT` and see who is locked out.

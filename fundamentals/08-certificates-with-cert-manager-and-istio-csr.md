@@ -111,6 +111,8 @@ default           Cert Chain     ACTIVE     true           3c86c8408d15841d9f5fa
 ROOTCA            CA             ACTIVE     true           622ad438aac119a3c725647160f33603ba53e4f7     2026-12-14T09:31:53Z     2026-11-14T09:31:53Z
 ```
 
+> **Info: what "Cert Chain" means.** The two lines have two roles. `default` (type `Cert Chain`) answers "who am I": the certificate of this pod, together with the certificates of the issuers behind it. A chain of trust: each certificate is signed by the next one, up to a root. `ROOTCA` answers "whom do I trust": the root with which the sidecar checks the chains of all other pods. The name `Cert Chain` is not an Istio term, it comes from Envoy (the field `certificate_chain` of the secret that the sidecar agent hands to Envoy). In our lab the chain of `productpage` has three certificates: the pod certificate, signed by `Intermediate CA tln2 a`, signed by `Lab Root CA tln2`, which signs itself and is the same certificate as `ROOTCA`. In a call, each side sends its chain and checks the chain of the other side against its own `ROOTCA`. This is why two clusters need the same root.
+
 Who signed it, and for which identity:
 
 ```

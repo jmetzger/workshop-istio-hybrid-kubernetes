@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 560" width="1100" height="560" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="gr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3b8a3b"/></marker>
+  </defs>
+  <rect width="1100" height="560" fill="#ffffff"/>
+  <text x="550" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">mTLS between workloads: PERMISSIVE and STRICT</text>
+  <rect x="30" y="60" width="500" height="330" rx="8" fill="#fafafa" stroke="#888" stroke-width="2"/>
+  <text x="280" y="90" text-anchor="middle" font-size="18" font-weight="bold" fill="#222">PERMISSIVE (the default)</text>
+  <text x="280" y="112" text-anchor="middle" font-size="12" fill="#555">no PeerAuthentication in the cluster</text>
+  <rect x="50" y="150" width="150" height="70" rx="6" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="125" y="176" text-anchor="middle" font-weight="bold">client</text>
+  <text x="125" y="196" text-anchor="middle" font-size="12" fill="#555">with sidecar (2/2)</text>
+  <rect x="50" y="270" width="150" height="70" rx="6" fill="#fff" stroke="#888" stroke-width="2"/>
+  <text x="125" y="296" text-anchor="middle" font-weight="bold">plain</text>
+  <text x="125" y="316" text-anchor="middle" font-size="12" fill="#555">no sidecar (1/1)</text>
+  <rect x="340" y="140" width="170" height="210" rx="8" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="425" y="164" text-anchor="middle" font-weight="bold">details pod</text>
+  <rect x="355" y="180" width="140" height="60" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/>
+  <text x="425" y="206" text-anchor="middle" fill="#8a4500" font-weight="bold">sidecar (Envoy)</text>
+  <text x="425" y="226" text-anchor="middle" font-size="12" fill="#8a4500">decides who may in</text>
+  <rect x="355" y="270" width="140" height="60" rx="6" fill="#e8f5e9" stroke="#3b8a3b"/>
+  <text x="425" y="305" text-anchor="middle">app :9080</text>
+  <path d="M425,242 L425,268" stroke="#555" stroke-width="2" fill="none" marker-end="url(#g)"/>
+  <path d="M202,185 L338,200" stroke="#3b8a3b" stroke-width="3" fill="none" marker-end="url(#gr)"/>
+  <text x="270" y="176" text-anchor="middle" font-size="13" font-weight="bold" fill="#3b8a3b">mTLS</text>
+  <text x="270" y="226" text-anchor="middle" font-size="22" fill="#3b8a3b">&#10003;</text>
+  <path d="M202,305 L338,225" stroke="#3b8a3b" stroke-width="3" fill="none" marker-end="url(#gr)"/>
+  <text x="265" y="295" text-anchor="middle" font-size="13" font-weight="bold" fill="#3b8a3b">plain text</text>
+  <text x="262" y="326" text-anchor="middle" font-size="22" fill="#3b8a3b">&#10003;</text>
+  <rect x="570" y="60" width="500" height="330" rx="8" fill="#fafafa" stroke="#888" stroke-width="2"/>
+  <text x="820" y="90" text-anchor="middle" font-size="18" font-weight="bold" fill="#222">STRICT</text>
+  <text x="820" y="112" text-anchor="middle" font-size="12" fill="#555">PeerAuthentication default in the namespace default: mode STRICT</text>
+  <rect x="590" y="150" width="150" height="70" rx="6" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="665" y="176" text-anchor="middle" font-weight="bold">client</text>
+  <text x="665" y="196" text-anchor="middle" font-size="12" fill="#555">with sidecar (2/2)</text>
+  <rect x="590" y="270" width="150" height="70" rx="6" fill="#fff" stroke="#888" stroke-width="2"/>
+  <text x="665" y="296" text-anchor="middle" font-weight="bold">plain</text>
+  <text x="665" y="316" text-anchor="middle" font-size="12" fill="#555">no sidecar (1/1)</text>
+  <rect x="880" y="140" width="170" height="210" rx="8" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="965" y="164" text-anchor="middle" font-weight="bold">details pod</text>
+  <rect x="895" y="180" width="140" height="60" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/>
+  <text x="965" y="206" text-anchor="middle" fill="#8a4500" font-weight="bold">sidecar (Envoy)</text>
+  <text x="965" y="226" text-anchor="middle" font-size="12" fill="#8a4500">decides who may in</text>
+  <rect x="895" y="270" width="140" height="60" rx="6" fill="#e8f5e9" stroke="#3b8a3b"/>
+  <text x="965" y="305" text-anchor="middle">app :9080</text>
+  <path d="M965,242 L965,268" stroke="#555" stroke-width="2" fill="none" marker-end="url(#g)"/>
+  <path d="M742,185 L878,200" stroke="#3b8a3b" stroke-width="3" fill="none" marker-end="url(#gr)"/>
+  <text x="810" y="176" text-anchor="middle" font-size="13" font-weight="bold" fill="#3b8a3b">mTLS</text>
+  <text x="810" y="226" text-anchor="middle" font-size="22" fill="#3b8a3b">&#10003;</text>
+  <path d="M742,305 L832,305" stroke="#c0392b" stroke-width="3" fill="none" stroke-dasharray="8 5"/>
+  <text x="785" y="295" text-anchor="middle" font-size="13" font-weight="bold" fill="#c0392b">plain text</text>
+  <text x="855" y="314" text-anchor="middle" font-size="26" font-weight="bold" fill="#c0392b">&#10007;</text>
+  <text x="280" y="415" text-anchor="middle" fill="#333" font-size="13">HTTP 200 from both callers:</text>
+  <text x="280" y="434" text-anchor="middle" fill="#333" font-size="13">the sidecar accepts mTLS and plain text</text>
+  <text x="820" y="415" text-anchor="middle" fill="#c0392b" font-size="13" font-weight="bold">plain: connection reset, no HTTP status (curl exit code 56)</text>
+  <text x="820" y="434" text-anchor="middle" fill="#333" font-size="13">client: HTTP 200, does not notice anything</text>
+  <rect x="30" y="460" width="1040" height="80" rx="6" fill="#e8f0fe" stroke="#4a6fa5"/>
+  <text x="550" y="485" text-anchor="middle" fill="#1d3b66" font-size="13" font-weight="bold">Still allowed in STRICT: every caller with a sidecar and a certificate from the same root</text>
+  <text x="550" y="505" text-anchor="middle" fill="#1d3b66" font-size="13">for example the ingress gateway and a pod in cluster b. Locked out: everything without a sidecar</text>
+  <text x="550" y="525" text-anchor="middle" fill="#1d3b66" font-size="13">(a job in a namespace without injection, a monitoring agent, a health check from outside the mesh).</text>
+</svg>
