@@ -60,7 +60,7 @@
   <text x="535" y="388" text-anchor="middle" fill="#555" font-size="12">(the pod does not run as root)</text>
   <rect x="385" y="430" width="300" height="130" rx="6" fill="#fff" stroke="#3b8a3b"/>
   <text x="535" y="454" text-anchor="middle" font-weight="bold">Pod istio-ingressgateway (Envoy)</text>
-  <text x="535" y="478" text-anchor="middle" fill="#333" font-size="13">listens on [::]:8080  (IPv6 only), runs on any node</text>
+  <text x="535" y="478" text-anchor="middle" fill="#333" font-size="13">listens on [::]:8080, one pod on one node</text>
   <text x="535" y="502" text-anchor="middle" fill="#555" font-size="12">gets its routes from istiod, built from the</text>
   <text x="535" y="518" text-anchor="middle" fill="#555" font-size="12">Gateway and the VirtualService (namespace default)</text>
   <path d="M535,402 L535,428" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
