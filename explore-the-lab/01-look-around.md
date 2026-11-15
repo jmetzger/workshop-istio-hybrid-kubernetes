@@ -52,10 +52,11 @@ Every pod shows `2/2`, although each pod has only one application container. The
 ## Step 3: Find the sidecar
 
 ```
-kubectl get pod -l app=productpage -o jsonpath='{.items[0].spec.containers[*].name}'; echo
+kubectl get pod -l app=productpage -o jsonpath='{.items[0].spec.containers[*].name}'; ech
 ```
 
 ```
+# Output 
 productpage
 ```
 
@@ -66,7 +67,7 @@ kubectl get pod -l app=productpage -o jsonpath='{.items[0].spec.initContainers[*
 ```
 
 ```
-istio-init istio-proxy
+# istio-init istio-proxy
 ```
 
 `istio-init` sets up the traffic redirection and ends. `istio-proxy` is the sidecar and keeps running.
