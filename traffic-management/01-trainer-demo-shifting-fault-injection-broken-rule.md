@@ -136,74 +136,7 @@ reviews.default.svc.cluster.local     9080     v3         outbound      EDS     
       8 reviews-v3
 ```
 
-## Demo 2: fault injection
-
-Optional. The trainer does not show this part in the training. Demo 3 does not need it.
-
-A fault is injected in the Envoy of the caller. The service itself is not touched. First the normal call:
-
-```
-kubectl exec deploy/client -c curl -- curl -s -o /dev/null -w "HTTP %{http_code} in %{time_total}s\n" http://ratings:9080/ratings/0
-```
-
-```
-HTTP 200 in 0.021429s
-```
-
-A delay of three seconds for every call. `04-virtualservice-ratings-delay.yml`:
-
-```
-apiVersion: networking.istio.io/v1
-kind: VirtualService
-metadata:
-  name: ratings
-spec:
-  hosts:
-    - ratings
-  http:
-    - fault:
-        delay:
-          percentage:
-            value: 100
-          fixedDelay: 3s
-      route:
-        - destination:
-            host: ratings
-```
-
-```
-kubectl apply -f 04-virtualservice-ratings-delay.yml
-```
-
-```
-HTTP 200 in 3.017278s
-```
-
-An error instead of an answer. `05-virtualservice-ratings-abort.yml` is the same file with this `fault`:
-
-```
-    - fault:
-        abort:
-          percentage:
-            value: 100
-          httpStatus: 503
-```
-
-```
-kubectl apply -f 05-virtualservice-ratings-abort.yml
-```
-
-```
-HTTP 503 in 0.006621s
-```
-
-The body of the answer is `fault filter abort`: this `503` comes from Envoy, the call never left the pod of the caller. Remove the fault:
-
-```
-kubectl delete virtualservice ratings
-```
-
-## Demo 3: a broken rule
+## Demo 2: a broken rule
 
 The `VirtualService` sends to the subset `v1`. We delete the `DestinationRule` that defines it:
 
