@@ -2,34 +2,23 @@
 
 ## What we do
 
-You install the three sample add-ons of Istio in cluster a, and you ask Prometheus four questions: who talks to whom, how fast, and how much memory and CPU the sidecars and `istiod` use. Measured in our lab (Istio 1.29.9, IPv6 only).
+The three sample add-ons of Istio are already installed in your lab. You ask Prometheus four questions: who talks to whom, how fast, and how much memory and CPU the sidecars and `istiod` use. Measured in our lab (Istio 1.29.9, IPv6 only).
 
 The add-ons are the samples from the Istio repository. They are good for a lab and not meant for production (no storage, no access control).
 
 All commands run on your bastion host as your lab user, in cluster a.
 
-## Step 1: Install the add-ons
+## Step 1: Check the add-ons
+
+Prometheus (both clusters), Grafana and Kiali (cluster a) are already installed in your lab. Nothing to install. The addresses and the password for your browser are in `~/monitoring-access.md`.
 
 ```
-export ADDONS=https://raw.githubusercontent.com/istio/istio/1.29.9/samples/addons
-kubectl apply -f $ADDONS/prometheus.yaml -f $ADDONS/grafana.yaml -f $ADDONS/kiali.yaml
-```
-
-**IPv6 only:** one image of the Prometheus sample comes from `ghcr.io`, and this registry has no IPv6 address. The pod stays in `ImagePullBackOff`. The same image is on `quay.io`:
-
-```
-kubectl -n istio-system set image deploy/prometheus prometheus-server-configmap-reload=quay.io/prometheus-operator/prometheus-config-reloader:v0.87.1
-kubectl -n istio-system rollout status deploy/prometheus
 kubectl -n istio-system get pods
 ```
 
-```
-NAME                          READY   STATUS    RESTARTS   AGE
-grafana-665dcbcb9b-5xckw      1/1     Running   0          4m50s
-istiod-66dbd576c8-k4456       1/1     Running   0          13m
-kiali-668bbb4856-g4sv9        1/1     Running   0          4m49s
-prometheus-68644cc96b-x5jsj   2/2     Running   0          5s
-```
+You should see `grafana`, `kiali` and `prometheus` with `Running`.
+
+**IPv6 only:** one image of the Prometheus sample comes from `ghcr.io`, and this registry has no IPv6 address. The pod would stay in `ImagePullBackOff`. The lab uses the same image from `quay.io`.
 
 ## Step 2: Create some traffic
 

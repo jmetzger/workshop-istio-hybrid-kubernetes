@@ -21,6 +21,7 @@ All material in this repository is in English.
      * [The big picture: several clusters and virtual machines in one mesh](fundamentals/00-the-big-picture-multi-cluster-and-vms.md)
   
   1. Explore the lab
+     * [Our lab: servers, VMs, bastion and monitoring (everything is IPv6)](explore-the-lab/00-our-lab.md)
      * [Look around the lab: nodes, pods, sidecar, `istioctl proxy-status`](explore-the-lab/01-look-around.md)
      * [How Istio is installed in the lab (Helm releases, settings, APIs)](explore-the-lab/02-how-istio-is-installed.md)
 

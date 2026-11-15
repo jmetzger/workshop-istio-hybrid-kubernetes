@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1000" width="1200" height="1000" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="po" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
+  </defs>
+  <rect width="1200" height="1000" fill="#ffffff"/>
+  <text x="600" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Our lab: two clusters, two VMs, the bastion host and the monitoring</text>
+
+  <!-- IPv6 banner -->
+  <rect x="40" y="46" width="1120" height="40" rx="8" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/>
+  <text x="600" y="72" text-anchor="middle" font-weight="bold" fill="#8a4500" font-size="16">Everything in this lab is IPv6. No lab server has an IPv4 address (pods, services, VMs, istiod, all of it).</text>
+
+  <!-- Browser -->
+  <rect x="40" y="112" width="200" height="70" rx="8" fill="#fafafa" stroke="#888"/>
+  <text x="140" y="140" text-anchor="middle" font-weight="bold">Your browser</text>
+  <text x="140" y="162" text-anchor="middle" fill="#555" font-size="12">IPv4 or IPv6, you do not care</text>
+
+  <!-- Bastion -->
+  <rect x="330" y="104" width="540" height="112" rx="8" fill="#e8f0fe" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="600" y="128" text-anchor="middle" font-weight="bold" fill="#1d3b66">Bastion host (jump host): you work here</text>
+  <text x="600" y="150" text-anchor="middle" fill="#1d3b66" font-size="13">kubectl, helm, istioctl 1.29.9, ssh a-cp / b-cp / a-vm1 ...</text>
+  <text x="600" y="170" text-anchor="middle" fill="#1d3b66" font-size="13">Caddy: HTTPS and login, the only part that also has IPv4</text>
+  <text x="600" y="192" text-anchor="middle" fill="#1d3b66" font-size="12">grafana. kiali. prometheus-a. prometheus-b.  &lt;your-user&gt;.do.t3isp.de</text>
+  <circle cx="345" cy="120" r="11" fill="#555"/><text x="345" y="125" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
+  <path d="M240,147 L328,147" stroke="#d9730d" stroke-width="2.2" fill="none" marker-end="url(#po)"/>
+  <text x="284" y="138" text-anchor="middle" fill="#d9730d" font-size="12">HTTPS</text>
+
+  <!-- Bastion to clusters -->
+  <path d="M470,216 L300,262" stroke="#555" stroke-width="1.8" fill="none" stroke-dasharray="6 4" marker-end="url(#pf)"/>
+  <path d="M730,216 L900,262" stroke="#555" stroke-width="1.8" fill="none" stroke-dasharray="6 4" marker-end="url(#pf)"/>
+  <text x="600" y="237" text-anchor="middle" fill="#555" font-size="12">over IPv6: ssh, 6443, 80</text>
+
+  <!-- Cluster a -->
+  <rect x="40" y="264" width="540" height="560" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="60" y="290" font-weight="bold" font-size="16" fill="#1f5f1f">Cluster a (context cluster-a, network net1)</text>
+  <text x="560" y="290" text-anchor="end" fill="#1f5f1f" font-size="12" font-weight="bold">IPv6 only</text>
+
+  <rect x="60" y="305" width="240" height="78" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="180" y="330" text-anchor="middle" font-weight="bold">a-cp: control plane</text>
+  <text x="180" y="351" text-anchor="middle" fill="#555" font-size="13">Kubernetes API, MetalLB</text>
+  <text x="180" y="370" text-anchor="middle" fill="#555" font-size="12">API server :6443</text>
+
+  <rect x="320" y="305" width="240" height="78" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="440" y="330" text-anchor="middle" font-weight="bold">a-w1: worker</text>
+  <text x="440" y="351" text-anchor="middle" fill="#555" font-size="13">all the pods below run here</text>
+  <text x="440" y="370" text-anchor="middle" fill="#555" font-size="12">Calico, no overlay</text>
+
+  <rect x="60" y="405" width="500" height="260" rx="8" fill="#fff" stroke="#3b8a3b" stroke-dasharray="6 4"/>
+  <text x="76" y="426" fill="#1f5f1f" font-size="12" font-weight="bold">Pods in cluster a</text>
+
+  <rect x="76" y="440" width="150" height="56" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="151" y="463" text-anchor="middle" font-weight="bold" font-size="12">istio-ingressgateway</text>
+  <text x="151" y="482" text-anchor="middle" fill="#555" font-size="11">ns istio-ingress, own IPv6</text>
+  <circle cx="226" cy="442" r="9" fill="#555"/><text x="226" y="446" text-anchor="middle" fill="#fff" font-weight="bold" font-size="11">2</text>
+
+  <rect x="242" y="440" width="150" height="56" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="317" y="463" text-anchor="middle" font-weight="bold">Bookinfo</text>
+  <text x="317" y="482" text-anchor="middle" fill="#555" font-size="12">Pods + Sidecar</text>
+
+  <rect x="408" y="440" width="136" height="56" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="476" y="463" text-anchor="middle" font-weight="bold">istiod, istio-csr</text>
+  <text x="476" y="482" text-anchor="middle" fill="#555" font-size="12">and cert-manager</text>
+
+  <rect x="76" y="520" width="150" height="56" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/>
+  <text x="151" y="543" text-anchor="middle" font-weight="bold">Prometheus</text>
+  <text x="151" y="562" text-anchor="middle" fill="#555" font-size="12">:9090, ns istio-system</text>
+  <rect x="242" y="520" width="150" height="56" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/>
+  <text x="317" y="543" text-anchor="middle" font-weight="bold">Grafana</text>
+  <text x="317" y="562" text-anchor="middle" fill="#555" font-size="12">:3000, ns istio-system</text>
+  <rect x="408" y="520" width="136" height="56" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/>
+  <text x="476" y="543" text-anchor="middle" font-weight="bold">Kiali</text>
+  <text x="476" y="562" text-anchor="middle" fill="#555" font-size="12">:20001, ns istio-system</text>
+  <circle cx="530" cy="532" r="9" fill="#555"/><text x="530" y="536" text-anchor="middle" fill="#fff" font-weight="bold" font-size="11">3</text>
+  <text x="76" y="608" fill="#555" font-size="12">Prometheus collects the numbers from every sidecar and from istiod.</text>
+  <text x="76" y="628" fill="#555" font-size="12">Grafana (two data sources: a and b) and Kiali read from Prometheus.</text>
+  <text x="76" y="648" fill="#555" font-size="12">Reach all three from your browser through the bastion (1 and 2).</text>
+
+  <rect x="60" y="690" width="500" height="112" rx="6" fill="#fafafa" stroke="#888" stroke-dasharray="6 4"/>
+  <text x="310" y="716" text-anchor="middle" font-weight="bold">a-vm1: virtual machine (Ubuntu), IPv6 only</text>
+  <text x="310" y="738" text-anchor="middle" fill="#555" font-size="13">no Kubernetes. Not in the mesh until you add it (exercise).</text>
+  <text x="310" y="758" text-anchor="middle" fill="#555" font-size="13">Then: pilot-agent + Envoy as a system service, namespace vm</text>
+  <text x="310" y="780" text-anchor="middle" fill="#8a4500" font-size="12" font-weight="bold">VM without IPv4: the IPv4 address of the VM is switched off</text>
+
+  <!-- Cluster b -->
+  <rect x="620" y="264" width="540" height="560" rx="10" fill="#f7f3fb" stroke="#7a4fb0" stroke-width="2"/>
+  <text x="640" y="290" font-weight="bold" font-size="16" fill="#4b2a78">Cluster b (context cluster-b, network net1)</text>
+  <text x="1140" y="290" text-anchor="end" fill="#4b2a78" font-size="12" font-weight="bold">IPv6 only</text>
+
+  <rect x="640" y="305" width="240" height="78" rx="6" fill="#fff" stroke="#7a4fb0"/>
+  <text x="760" y="330" text-anchor="middle" font-weight="bold">b-cp: control plane</text>
+  <text x="760" y="351" text-anchor="middle" fill="#555" font-size="13">Kubernetes API, MetalLB</text>
+  <text x="760" y="370" text-anchor="middle" fill="#555" font-size="12">API server :6443</text>
+
+  <rect x="900" y="305" width="240" height="78" rx="6" fill="#fff" stroke="#7a4fb0"/>
+  <text x="1020" y="330" text-anchor="middle" font-weight="bold">b-w1: worker</text>
+  <text x="1020" y="351" text-anchor="middle" fill="#555" font-size="13">all the pods below run here</text>
+  <text x="1020" y="370" text-anchor="middle" fill="#555" font-size="12">Calico, no overlay</text>
+
+  <rect x="640" y="405" width="500" height="260" rx="8" fill="#fff" stroke="#7a4fb0" stroke-dasharray="6 4"/>
+  <text x="656" y="426" fill="#4b2a78" font-size="12" font-weight="bold">Pods in cluster b</text>
+
+  <rect x="656" y="440" width="150" height="56" rx="6" fill="#fff" stroke="#7a4fb0"/>
+  <text x="731" y="463" text-anchor="middle" font-weight="bold" font-size="12">istio-ingressgateway</text>
+  <text x="731" y="482" text-anchor="middle" fill="#555" font-size="11">ns istio-ingress, own IPv6</text>
+  <circle cx="806" cy="442" r="9" fill="#555"/><text x="806" y="446" text-anchor="middle" fill="#fff" font-weight="bold" font-size="11">2</text>
+  <rect x="822" y="440" width="150" height="56" rx="6" fill="#fff" stroke="#7a4fb0"/>
+  <text x="897" y="463" text-anchor="middle" font-weight="bold">Bookinfo</text>
+  <text x="897" y="482" text-anchor="middle" fill="#555" font-size="12">Pods + Sidecar</text>
+  <rect x="988" y="440" width="136" height="56" rx="6" fill="#fff" stroke="#7a4fb0"/>
+  <text x="1056" y="463" text-anchor="middle" font-weight="bold">istiod, istio-csr</text>
+  <text x="1056" y="482" text-anchor="middle" fill="#555" font-size="12">and cert-manager</text>
+
+  <rect x="656" y="520" width="150" height="56" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="2"/>
+  <text x="731" y="543" text-anchor="middle" font-weight="bold">Prometheus</text>
+  <text x="731" y="562" text-anchor="middle" fill="#555" font-size="12">:9090, ns istio-system</text>
+  <text x="656" y="608" fill="#555" font-size="12">Only Prometheus runs in cluster b. Grafana in cluster a reads it as the</text>
+  <text x="656" y="628" fill="#555" font-size="12">second data source, so one Grafana shows both clusters.</text>
+  <text x="656" y="648" fill="#555" font-size="12">Kiali shows cluster a only.</text>
+
+  <rect x="640" y="690" width="500" height="112" rx="6" fill="#fafafa" stroke="#888" stroke-dasharray="6 4"/>
+  <text x="890" y="716" text-anchor="middle" font-weight="bold">b-vm1: virtual machine (Ubuntu), IPv6 only</text>
+  <text x="890" y="738" text-anchor="middle" fill="#555" font-size="13">no Kubernetes. Not in the mesh until you add it (exercise).</text>
+  <text x="890" y="758" text-anchor="middle" fill="#555" font-size="13">The second VM, for cluster b (exercise)</text>
+  <text x="890" y="780" text-anchor="middle" fill="#8a4500" font-size="12" font-weight="bold">VM without IPv4: the IPv4 address of the VM is switched off</text>
+
+  <!-- Link between the clusters -->
+  <path d="M562,430 L618,430" stroke="#d9730d" stroke-width="1.6" fill="none" marker-start="url(#pf)" marker-end="url(#pf)"/>
+  <text x="590" y="418" text-anchor="middle" fill="#d9730d" font-size="11" font-weight="bold">mesh</text>
+  <text x="590" y="452" text-anchor="middle" fill="#d9730d" font-size="10">IPv6</text>
+  <path d="M562,590 L618,590" stroke="#d9730d" stroke-width="1.8" fill="none" stroke-dasharray="5 4" marker-end="url(#po)"/>
+  <text x="590" y="580" text-anchor="middle" fill="#d9730d" font-size="10">metrics</text>
+
+  <!-- Legend -->
+  <rect x="40" y="842" width="1120" height="140" rx="8" fill="#fafafa" stroke="#bbb"/>
+  <text x="60" y="868" font-weight="bold" fill="#222">How to read it</text>
+  <circle cx="70" cy="888" r="9" fill="#555"/><text x="70" y="892" text-anchor="middle" fill="#fff" font-weight="bold" font-size="11">1</text>
+  <text x="90" y="893" fill="#333" font-size="13">The bastion: your kubectl runs here. Monitoring pages open through its HTTPS address, the only one that also answers on IPv4.</text>
+  <circle cx="70" cy="912" r="9" fill="#555"/><text x="70" y="916" text-anchor="middle" fill="#fff" font-weight="bold" font-size="11">2</text>
+  <text x="90" y="917" fill="#333" font-size="13">Each cluster has an ingress gateway with its own IPv6 address. The bastion forwards the monitoring requests to it over IPv6.</text>
+  <circle cx="70" cy="936" r="9" fill="#555"/><text x="70" y="940" text-anchor="middle" fill="#fff" font-weight="bold" font-size="11">3</text>
+  <text x="90" y="941" fill="#333" font-size="13">Orange boxes are the monitoring add-ons (Istio samples, no storage, for a lab only). Details: Monitoring chapter.</text>
+  <text x="90" y="966" fill="#8a4500" font-size="13" font-weight="bold">IPv6 only means: if a tool or an image registry has no IPv6 address (for example ghcr.io), it does not work here. Use another source.</text>
+</svg>
