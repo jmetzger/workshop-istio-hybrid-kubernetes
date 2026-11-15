@@ -45,7 +45,7 @@ For Istio it makes no difference who signs in the end: `istio-csr` always create
 * **A short lifetime.** A sidecar renews its certificate after half of its lifetime. If the CA is gone for longer than the rest of the lifetime, the certificate expires and new mTLS connections fail. With one hour this happens much sooner than with 24 hours. Our lab uses 10 minutes on purpose: you see a renewal every 5 minutes, and an outage of the CA shows its effect within minutes.
 * **A VM needs a second address.** It must reach `istiod` **and** `istio-csr`. We come back to this in the VM exercise.
 
-## Look at it yourself
+## Exercise: Look at it yourself
 
 The commands run on your bastion host as your lab user.
 
