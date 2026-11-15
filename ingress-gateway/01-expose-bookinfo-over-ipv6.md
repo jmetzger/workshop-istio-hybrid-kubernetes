@@ -115,32 +115,14 @@ ADDRESSES PORT  MATCH DESTINATION
 
 The addresses are `::`, not `0.0.0.0`. Envoy in an IPv6 single stack cluster listens on IPv6 only. The listener for your Gateway resource is on 8080: the `Gateway` of the sample names port 8080, the port of the gateway pod, and the Service port 80 leads there (step 1).
 
-## Step 6: Call it from other places
-
-The gateway address is reachable from everywhere that has IPv6 connectivity to your lab:
-
-| Caller | Command | Expected |
-|---|---|---|
-| A node of the other cluster (cluster B) | `curl -6 -s -o /dev/null -w "HTTP %{http_code}\n" "http://[$GATEWAY]/productpage"` | HTTP 200 |
-| A host outside the lab with IPv6 (for example the trainer's machine) | the same command | HTTP 200 |
-| A host with IPv4 only | cannot work, there is no IPv4 address anywhere in the lab | no connection |
-
-If the call ends immediately with `Connection refused` although the Service has an endpoint, check the `targetPort` of the Service (step 1). With `targetPort` 80 the traffic arrives at a port where nothing listens. A quick test:
-
-```
-kubectl get endpointslice -n istio-ingress
-```
-
-The endpoint list is fine in that case, only the port is wrong. That is why this problem is easy to overlook.
-
 ## Limits to know
 
 * The fixed address belongs to the `/64` of **one** node. If this node is down, the address is gone, even if the gateway pod runs on another node.
-* `externalTrafficPolicy: Cluster` (the default) hides the real client address from the gateway (source NAT).
 
-## Clean up
 
-Keep Bookinfo, the next exercises use it. If you want to remove it:
+**Keep Bookinfo, the next exercises use it. If you want to remove it:**
+
+## Optional: Tear bookinfo down 
 
 ```
 kubectl delete -f $SAMPLES/bookinfo/networking/bookinfo-gateway.yaml
