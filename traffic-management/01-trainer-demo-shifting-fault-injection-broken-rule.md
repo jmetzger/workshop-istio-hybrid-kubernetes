@@ -72,7 +72,12 @@ kubectl apply -f 01-destinationrule-reviews.yml -f 02-virtualservice-reviews-v1.
 The same twenty calls:
 
 ```
-     20 reviews-v1
+kubectl exec deploy/client -c curl -- sh -c 'for i in $(seq 1 20); do curl -s http://reviews:9080/reviews/0; echo; done' | grep -o "reviews-v[123]" | sort | uniq -c
+```
+
+```
+# output 
+20 reviews-v1
 ```
 
 Now 80 percent to `v1` and 20 percent to `v3`. `03-virtualservice-reviews-80-20.yml`:
