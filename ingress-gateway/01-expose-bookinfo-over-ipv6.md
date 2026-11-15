@@ -24,6 +24,7 @@ export SAMPLES=https://raw.githubusercontent.com/istio/istio/1.29.9/samples
 ## Step 1: Look at the gateway Service
 
 ```
+export SAMPLES=https://raw.githubusercontent.com/istio/istio/1.29.9/samples
 kubectl get svc istio-ingressgateway -n istio-ingress
 ```
 
@@ -65,6 +66,7 @@ kubectl get pods -n default
 ## Step 3: Publish it with a Gateway and a VirtualService
 
 ```
+wget -q -O -  $SAMPLES/bookinfo/networking/bookinfo-gateway.yaml
 kubectl apply -f $SAMPLES/bookinfo/networking/bookinfo-gateway.yaml
 kubectl get gateway,virtualservice -n default
 ```
