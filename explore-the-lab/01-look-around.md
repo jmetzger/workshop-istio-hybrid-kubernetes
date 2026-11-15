@@ -92,9 +92,7 @@ reviews-v2-674c6d8b4-rcfxg.default                      cluster-a     istiod-66d
 reviews-v3-7b775c7568-h9q2w.default                     cluster-a     istiod-66dbd576c8-k4456     1.29.9      4 (CDS,LDS,EDS,RDS)
 ```
 
-This is the list of all proxies that are currently connected to `istiod`: the six pods of Bookinfo and the ingress gateway. How the list is made: `istioctl` does not ask the proxies. It asks the debug interface of `istiod`. `istiod` keeps a record of every open xDS connection. For each proxy it remembers which configuration it sent last (with a nonce) and whether the proxy has confirmed it (ACK). The table shows one line per proxy.
-
-A proxy that is not in the list is not connected to `istiod`. Be careful: a line in the list says that the proxy is connected, not that it is healthy or that its configuration is correct.
+This is the list of all proxies that are currently connected to `istiod`: the six pods of Bookinfo and the ingress gateway.
 
 Read it column by column:
 
@@ -115,6 +113,8 @@ The abbreviations are the kinds of configuration Envoy receives from `istiod`:
 | EDS | endpoints: which addresses are behind a service |
 | RDS | routes: how are requests distributed |
 | NDS | name table: used by the DNS proxy, for example on a VM (you see it on day 2) |
+
+> **Info: how the list is made.** `istioctl` does not ask the proxies, it asks the debug interface of `istiod`. `istiod` records every open xDS connection and, for each proxy, which configuration it sent last (with a nonce) and whether the proxy confirmed it (ACK). A proxy that is not in the list is not connected. A line in the list does not mean the proxy is healthy or its configuration is correct.
 
 ## Step 5: The same in cluster b
 
