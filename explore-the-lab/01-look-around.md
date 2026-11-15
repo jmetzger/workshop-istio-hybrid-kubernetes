@@ -158,6 +158,8 @@ plain-web   1/1     Running   0          1s
 
 The pod shows `1/1` and does not appear in `proxy-status`. It is not part of the mesh.
 
+istioctl proxy-status | grep -E "plain-web"
+
 **Take-away:** `proxy-status` shows who is connected to `istiod`. It does not show whether everything works. Later in the training you will use this list to find a VM that dropped out of the mesh.
 
 ## Clean up
