@@ -56,7 +56,6 @@ A gateway is an Envoy that runs **on its own**, without an application next to i
 
 ## What you should remember
 
-* istiod **decides**, Envoy **carries**.
 * The configuration travels from istiod to Envoy, never the other way round. The connection always starts at the proxy.
 * The proxies hold their last configuration. If istiod is down for a while, existing traffic keeps flowing, but changes and new certificates stop.
 
