@@ -57,7 +57,7 @@ kubectl get pod -l app=productpage -o jsonpath='{.items[0].spec.containers[*].na
 
 ```
 # Output 
-productpage
+# productpage
 ```
 
 The sidecar is not in this list. In this lab (Kubernetes 1.35) Istio runs the sidecar as a native sidecar: a container in `initContainers` that has `restartPolicy: Always`.
@@ -67,6 +67,7 @@ kubectl get pod -l app=productpage -o jsonpath='{.items[0].spec.initContainers[*
 ```
 
 ```
+# Output pro
 # istio-init istio-proxy
 ```
 
