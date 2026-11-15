@@ -138,6 +138,8 @@ reviews.default.svc.cluster.local     9080     v3         outbound      EDS     
 
 ## Demo 2: fault injection
 
+Optional. The trainer does not show this part in the training. Demo 3 does not need it.
+
 A fault is injected in the Envoy of the caller. The service itself is not touched. First the normal call:
 
 ```

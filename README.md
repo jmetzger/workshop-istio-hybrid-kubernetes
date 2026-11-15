@@ -67,3 +67,4 @@ All material in this repository is in English.
 
   1. Upgrade
      * [Upgrade Istio: control plane first, then the proxies](upgrade/01-upgrade-istio-in-place.md)
+     * [Upgrade Istio with revisions: two control planes side by side](upgrade/02-upgrade-istio-with-revisions.md)

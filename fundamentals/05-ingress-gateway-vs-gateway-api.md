@@ -50,12 +50,24 @@ Other route types exist, for example `GRPCRoute` for gRPC.
 
 The last row matters if you are a tenant: installing CRDs is a cluster-wide act. Ask your trainer whether the Gateway API CRDs are installed in your lab.
 
+## What stays with the Istio objects
+
+Not every feature has an equivalent in the Gateway API:
+
+| Feature | Istio object | In the Gateway API | With an `HTTPRoute` |
+|---|---|---|---|
+| Connection pool settings | `DestinationRule` | nothing | keep the `DestinationRule` next to the `HTTPRoute` |
+| Outlier detection | `DestinationRule` | nothing | keep the `DestinationRule` next to the `HTTPRoute` |
+| Fault injection | `VirtualService` | not supported | not possible, the routing of this Service has to be a `VirtualService` |
+
+A `DestinationRule` belongs to the target Service, not to the route. That is why it also works when the routing is an `HTTPRoute`. Not measured in our lab, this is from the Istio documentation: the circuit breaking task uses a `DestinationRule` and has no Gateway API variant, the egress gateway task with TLS origination applies a `DestinationRule` together with an `HTTPRoute`, and the request timeouts task says "Gateway API does not support fault injection yet, so we need to use an Istio `VirtualService`".
+
 ## Which one to use?
 
 * The Gateway API is the direction Istio is moving in. For **new ingress** configuration it is a good default when the CRDs are available.
-* The Istio APIs stay important. Not every feature of `VirtualService` and `DestinationRule` has an equivalent in the Gateway API, for example fault injection, connection pool settings and outlier detection are still configured with the Istio objects. Existing setups are full of them, and many companies run the classic APIs.
+* The Istio APIs stay important. Existing setups are full of them, and many companies run the classic APIs.
 * You can use both in one cluster, and you can move step by step.
-* **One owner per Service.** Do not describe the routing of the same Service with an `HTTPRoute` and a `VirtualService` at the same time. Pick one. (Hint: It does not work properly)
+* **One owner for the routing of a Service.** Do not describe the routing of the same Service with an `HTTPRoute` and a `VirtualService` at the same time. Pick one. (Hint: It does not work properly)
 
 In this course the focus is on the Istio APIs. You see the Gateway API as a short contrast.
 

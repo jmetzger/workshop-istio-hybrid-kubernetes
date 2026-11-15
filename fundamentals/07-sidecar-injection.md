@@ -40,6 +40,8 @@ kubectl get pod -l app=productpage -o jsonpath='{.items[0].metadata.annotations.
 
 ### Try it: three pods, three results
 
+Optional. The trainer shows this part. You have already seen two of the three results yourself in [Look around the lab](../explore-the-lab/01-look-around.md), step 6.
+
 ```
 kubectl create namespace inj-test
 kubectl -n inj-test run a --image=curlimages/curl:8.11.1 --restart=Never -- sleep 3600
