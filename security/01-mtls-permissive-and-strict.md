@@ -91,6 +91,8 @@ kubectl apply -f peerauthentication-strict.yml
 
 The same two calls:
 
+
+
 ```
 HTTP 000
 command terminated with exit code 56
