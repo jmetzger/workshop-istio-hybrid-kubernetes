@@ -107,6 +107,12 @@ kubectl apply -f 03-virtualservice-reviews-80-20.yml
 ```
 
 ```
+kubectl exec deploy/client -c curl -- sh -c 'for i in $(seq 1 20); do curl -s http://reviews:9080/reviews/0; echo; done' | grep -o "reviews-v[123]" | sort | uniq -c
+```
+
+
+```
+# Output 
      16 reviews-v1
       4 reviews-v3
 ```
