@@ -49,16 +49,6 @@ SingleStack ["IPv6"]
 
 Port 80 of the Service leads to port **8080** of the gateway pod. The gateway pod does not run as root, so Envoy cannot listen on port 80 inside the pod. Keep this in mind, it matters in step 6.
 
-Which node does the gateway pod run on?
-
-```
-kubectl get pod -n istio-ingress -o wide
-```
-
-There is **one** pod (`replicas: 1`), and nothing pins it to a node. The scheduler picks one when the pod starts, so it may run on a different node in your lab than in your neighbour's. The Service finds the pod wherever it runs.
-
-![One gateway pod on one node: the Service finds it wherever it runs](/images/ingress-gateway-which-node.svg)
-
 ## Step 2: Deploy Bookinfo
 
 ```
