@@ -117,6 +117,11 @@ cluster-a                synced     istiod-66dbd576c8-mrtbz
 The line for cluster B is gone. There is no error message anywhere. Repeat the calls of step 3:
 
 ```
+kubectl --context $CTX_A exec -n helloworld deploy/sleep -c sleep -- sh -c 'for i in $(seq 1 40); do curl -s http://helloworld.helloworld:5000/hello; done | grep -o "version: v[12]" | sort | uniq -c'
+```
+
+
+```
      40 version: v1
 ```
 
