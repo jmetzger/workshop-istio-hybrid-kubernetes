@@ -64,6 +64,7 @@ All material in this repository is in English.
      * [Prometheus, Grafana, Kiali, and what Istio costs](observability/01-prometheus-grafana-kiali.md)
      * [Make the expiry of certificates visible](observability/02-certificate-expiry.md)
      * [Memory of the sidecars: many services, and the Sidecar object](observability/03-sidecar-memory-and-the-sidecar-object.md)
+     * [Kiali in practice: read the graph, find a broken rule](observability/04-kiali-in-practice.md)
 
   1. Upgrade
      * [Upgrade Istio: control plane first, then the proxies](upgrade/01-upgrade-istio-in-place.md)
