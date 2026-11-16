@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 920" width="1200" height="920" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 950" width="1200" height="950" font-family="Segoe UI, Arial, sans-serif" font-size="14">
   <defs>
     <marker id="pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
     <marker id="po" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
   </defs>
-  <rect width="1200" height="920" fill="#ffffff"/>
+  <rect width="1200" height="950" fill="#ffffff"/>
   <text x="600" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Your lab: two clusters, one mesh. How cluster b answers a request with pods from cluster a</text>
 
   <!-- Jump-Host -->
@@ -21,9 +21,10 @@
   <rect x="60" y="235" width="230" height="70" rx="6" fill="#fff" stroke="#3b8a3b"/>
   <text x="175" y="262" text-anchor="middle" font-weight="bold">Worker</text>
   <text x="175" y="284" text-anchor="middle" fill="#555">Kubernetes node</text>
-  <rect x="310" y="235" width="230" height="70" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <rect x="310" y="235" width="230" height="84" rx="6" fill="#fff" stroke="#3b8a3b"/>
   <text x="425" y="258" text-anchor="middle" font-weight="bold">Control-Plane + istiod</text>
   <text x="425" y="280" text-anchor="middle" fill="#555">Istio 1.29.9, sidecar mode</text>
+  <text x="425" y="302" text-anchor="middle" fill="#555" font-size="12">Certificates: istio-csr + cert-manager</text>
   <circle cx="525" cy="250" r="11" fill="#555"/><text x="525" y="255" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
   <rect x="60" y="340" width="140" height="50" rx="6" fill="#fff" stroke="#3b8a3b"/>
   <text x="130" y="358" text-anchor="middle" font-weight="bold" font-size="12">istio-ingressgateway</text>
@@ -42,9 +43,10 @@
   <!-- Cluster b -->
   <rect x="640" y="190" width="520" height="420" rx="10" fill="#f7f3fb" stroke="#7a4fb0" stroke-width="2"/>
   <text x="660" y="216" font-weight="bold" font-size="16" fill="#4b2a78">Cluster b (context cluster-b)</text>
-  <rect x="660" y="235" width="230" height="70" rx="6" fill="#fff" stroke="#7a4fb0"/>
+  <rect x="660" y="235" width="230" height="84" rx="6" fill="#fff" stroke="#7a4fb0"/>
   <text x="775" y="258" text-anchor="middle" font-weight="bold">Control-Plane + istiod</text>
   <text x="775" y="280" text-anchor="middle" fill="#555">Istio 1.29.9, sidecar mode</text>
+  <text x="775" y="302" text-anchor="middle" fill="#555" font-size="12">Certificates: istio-csr + cert-manager</text>
   <circle cx="675" cy="250" r="11" fill="#555"/><text x="675" y="255" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
   <rect x="910" y="235" width="230" height="70" rx="6" fill="#fff" stroke="#7a4fb0"/>
   <text x="1025" y="262" text-anchor="middle" font-weight="bold">Worker</text>
@@ -80,13 +82,14 @@
   <circle cx="600" cy="470" r="11" fill="#555"/><text x="600" y="475" text-anchor="middle" fill="#fff" font-weight="bold">3</text>
 
   <!-- Legende -->
-  <rect x="40" y="715" width="1120" height="190" rx="8" fill="#fafafa" stroke="#ccc"/>
+  <rect x="40" y="715" width="1120" height="215" rx="8" fill="#fafafa" stroke="#ccc"/>
   <text x="56" y="740" font-weight="bold" fill="#8a4500">The path of a request (orange)</text>
   <text x="56" y="762" fill="#333"><tspan font-weight="bold">A</tspan>  The request arrives at the istio-ingressgateway of cluster b.</text>
   <text x="56" y="782" fill="#333"><tspan font-weight="bold">B</tspan>  The istio-ingressgateway passes it to productpage in cluster b.</text>
   <text x="56" y="802" fill="#333"><tspan font-weight="bold">C</tspan>  productpage calls reviews. No reviews pod runs in cluster b, so the pods in cluster a answer.</text>
   <text x="56" y="832" font-weight="bold" fill="#333">What it takes (grey numbers in the picture)</text>
-  <text x="56" y="854" fill="#333"><tspan font-weight="bold">1</tspan>  Same root CA: each side trusts the certificates of the other.    <tspan font-weight="bold">2</tspan>  Remote secret: istiod reads the API of the other cluster.</text>
-  <text x="56" y="874" fill="#333"><tspan font-weight="bold">3</tspan>  Pods reach each other directly (IPv6, Calico without overlay, the firewall allows only your lab).</text>
-  <text x="56" y="894" fill="#333"><tspan font-weight="bold">4</tspan>  The service reviews exists in both clusters (same name and namespace). The pods only in one, in b the deployment may be at 0.</text>
+  <text x="56" y="854" fill="#333"><tspan font-weight="bold">1</tspan>  Same root CA: istio-csr with cert-manager signs in each cluster (own intermediate CA), so each side trusts the certificates of the other.</text>
+  <text x="56" y="874" fill="#333"><tspan font-weight="bold">2</tspan>  Remote secret: istiod reads the API of the other cluster.</text>
+  <text x="56" y="894" fill="#333"><tspan font-weight="bold">3</tspan>  Pods reach each other directly (IPv6, Calico without overlay, the firewall allows only your lab).</text>
+  <text x="56" y="914" fill="#333"><tspan font-weight="bold">4</tspan>  The service reviews exists in both clusters (same name and namespace). The pods only in one, in b the deployment may be at 0.</text>
 </svg>

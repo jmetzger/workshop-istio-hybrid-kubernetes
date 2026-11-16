@@ -27,6 +27,7 @@ This page shows where the course is heading: two Kubernetes clusters and a virtu
 * A VM is a workload without Kubernetes. The same sidecar (`pilot-agent` and Envoy) runs on it as a system service.
 * The sidecar needs three things: it must reach `istiod` (port `15012`), a **token** to log in, and the **root certificate**.
 * When the VM connects, `istiod` creates a `WorkloadEntry` with the address of the VM. From then on the VM is an endpoint like a pod.
+* In our lab the VM gets its certificate from `istio-csr`, not from `istiod`. `istioctl x workload entry configure` does not know about cert-manager: the address of `istio-csr` (`/etc/hosts`) and `CA_ADDR` in `cluster.env` are added by hand. Details: [Virtual machines in the mesh](../virtual-machines/01-add-a-vm-to-the-mesh.md).
 * mTLS runs between the sidecars. The application on the VM only talks to its local sidecar.
 
 ## What happens when the istiod of the VM is gone?
@@ -35,7 +36,7 @@ This page shows where the course is heading: two Kubernetes clusters and a virtu
 
 A VM knows **one** `istiod` address by default. If that cluster is down, the sidecar gets no new configuration and cannot log in again. The certificate of the VM is valid for 24 hours by default (in our lab, where cert-manager with `istio-csr` signs, only 10 minutes). When it runs out and no `istiod` has renewed it, the VM drops out of the mesh.
 
-Measured in the lab (clusters A and B, shared root CA, a VM with two `istiod` addresses in `/etc/hosts`, A first):
+Measured in the lab (clusters A and B, shared root CA). The configuration of the VM knows only **one** `istiod` name. For the test we put the addresses of both clusters under this name in `/etc/hosts`. The agent does not take the first line. Its resolver sorts the addresses by similarity to its own (RFC 6724) and tries the next one when a connection fails. This is behaviour of the resolver, not a feature of Istio. Because a token only fits the cluster that issued it, our lab scripts write only one cluster into the file (details: [the outage of the VM](../virtual-machines/03-outage-what-happens-to-the-vm.md)):
 
 | Situation | Result |
 |---|---|

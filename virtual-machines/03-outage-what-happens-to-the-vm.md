@@ -430,6 +430,23 @@ It is tempting to write the addresses of both clusters into `/etc/hosts`, so tha
 
 But the agent does **not** take the first line of the file. With both control planes running, our VM (`2a01:4f8:c014:...`) connected to cluster b (`2a01:4f8:c014:...`) although cluster a (`2a01:4f8:c013:...`) was the first line: it prefers the address that is most similar to its own (the name resolution of the agent sorts the addresses, RFC 6724). As soon as the VM needs a token, this matters, because a token only fits the cluster that created it. That is why the script writes exactly one cluster into the file.
 
+### Where this behaviour comes from
+
+It is not a feature of Istio. The configuration of the VM knows only one name each: `discoveryAddress: istiod.istio-system.svc:15012` in `/etc/istio/config/mesh` and `CA_ADDR` in `cluster.env`. The rest comes from Go, in which `pilot-agent` is written (a static binary, so it does not use the resolver of Linux):
+
+* The resolver of Go reads the addresses from `/etc/hosts` and sorts them with `sortByRFC6724` (the function `goLookupIPFiles` in `net/dnsclient_unix.go` calls it). RFC 6724 is the rule for the order of destination addresses; among other things it prefers the address with the longest common prefix with the own address. The order of the lines is lost.
+* The dialer of Go tries the addresses one after the other and takes the first that answers (`dialSerial` in `net/dial.go`).
+* The client of Istio for the certificate authority connects with `grpc.Dial(CAEndpoint, ...)`, a plain name without a resolver or balancer of its own (`security/pkg/nodeagent/caclient/providers/citadel/client.go`).
+
+Measured in our lab: the VM (address `2a01:4f8:c014:77c2::1`, so it is closer to the addresses of cluster b) had both addresses of `istio-csr` under the name, cluster a first:
+
+| Situation | Who signed the next certificate of the VM |
+|---|---|
+| both `istio-csr` running | cluster b (the closest address, not the first line) |
+| `istio-csr` of b scaled to 0 | cluster a, on the next renewal, without any action |
+
+Certificates were valid for 10 minutes and renewed in time. This was measured with `enableClientCert=true` (see above). With the default settings of `istio-csr` (only a token as proof) cluster b would not accept a token of cluster a. For `istiod` we did not repeat this test.
+
 ## What to take away
 
 | Symptom | Likely cause | Where to look |

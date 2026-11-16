@@ -1,13 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 545" width="1200" height="681" font-family="Segoe UI, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="1200" height="750" font-family="Segoe UI, Arial, sans-serif">
 <defs>
 <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2e7d32"/></marker>
 <marker id="r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#c62828"/></marker>
 </defs>
-<rect width="960" height="545" fill="#ffffff"/>
+<rect width="960" height="600" fill="#ffffff"/>
 <text x="480" y="26" text-anchor="middle" font-size="18" font-weight="bold" fill="#263238">What happens to the VM when its istiod is gone?</text>
 
 <!-- Cluster A (aus) -->
-<rect x="20" y="45" width="300" height="250" rx="10" fill="#fafafa" stroke="#c62828" stroke-width="2.5" stroke-dasharray="8 5"/>
+<rect x="20" y="45" width="300" height="300" rx="10" fill="#fafafa" stroke="#c62828" stroke-width="2.5" stroke-dasharray="8 5"/>
 <text x="170" y="68" text-anchor="middle" font-size="14" font-weight="bold" fill="#c62828">Cluster A (down)</text>
 <rect x="45" y="90" width="250" height="42" rx="6" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
 <text x="170" y="116" text-anchor="middle" font-size="13" font-weight="bold" fill="#c62828">istiod A (down)</text>
@@ -17,8 +17,12 @@
 <text x="170" y="224" text-anchor="middle" font-size="12" font-weight="bold" fill="#616161">WorkloadEntry (stale)</text>
 <text x="170" y="241" text-anchor="middle" font-size="11" fill="#616161">stays, clean up by runbook</text>
 
+<rect x="45" y="266" width="250" height="52" rx="6" fill="#ffebee" stroke="#c62828" stroke-width="2"/>
+<text x="170" y="288" text-anchor="middle" font-size="13" font-weight="bold" fill="#c62828">istio-csr A + cert-manager (down)</text>
+<text x="170" y="306" text-anchor="middle" font-size="11" fill="#c62828">the CA of cluster A in our lab</text>
+
 <!-- Cluster B -->
-<rect x="640" y="45" width="300" height="250" rx="10" fill="#f1f8fe" stroke="#2e7d32" stroke-width="2.5"/>
+<rect x="640" y="45" width="300" height="300" rx="10" fill="#f1f8fe" stroke="#2e7d32" stroke-width="2.5"/>
 <text x="790" y="68" text-anchor="middle" font-size="14" font-weight="bold" fill="#2e7d32">Cluster B (running)</text>
 <rect x="665" y="90" width="250" height="42" rx="6" fill="#ede7f6" stroke="#311b92" stroke-width="2"/>
 <text x="790" y="116" text-anchor="middle" font-size="13" font-weight="bold" fill="#311b92">istiod B</text>
@@ -28,30 +32,36 @@
 <text x="790" y="224" text-anchor="middle" font-size="12" font-weight="bold" fill="#e65100">WorkloadEntry (new)</text>
 <text x="790" y="241" text-anchor="middle" font-size="11" fill="#455a64">only with namespace, SA, WorkloadGroup</text>
 
+<rect x="665" y="266" width="250" height="52" rx="6" fill="#ede7f6" stroke="#311b92" stroke-width="2"/>
+<text x="790" y="288" text-anchor="middle" font-size="13" font-weight="bold" fill="#311b92">istio-csr B + cert-manager</text>
+<text x="790" y="306" text-anchor="middle" font-size="11" fill="#455a64">the CA of cluster B in our lab</text>
+
 <!-- VM -->
 <rect x="380" y="95" width="200" height="130" rx="10" fill="#f5f5f5" stroke="#37474f" stroke-width="2.5"/>
 <text x="480" y="118" text-anchor="middle" font-size="14" font-weight="bold" fill="#263238">VM</text>
-<text x="480" y="138" text-anchor="middle" font-size="11" fill="#37474f">/etc/hosts, two lines:</text>
+<text x="480" y="138" text-anchor="middle" font-size="11" fill="#37474f">/etc/hosts: one cluster only</text>
 <rect x="395" y="148" width="170" height="26" rx="4" fill="#ffebee" stroke="#c62828" stroke-width="1.5"/>
-<text x="480" y="165" text-anchor="middle" font-size="11" fill="#c62828">1. istiod A (first)</text>
+<text x="480" y="165" text-anchor="middle" font-size="11" fill="#c62828">istiod A (today)</text>
 <rect x="395" y="180" width="170" height="26" rx="4" fill="#e8f5e9" stroke="#2e7d32" stroke-width="1.5"/>
-<text x="480" y="197" text-anchor="middle" font-size="11" fill="#2e7d32">2. istiod B (fallback)</text>
+<text x="480" y="197" text-anchor="middle" font-size="11" fill="#2e7d32">istiod B (after the switch)</text>
 <line x1="378" y1="161" x2="322" y2="130" stroke="#c62828" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#r)"/>
 <text x="338" y="110" text-anchor="middle" font-size="22" font-weight="bold" fill="#c62828">✗</text>
 <line x1="582" y1="193" x2="638" y2="118" stroke="#2e7d32" stroke-width="3" marker-end="url(#g)"/>
 
-<text x="480" y="252" text-anchor="middle" font-size="12" font-weight="bold" fill="#c62828">Try 1 on A: timeout, about 10 s</text>
-<text x="480" y="272" text-anchor="middle" font-size="12" font-weight="bold" fill="#2e7d32">Try 2 on B: the VM is back in the mesh</text>
+<text x="480" y="252" text-anchor="middle" font-size="12" font-weight="bold" fill="#c62828">Today: the VM talks to A, A is down</text>
+<text x="480" y="272" text-anchor="middle" font-size="12" font-weight="bold" fill="#2e7d32">You switch the VM to B: it is back in the mesh</text>
 <text x="480" y="291" text-anchor="middle" font-size="11" fill="#455a64">The VM then stays with B (it does not go back to A)</text>
 
+<g transform="translate(0,52)">
 <!-- Vier Bausteine -->
 <text x="480" y="326" text-anchor="middle" font-size="14" font-weight="bold" fill="#263238">Four building blocks for the fallback</text>
 <rect x="15" y="338" width="225" height="135" rx="8" fill="#e8eaf6" stroke="#311b92" stroke-width="2"/>
 <text x="127" y="360" text-anchor="middle" font-size="13" font-weight="bold" fill="#311b92">1. Shared root CA</text>
 <text x="127" y="384" text-anchor="middle" font-size="11" fill="#263238">The same root of trust</text>
-<text x="127" y="399" text-anchor="middle" font-size="11" fill="#263238">in all clusters.</text>
-<text x="127" y="423" text-anchor="middle" font-size="11" fill="#263238">Otherwise istiod B rejects</text>
-<text x="127" y="438" text-anchor="middle" font-size="11" fill="#263238">the certificate of the VM.</text>
+<text x="127" y="399" text-anchor="middle" font-size="11" fill="#263238">in all clusters (own intermediate CA</text>
+<text x="127" y="412" text-anchor="middle" font-size="11" fill="#263238">per cluster, one common root).</text>
+<text x="127" y="433" text-anchor="middle" font-size="11" fill="#263238">Otherwise istiod B rejects</text>
+<text x="127" y="448" text-anchor="middle" font-size="11" fill="#263238">the certificate of the VM.</text>
 <rect x="250" y="338" width="225" height="135" rx="8" fill="#e8eaf6" stroke="#311b92" stroke-width="2"/>
 <text x="362" y="360" text-anchor="middle" font-size="13" font-weight="bold" fill="#311b92">2. Same objects for the VM</text>
 <text x="362" y="384" text-anchor="middle" font-size="11" fill="#263238">Namespace, ServiceAccount,</text>
@@ -60,12 +70,12 @@
 <text x="362" y="438" text-anchor="middle" font-size="11" fill="#263238">Otherwise istiod B creates</text>
 <text x="362" y="453" text-anchor="middle" font-size="11" fill="#263238">no WorkloadEntry.</text>
 <rect x="485" y="338" width="225" height="135" rx="8" fill="#e8eaf6" stroke="#311b92" stroke-width="2"/>
-<text x="597" y="360" text-anchor="middle" font-size="13" font-weight="bold" fill="#311b92">3. Several istiod addresses</text>
-<text x="597" y="384" text-anchor="middle" font-size="11" fill="#263238">Two lines for istiod in the</text>
-<text x="597" y="399" text-anchor="middle" font-size="11" fill="#263238">hosts file of the VM. The agent</text>
-<text x="597" y="414" text-anchor="middle" font-size="11" fill="#263238">falls back by itself.</text>
-<text x="597" y="438" text-anchor="middle" font-size="11" fill="#263238">The first line is the</text>
-<text x="597" y="453" text-anchor="middle" font-size="11" fill="#263238">normal case.</text>
+<text x="597" y="360" text-anchor="middle" font-size="13" font-weight="bold" fill="#311b92">3. One name, several addresses</text>
+<text x="597" y="384" text-anchor="middle" font-size="11" fill="#263238">The config of the VM knows one</text>
+<text x="597" y="399" text-anchor="middle" font-size="11" fill="#263238">name. Put several addresses under</text>
+<text x="597" y="414" text-anchor="middle" font-size="11" fill="#263238">it in /etc/hosts (also istio-csr).</text>
+<text x="597" y="438" text-anchor="middle" font-size="11" fill="#263238">The resolver sorts by similarity,</text>
+<text x="597" y="453" text-anchor="middle" font-size="11" fill="#263238">then tries the next. Tested: istio-csr.</text>
 <rect x="720" y="338" width="225" height="135" rx="8" fill="#e8eaf6" stroke="#311b92" stroke-width="2"/>
 <text x="832" y="360" text-anchor="middle" font-size="13" font-weight="bold" fill="#311b92">4. Token from a living cluster</text>
 <text x="832" y="384" text-anchor="middle" font-size="11" fill="#263238">A token belongs to the cluster</text>
@@ -74,6 +84,8 @@
 <text x="832" y="438" text-anchor="middle" font-size="11" fill="#263238">A token of A fails while A is down</text>
 <text x="832" y="453" text-anchor="middle" font-size="11" fill="#263238">(the check needs the API of A).</text>
 
-<text x="480" y="505" text-anchor="middle" font-size="12" fill="#37474f">One more lever: SECRET_TTL=72h in cluster.env gives the VM certificate 72 hours instead of 24 (more time to repair).</text>
-<text x="480" y="525" text-anchor="middle" font-size="11" fill="#78909c">Measured in a lab (two kubeadm clusters, one VM, Istio 1.29.9), not in production. A renewal still needs a reachable CA.</text>
+<text x="480" y="500" text-anchor="middle" font-size="12" fill="#37474f">One more lever when istiod is the CA: SECRET_TTL=72h in cluster.env gives the VM certificate 72 hours instead of 24.</text>
+<text x="480" y="517" text-anchor="middle" font-size="12" fill="#37474f">In our lab istio-csr signs: the lifetime (10 minutes) is set there. The VM needs an address for istio-csr (CA_ADDR) as well.</text>
+<text x="480" y="537" text-anchor="middle" font-size="11" fill="#78909c">Measured in a lab (two kubeadm clusters, one VM, Istio 1.29.9), not in production. A renewal still needs a reachable CA (istiod or istio-csr).</text>
+</g>
 </svg>
