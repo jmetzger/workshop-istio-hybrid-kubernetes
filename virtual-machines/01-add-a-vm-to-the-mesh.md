@@ -324,18 +324,18 @@ The sidecar sets iptables rules, and Envoy listens on the IPv6 wildcard address.
 
 ```
 echo "IPv4 rules: $(iptables-save -t nat | grep -c ISTIO)  IPv6 rules: $(ip6tables-save -t nat | grep -c ISTIO)"
-ss -lnt | grep -E ':1500[16] '
+ss -lntp | grep -E ':1500[16] '
 ```
 
 ```
 IPv4 rules: 23  IPv6 rules: 19
-LISTEN 0      4096            [::]:15006         [::]:*
-LISTEN 0      4096            [::]:15006         [::]:*
-LISTEN 0      4096            [::]:15001         [::]:*
-LISTEN 0      4096            [::]:15001         [::]:*
+LISTEN 0      4096            [::]:15001         [::]:*    users:(("envoy",pid=4189,fd=33))
+LISTEN 0      4096            [::]:15001         [::]:*    users:(("envoy",pid=4189,fd=34))
+LISTEN 0      4096            [::]:15006         [::]:*    users:(("envoy",pid=4189,fd=35))
+LISTEN 0      4096            [::]:15006         [::]:*    users:(("envoy",pid=4189,fd=36))
 ```
 
-Every port shows twice in our lab; what matters is `[::]`, the IPv6 wildcard address. What the rules mean: [What the sidecar sets on the VM](00-how-a-vm-joins-the-mesh.md#what-the-sidecar-sets-on-the-vm).
+Every port shows twice. Both lines belong to the same `envoy` process (same `pid`, different `fd`): Envoy opens one socket per worker thread (`SO_REUSEPORT`), and our VMs have 2 vCPU. What matters is `[::]`, the IPv6 wildcard address. What the rules mean: [What the sidecar sets on the VM](00-how-a-vm-joins-the-mesh.md#what-the-sidecar-sets-on-the-vm).
 
 ## Clean up
 
