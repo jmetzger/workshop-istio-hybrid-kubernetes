@@ -18,6 +18,7 @@ This page shows where the course is heading: two Kubernetes clusters and a virtu
 * The sidecar of a calling pod then knows the endpoints of **both** clusters.
 * The request goes directly to the pod IP in the other cluster, protected by mTLS.
 * The same in all clusters: `meshID`, root CA, trust domain. Different per cluster: `clusterName`.
+* **Who signs the certificates:** not `istiod`, but `istio-csr` through cert-manager. Every cluster has its own intermediate CA under one common root CA. That is why a sidecar in cluster a trusts a sidecar in cluster b. Details: [Who signs the certificates: cert-manager with istio-csr](08-certificates-with-cert-manager-and-istio-csr.md).
 
 ## A virtual machine in the mesh
 
@@ -32,7 +33,7 @@ This page shows where the course is heading: two Kubernetes clusters and a virtu
 
 ![The cluster of the VM is down: the VM tries istiod A, runs into a timeout and then connects to istiod B. Four building blocks make the fallback work](/images/vm-istiod-outage.svg)
 
-A VM knows **one** `istiod` address by default. If that cluster is down, the sidecar gets no new configuration and cannot log in again. The certificate of the VM is valid for 24 hours by default. When it runs out and no `istiod` has renewed it, the VM drops out of the mesh.
+A VM knows **one** `istiod` address by default. If that cluster is down, the sidecar gets no new configuration and cannot log in again. The certificate of the VM is valid for 24 hours by default (in our lab, where cert-manager with `istio-csr` signs, only 10 minutes). When it runs out and no `istiod` has renewed it, the VM drops out of the mesh.
 
 Measured in the lab (clusters A and B, shared root CA, a VM with two `istiod` addresses in `/etc/hosts`, A first):
 
@@ -55,5 +56,6 @@ What to remember:
 * [Istio: Deployment models](https://istio.io/latest/docs/ops/deployment/deployment-models/)
 * [Istio: Install multicluster](https://istio.io/latest/docs/setup/install/multicluster/)
 * [Istio: Virtual machine installation](https://istio.io/latest/docs/setup/install/virtual-machine/)
+* [istio-csr](https://cert-manager.io/docs/usage/istio-csr/)
 
 Next: [What is a service mesh, and what is Istio?](01-what-is-a-service-mesh.md)
