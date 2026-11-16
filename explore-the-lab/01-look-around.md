@@ -20,6 +20,7 @@ All commands below run on your bastion host as your lab user. The default contex
 ## Step 1: Look at the nodes
 
 ```
+kubectl config view 
 kubectl get nodes -o wide
 ```
 
