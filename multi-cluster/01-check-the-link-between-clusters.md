@@ -12,6 +12,8 @@ In this exercise you read the output, break the link on purpose, see what happen
 
 Prerequisite: the two clusters are connected (exercise [Connect cluster a and cluster b](00-connect-the-two-clusters.md)).
 
+## Step 0: Prepare 
+
 All commands run on your bastion host as your lab user:
 
 ```
