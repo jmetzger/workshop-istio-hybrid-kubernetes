@@ -91,6 +91,45 @@ ssh a-vm1 "openssl x509 -noout -enddate -in /etc/certs/cert-chain.pem"
 
 If the time shown is in the past, the VM cannot open new connections in the mesh. For a pod, `istioctl proxy-config secret` shows `false` in the column `VALID CERT`. See [Outage: what happens to the VM](../virtual-machines/03-outage-what-happens-to-the-vm.md).
 
+## Step 5: All certificates at a glance in Grafana
+
+Open Grafana (address and password are in `~/monitoring-access.md`). Choose **Dashboards**, the folder **lab**, and the dashboard **Lab: certificates and when they expire**.
+
+It has one table for cluster a and one for cluster b. Every row is one certificate, the one that expires first is on top:
+
+| Kind | Certificate | Where the number comes from |
+|---|---|---|
+| CA, nobody renews it | root CA and intermediate CA of the cluster | `x509_cert_not_after` (a small exporter reads the secret `istio-ca`) |
+| istiod, renewed by cert-manager | `istiod` | `certmanager_certificate_expiration_timestamp_seconds` |
+| workload, renewed by its agent | one row per pod with a sidecar, and the ingress gateway | `istio_agent_cert_expiry_seconds` (every sidecar reports it) |
+
+The column **Expires in** is green with more than five minutes left, orange with less, and red when the certificate has expired. The workload rows move between ten and five minutes all the time: the agent renews after half of the lifetime. Below the tables you see this as a saw.
+
+Now stop the component that signs the workload certificates in cluster a, and watch the table of cluster a:
+
+```
+kubectl -n cert-manager scale deploy cert-manager-istio-csr --replicas=0
+```
+
+Measured in our lab (seven workload certificates in cluster a):
+
+| Time after the stop | Table of cluster a |
+|---|---|
+| 1 minute | shortest time left 246 seconds, nothing is red |
+| 5 minutes | the first workload certificate has expired (red) |
+| 10 minutes | all workload certificates have expired |
+| 14 minutes | the table counts on below zero (minus 548 seconds) |
+
+The rows of the CAs and of `istiod` stay green, and so does the whole table of cluster b: each cluster has its own istio-csr. Start it again:
+
+```
+kubectl -n cert-manager scale deploy cert-manager-istio-csr --replicas=1
+```
+
+One minute later every workload row is green again (565 seconds left in our lab). The agents ask again by themselves, you do not restart any pod.
+
+The certificate of a VM is not in the table: Prometheus does not collect from the VM in our lab. For a VM, read the file as in step 4.
+
 ## What to watch, and how
 
 | What | How we looked at it | Idea for an alert |
@@ -101,7 +140,7 @@ If the time shown is in the past, the VM cannot open new connections in the mesh
 
 **A trap:** Envoy has a metric `envoy_server_days_until_first_cert_expiring`. It counts whole days. With certificates that live one hour it always showed `0` in our lab (and ten minutes are less than a day, too), so it is useless for an alert here.
 
-The alerts in the last column are ideas, not tested rules.
+The alerts in the last column are ideas, not tested rules. The three metrics of step 5 are the numbers such rules would use: an alert is the same question as the table, with a limit.
 
 Previous: [Monitoring: Prometheus, Grafana, Kiali](01-prometheus-grafana-kiali.md)
 Next: [Memory of the sidecars: many services, and the Sidecar object](03-sidecar-memory-and-the-sidecar-object.md)
