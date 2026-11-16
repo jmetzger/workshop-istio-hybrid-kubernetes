@@ -1,5 +1,7 @@
 # Check the link between two clusters
 
+![Each istiod reads the API server of the other cluster through a remote secret; the client in cluster a gets answers from v1 and v2](/images/check-the-link-between-clusters.svg)
+
 Two clusters form one mesh when each `istiod` can read the services and endpoints of the other cluster. For this, every cluster holds a **remote secret**: a small kubeconfig that gives its `istiod` read access to the API server of the other cluster.
 
 If a remote secret is missing or broken, nothing fails loudly. The other cluster is simply not part of the mesh, and traffic stays local. The command that shows this is:

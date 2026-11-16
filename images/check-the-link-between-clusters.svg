@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 720" width="1200" height="720" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="pf" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3b8a3b"/></marker>
+    <marker id="pp" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7a4fb0"/></marker>
+    <marker id="po" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
+  </defs>
+  <rect width="1200" height="720" fill="#ffffff"/>
+  <text x="600" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Check the link: each istiod reads the API server of the other cluster</text>
+
+  <!-- Bastion -->
+  <rect x="420" y="55" width="360" height="52" rx="8" fill="#e8f0fe" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="600" y="77" text-anchor="middle" font-weight="bold" fill="#1d3b66">Bastion: istioctl remote-clusters</text>
+  <text x="600" y="96" text-anchor="middle" fill="#1d3b66" font-size="12">shows arrows 1 and 2 as lines with STATUS synced</text>
+
+  <!-- Cluster a -->
+  <rect x="40" y="130" width="500" height="340" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="60" y="156" font-weight="bold" font-size="16" fill="#1f5f1f">Cluster a (context cluster-a)</text>
+  <rect x="320" y="170" width="200" height="60" rx="6" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="420" y="196" text-anchor="middle" font-weight="bold">istiod</text>
+  <text x="420" y="215" text-anchor="middle" fill="#555" font-size="12">holds the secret for b</text>
+  <rect x="320" y="250" width="200" height="60" rx="6" fill="#fff" stroke="#3b8a3b"/>
+  <text x="420" y="276" text-anchor="middle" font-weight="bold">API server of a</text>
+  <text x="420" y="295" text-anchor="middle" fill="#555" font-size="12">pods, services, endpoints</text>
+  <rect x="60" y="350" width="170" height="60" rx="6" fill="#fff" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="145" y="376" text-anchor="middle" font-weight="bold">sleep</text>
+  <text x="145" y="395" text-anchor="middle" fill="#555" font-size="12">client pod + sidecar</text>
+  <rect x="330" y="350" width="190" height="60" rx="6" fill="#fff" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="425" y="376" text-anchor="middle" font-weight="bold">helloworld v1</text>
+  <text x="425" y="395" text-anchor="middle" fill="#555" font-size="12">only in cluster a</text>
+
+  <!-- Cluster b -->
+  <rect x="660" y="130" width="500" height="340" rx="10" fill="#f7f3fb" stroke="#7a4fb0" stroke-width="2"/>
+  <text x="680" y="156" font-weight="bold" font-size="16" fill="#4b2a78">Cluster b (context cluster-b)</text>
+  <rect x="680" y="170" width="200" height="60" rx="6" fill="#fff" stroke="#7a4fb0"/>
+  <text x="780" y="196" text-anchor="middle" font-weight="bold">API server of b</text>
+  <text x="780" y="215" text-anchor="middle" fill="#555" font-size="12">pods, services, endpoints</text>
+  <rect x="680" y="250" width="200" height="60" rx="6" fill="#fff" stroke="#7a4fb0" stroke-width="2"/>
+  <text x="780" y="276" text-anchor="middle" font-weight="bold">istiod</text>
+  <text x="780" y="295" text-anchor="middle" fill="#555" font-size="12">holds the secret for a</text>
+  <rect x="680" y="350" width="200" height="60" rx="6" fill="#fff" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="780" y="376" text-anchor="middle" font-weight="bold">helloworld v2</text>
+  <text x="780" y="395" text-anchor="middle" fill="#555" font-size="12">only in cluster b</text>
+
+  <!-- 1 und 2: Remote Secrets -->
+  <path d="M522,200 L678,200" stroke="#3b8a3b" stroke-width="3" fill="none" marker-end="url(#pg)"/>
+  <circle cx="600" cy="178" r="11" fill="#3b8a3b"/><text x="600" y="183" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
+  <text x="600" y="224" text-anchor="middle" fill="#c01c28" font-size="12" font-weight="bold">step 4: deleted</text>
+  <path d="M678,280 L522,280" stroke="#7a4fb0" stroke-width="3" fill="none" marker-end="url(#pp)"/>
+  <circle cx="600" cy="258" r="11" fill="#7a4fb0"/><text x="600" y="263" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+
+  <!-- 3: Verkehr -->
+  <path d="M232,380 L328,380" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
+  <text x="280" y="372" text-anchor="middle" fill="#8a4500" font-size="12">17 x</text>
+  <path d="M145,412 L145,445 L780,445 L780,412" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
+  <text x="460" y="437" text-anchor="middle" fill="#8a4500" font-size="12">23 x: pod to pod over IPv6, no gateway</text>
+  <circle cx="90" cy="332" r="12" fill="#d9730d"/><text x="90" y="337" text-anchor="middle" fill="#fff" font-weight="bold">3</text>
+
+  <!-- Erklaerung -->
+  <rect x="40" y="495" width="1120" height="200" rx="8" fill="#fafafa" stroke="#ccc"/>
+  <circle cx="68" cy="525" r="11" fill="#3b8a3b"/><text x="68" y="530" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
+  <text x="90" y="530">Remote secret for b in cluster a: istiod a reads the API server of b and learns the pods of b.</text>
+  <circle cx="68" cy="560" r="11" fill="#7a4fb0"/><text x="68" y="565" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+  <text x="90" y="565">Remote secret for a in cluster b: the same in the other direction. Each direction needs its own secret.</text>
+  <circle cx="68" cy="595" r="11" fill="#d9730d"/><text x="68" y="600" text-anchor="middle" fill="#fff" font-weight="bold">3</text>
+  <text x="90" y="600">40 calls from sleep: with both secrets the answers come from v1 and v2 (for example 17 and 23).</text>
+  <text x="90" y="640" font-weight="bold" fill="#c01c28">Without arrow 1 (step 4): istiod a no longer knows cluster b. All 40 answers come from v1. There is no error message.</text>
+  <text x="90" y="668" fill="#555">The sidecars never talk to the other istiod. They only know the endpoints that their own istiod got from the API servers.</text>
+</svg>
