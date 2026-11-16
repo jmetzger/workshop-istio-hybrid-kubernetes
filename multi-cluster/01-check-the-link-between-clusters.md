@@ -149,6 +149,11 @@ istioctl --context $CTX_A remote-clusters
 
 Both lines are back and say `synced`. Repeat the calls of step 3: answers from v1 and v2 again (for example 19 and 21).
 
+```
+kubectl --context $CTX_A exec -n helloworld deploy/sleep -c sleep -- sh -c 'for i in $(seq 1 40); do curl -s http://helloworld.helloworld:5000/hello; done | grep -o "version: v[12]" | sort | uniq -c'
+```
+
+
 ## Clean up
 
 ```
