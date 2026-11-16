@@ -52,6 +52,13 @@ reviews-v3-7b775c7568-h9q2w       2/2     Running   0          93s   2a01:4f8:c0
 
 Every pod shows `2/2`, although each pod has only one application container. The second container is the Istio sidecar (Envoy). Each pod has its own IPv6 address from the network of its node, there is no NAT between pods.
 
+```
+kubectl describe ns default | head
+# looking for line Labels: 
+``` 
+
+
+
 ## Step 3: Find the sidecar
 
 ```
