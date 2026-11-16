@@ -126,8 +126,29 @@ The command is `istioctl x workload entry configure` (`x` is short for `experime
 
 ```
 istioctl --context $CTX_A x workload entry configure -f 02-workloadgroup.yml -o vmfiles --clusterID cluster-a --ingressIP $ISTIOD_ADDR --autoregister
-ls vmfiles
-scp -q -r vmfiles vm-echo-server.py $VM:/root/
+```
+
+```
+Warning: a security token for namespace "vm" and service account "diameter-adapter" has been generated and stored at "vmfiles/istio-token"
+Configuration generation into directory vmfiles was successful
+```
+
+The warning is meant seriously: the folder contains a token. We take away the rights of everyone else and look at the folder:
+
+```
+chmod 600 vmfiles/istio-token
+ls -la vmfiles
+```
+
+```
+total 28
+drwxr--r-- 2 tln12 tln12 4096 Nov 16 07:51 .
+drwxrwxr-x 3 tln12 tln12 4096 Nov 16 07:51 ..
+-rwxr--r-- 1 tln12 tln12  783 Nov 16 07:51 cluster.env
+-rwxr--r-- 1 tln12 tln12   48 Nov 16 07:51 hosts
+-rw------- 1 tln12 tln12  893 Nov 16 07:51 istio-token
+-rwxr--r-- 1 tln12 tln12  780 Nov 16 07:51 mesh.yaml
+-rwxr--r-- 1 tln12 tln12 1866 Nov 16 07:51 root-cert.pem
 ```
 
 | Option | Meaning |
@@ -138,10 +159,83 @@ scp -q -r vmfiles vm-echo-server.py $VM:/root/
 | `--ingressIP $ISTIOD_ADDR` | the address of `istiod` that the VM can reach (our `istiod-lb`, see step 2) |
 | `--autoregister` | `istiod` creates the `WorkloadEntry` when the VM connects. Without it the `WorkloadEntry` is missing |
 
-The command writes five files:
+Five files. Look at them one by one, but **not** at `istio-token`: it is a secret, we only look at its size.
 
 ```
-cluster.env  hosts  istio-token  mesh.yaml  root-cert.pem
+cat vmfiles/hosts
+```
+
+```
+2a01:4f8:c016:f27b::2:2 istiod.istio-system.svc
+```
+
+```
+cat vmfiles/mesh.yaml
+```
+
+```
+defaultConfig:
+  discoveryAddress: istiod.istio-system.svc:15012
+  meshId: mesh-tln12
+  proxyMetadata:
+    CANONICAL_REVISION: latest
+    CANONICAL_SERVICE: diameter-adapter
+    ISTIO_META_AUTO_REGISTER_GROUP: diameter-adapter
+    ISTIO_META_CLUSTER_ID: cluster-a
+    ISTIO_META_DNS_AUTO_ALLOCATE: "true"
+    ISTIO_META_DNS_CAPTURE: "true"
+    ISTIO_META_MESH_ID: mesh-tln12
+    ISTIO_META_NETWORK: net1
+    ISTIO_META_POD_PORTS: '[{"name":"http","containerPort":8000,"protocol":""}]'
+    ISTIO_META_WORKLOAD_NAME: diameter-adapter
+    ISTIO_METAJSON_LABELS: '{"app":"diameter-adapter","service.istio.io/canonical-name":"diameter-adapter","service.istio.io/canonical-revision":"latest"}'
+    POD_NAMESPACE: vm
+    SERVICE_ACCOUNT: diameter-adapter
+    TRUST_DOMAIN: cluster.local
+```
+
+```
+cat vmfiles/cluster.env
+```
+
+```
+CANONICAL_REVISION='latest'
+CANONICAL_SERVICE='diameter-adapter'
+ISTIO_INBOUND_PORTS='8000'
+ISTIO_LOCAL_EXCLUDE_PORTS='22,15090,15021,15020'
+ISTIO_METAJSON_LABELS='{"app":"diameter-adapter","service.istio.io/canonical-name":"diameter-adapter","service.istio.io/canonical-revision":"latest"}'
+ISTIO_META_AUTO_REGISTER_GROUP='diameter-adapter'
+ISTIO_META_CLUSTER_ID='cluster-a'
+ISTIO_META_DNS_AUTO_ALLOCATE='true'
+ISTIO_META_DNS_CAPTURE='true'
+ISTIO_META_MESH_ID='mesh-tln12'
+ISTIO_META_NETWORK='net1'
+ISTIO_META_POD_PORTS='[{"name":"http","containerPort":8000,"protocol":""}]'
+ISTIO_META_WORKLOAD_NAME='diameter-adapter'
+ISTIO_NAMESPACE='vm'
+ISTIO_SERVICE='diameter-adapter.vm'
+ISTIO_SERVICE_CIDR='*'
+POD_NAMESPACE='vm'
+SERVICE_ACCOUNT='diameter-adapter'
+TRUST_DOMAIN='cluster.local'
+```
+
+The root certificate is the root certificate of the mesh, and the token is a JWT of the service account (we only look at the size):
+
+```
+openssl x509 -in vmfiles/root-cert.pem -noout -subject
+wc -c vmfiles/istio-token
+```
+
+```
+subject=O = Lab, CN = Lab Root CA tln12
+893 vmfiles/istio-token
+```
+
+(Your output shows your own name instead of `tln12`.) Now the folder goes to the VM:
+
+```
+scp -q -r vmfiles vm-echo-server.py $VM:/root/
 ```
 
 What the five files are and what is in them: [What the VM gets from `istioctl`](00-how-a-vm-joins-the-mesh.md#what-the-vm-gets-from-istioctl).

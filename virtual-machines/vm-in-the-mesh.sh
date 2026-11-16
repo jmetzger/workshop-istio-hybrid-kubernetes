@@ -281,7 +281,21 @@ step "Create the files for the VM" \
 go <<'EOF'
 rm -rf vmfiles
 istioctl --context $CTX_A x workload entry configure -f 02-workloadgroup.yml -o vmfiles --clusterID cluster-a --ingressIP $ISTIOD_ADDR --autoregister
-ls vmfiles
+chmod 600 vmfiles/istio-token
+ls -la vmfiles
+EOF
+echo
+echo "Now look at the five files. Not at the token: it is a secret, we only look at its size."
+go <<'EOF'
+cat vmfiles/cluster.env
+cat vmfiles/hosts
+cat vmfiles/mesh.yaml
+openssl x509 -in vmfiles/root-cert.pem -noout -subject
+wc -c vmfiles/istio-token
+EOF
+echo
+echo "Then the folder goes to the VM."
+go <<'EOF'
 scp -q -r vmfiles vm-echo-server.py $VM:/root/
 EOF
 

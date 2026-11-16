@@ -104,9 +104,13 @@ The command is `istioctl x workload entry configure` (`x` is short for `experime
 
 ```
 istioctl --context $CTX_A x workload entry configure -f 02-workloadgroup.yml -o vmfiles --clusterID cluster-a --ingressIP $ISTIOD_ADDR --autoregister
-ls vmfiles
+chmod 600 vmfiles/istio-token
+ls -la vmfiles
+cat vmfiles/hosts vmfiles/mesh.yaml vmfiles/cluster.env
 scp -q -r vmfiles vm-echo-server.py $VM:/root/
 ```
+
+The output of these commands, line by line, is on the page [Add a virtual machine to the mesh (IPv6 only)](01-add-a-vm-to-the-mesh.md), step 4. Here `mesh.yaml` and `cluster.env` have one more line, `ISTIO_DUAL_STACK` (see below). Do not print `istio-token`: it is a secret.
 
 | Option | Meaning |
 |---|---|
