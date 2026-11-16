@@ -18,6 +18,8 @@ What is missing is the fourth part, and that is your job: the **remote secrets**
 
 All commands run on your bastion host as your lab user.
 
+## Step 0: Preparation 
+
 ```
 export CTX_A=cluster-a
 export CTX_B=cluster-b
