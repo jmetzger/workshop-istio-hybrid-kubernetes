@@ -8,6 +8,8 @@ Theory: [How the sidecar on a VM is upgraded](00-how-the-vm-sidecar-is-upgraded.
 
 Two VMs (`a-vm1` and `b-vm1`) are in the mesh and serve the Service `diameter-adapter`. You upgrade `istiod` in cluster a in place, then the sidecar package on the first VM, then on the second. A loop in a pod calls the Service five times per second. At the end you switch off the retries of the calls and restart one VM again, to see what kept the calls alive.
 
+**Before you start:** This page needs the exercise [Add a VM to the mesh](../virtual-machines/01-add-a-vm-to-the-mesh.md) first. In its step 2 the script creates the Service `istiod-lb`, the fixed address that the VM uses to reach `istiod`, and it brings the VM into the mesh. Without that exercise there is no VM and no `istiod-lb`, and the steps below do not work.
+
 | Step | What |
 |---|---|
 | 1 | Bring the second VM into the mesh |

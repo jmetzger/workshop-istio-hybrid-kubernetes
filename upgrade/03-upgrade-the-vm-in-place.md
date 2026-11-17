@@ -8,6 +8,8 @@ Theory: [How the sidecar on a VM is upgraded](00-how-the-vm-sidecar-is-upgraded.
 
 A VM is in the mesh in cluster a (exercise [Add a VM to the mesh](../virtual-machines/01-add-a-vm-to-the-mesh.md), Istio 1.29.9). You upgrade `istiod` in cluster a to 1.30.8 with Helm, and then the sidecar package on the VM. A loop in a pod calls the VM twice per second, with the time, so you see what the upgrade costs.
 
+**Before you start:** This page needs the exercise [Add a VM to the mesh](../virtual-machines/01-add-a-vm-to-the-mesh.md) first. In its step 2 the script creates the Service `istiod-lb`, the fixed address that the VM uses to reach `istiod`, and it brings the VM into the mesh. Without that exercise there is no VM and no `istiod-lb`, and the steps below do not work.
+
 | Step | What |
 |---|---|
 | 1 | Check the versions |
