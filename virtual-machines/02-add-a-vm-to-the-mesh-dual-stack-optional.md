@@ -4,6 +4,8 @@
 
 > **Optional exercise.** The main exercise [Add a virtual machine to the mesh (IPv6 only)](01-add-a-vm-to-the-mesh.md) uses a VM **without** an IPv4 address. That is the best and easiest way. Do this page only if you want to see what changes when the VM keeps an IPv4 address, for example because your environment has VMs with both address families.
 
+> **Hint:** This exercise is run by a script: [`vm-in-the-mesh.sh`](vm-in-the-mesh.sh) with `DUAL_STACK=1`. It is in the folder `~/virtual-machines` on your bastion host. You do not have to type every command: the script shows each step first, you press ENTER, and it runs exactly these commands. Read the commands, they are the exercise.
+
 ## Background
 
 A virtual machine joins the mesh with the Istio sidecar package (`istio-sidecar.deb`). The sidecar connects to `istiod` and gets a workload certificate. The VM is **not** a pod and does not show up in `kubectl get pods`. `istiod` creates a `WorkloadEntry` for it automatically (auto-registration), and it appears in `istioctl proxy-status` like the sidecar of a pod. From then on a pod calls the VM through a normal Kubernetes `Service`, with mTLS.
