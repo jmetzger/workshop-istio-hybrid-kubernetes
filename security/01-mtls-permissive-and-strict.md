@@ -76,7 +76,15 @@ Effective PeerAuthentication:
 
 ## Step 3: Switch the namespace to STRICT
 
-`peerauthentication-strict.yml`:
+```
+cd
+mkdir manifests/perms/
+cd manifests/perms/
+```
+
+```
+nano peerauthentication-strict.yml
+```
 
 ```
 apiVersion: security.istio.io/v1
