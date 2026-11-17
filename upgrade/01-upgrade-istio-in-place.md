@@ -70,6 +70,8 @@ pilot:
 
 ## Step 2: Start a loop of calls
 
+**Why we do this:** An upgrade that nobody watches proves nothing. If a call fails for a second while `istiod` or a sidecar is replaced, you only notice it when traffic is running at that moment. So we send a call every half second for the whole upgrade, and count the results in step 5. The calls go through the ingress gateway to `productpage`, so they pass exactly the parts that you upgrade: the gateway and the sidecars. Every `200` in the log is a call that the upgrade did not cost.
+
 In a **second terminal**, also on the bastion host:
 
 ```
