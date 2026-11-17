@@ -4,7 +4,7 @@
 
 You upgrade Istio in **cluster b** from 1.29.9 to 1.30.8 with Helm, in the same order as in production: first the control plane, then the data plane (gateway and sidecars). A loop calls Bookinfo all the time, so you see whether the upgrade costs requests.
 
-Measured in our lab in a cluster that was **not** connected to another cluster and had no VM. Not tested: the upgrade of one cluster while the two clusters are one mesh, and the upgrade of the sidecar on a VM (a new `istio-sidecar.deb`).
+Measured in our lab in a cluster that was **not** connected to another cluster and had no VM. Not tested: the upgrade of one cluster while the two clusters are one mesh. The upgrade of the sidecar on a VM (a new `istio-sidecar.deb`) is on its own pages: [How the sidecar on a VM is upgraded](00-how-the-vm-sidecar-is-upgraded.md).
 
 This is an in-place upgrade: the new `istiod` replaces the old one. The other way, two control planes side by side, is on the next page: [Upgrade Istio with revisions](02-upgrade-istio-with-revisions.md).
 

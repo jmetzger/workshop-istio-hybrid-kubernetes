@@ -34,6 +34,7 @@ All material in this repository is in English.
 
   1. Security
      * [mTLS between workloads: PERMISSIVE and STRICT](security/01-mtls-permissive-and-strict.md)
+     * [Zero trust with Bookinfo: deny all, then allow each path](security/02-zero-trust-with-authorization-policies.md)
 
   1. Outages
      * [Outage: istiod is gone](outage/01-istiod-is-gone.md)
@@ -69,3 +70,7 @@ All material in this repository is in English.
   1. Upgrade
      * [Upgrade Istio: control plane first, then the proxies](upgrade/01-upgrade-istio-in-place.md)
      * [Upgrade Istio with revisions: two control planes side by side](upgrade/02-upgrade-istio-with-revisions.md)
+     * [How the sidecar on a VM is upgraded](upgrade/00-how-the-vm-sidecar-is-upgraded.md)
+     * [Upgrade a VM in place](upgrade/03-upgrade-the-vm-in-place.md)
+     * [Upgrade a VM with revisions](upgrade/04-upgrade-the-vm-with-revisions.md)
+     * [Upgrade two VMs, one after the other](upgrade/05-upgrade-two-vms-one-after-the-other.md)

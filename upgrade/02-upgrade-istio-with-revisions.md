@@ -318,6 +318,6 @@ In our lab: 182 calls, two of them without an answer (`000`, no answer within 4 
 * **`istioctl proxy-status` needs `--revision`** as long as two control planes run. Without it you see only the proxies of the default control plane.
 * **Set the tag `default` before you remove the old control plane.** Without it, namespaces with `istio-injection=enabled` silently get no sidecar any more.
 * **With cert-manager and istio-csr the revision must be known to istio-csr** (`app.istio.revisions`), before the first pod is moved.
-* **The Service `istiod` goes away with the old control plane** (Helm). A VM has `istiod.istio-system.svc` in its configuration. We did not test what happens to a VM, and we did not test revisions in a mesh of two clusters.
+* **The Service `istiod` goes away with the old control plane** (Helm). A VM is not affected in our lab: it uses the address of `istiod-lb`, see [Upgrade a VM with revisions](04-upgrade-the-vm-with-revisions.md). We did not test revisions in a mesh of two clusters.
 
-Previous: [Upgrade Istio in place](01-upgrade-istio-in-place.md)
+Previous: [Upgrade Istio in place](01-upgrade-istio-in-place.md) | Next: [How the sidecar on a VM is upgraded](00-how-the-vm-sidecar-is-upgraded.md)
