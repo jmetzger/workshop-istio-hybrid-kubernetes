@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540" width="1200" height="540" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#d9730d"/></marker>
+  </defs>
+  <rect width="1200" height="540" fill="#ffffff"/>
+
+  <text x="30" y="34" font-size="22" font-weight="700" fill="#222">One call from pod shop to pod orders: four places to look</text>
+
+  <!-- pod shop -->
+  <rect x="30" y="70" width="420" height="230" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="48" y="96" font-size="16" font-weight="700" fill="#2b6a2b">pod shop</text>
+  <rect x="50" y="140" width="130" height="100" rx="8" fill="#ffffff" stroke="#555" stroke-width="2"/>
+  <text x="115" y="184" font-size="16" font-weight="700" text-anchor="middle" fill="#222">shop</text>
+  <text x="115" y="206" font-size="12" text-anchor="middle" fill="#555">the application</text>
+  <rect x="300" y="140" width="125" height="100" rx="8" fill="#e8eef8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="362" y="184" font-size="16" font-weight="700" text-anchor="middle" fill="#1a5fb4">istio-proxy</text>
+  <text x="362" y="206" font-size="12" text-anchor="middle" fill="#333">sidecar (Envoy)</text>
+
+  <!-- pod orders -->
+  <rect x="750" y="70" width="420" height="230" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="768" y="96" font-size="16" font-weight="700" fill="#2b6a2b">pod orders</text>
+  <rect x="775" y="140" width="125" height="100" rx="8" fill="#e8eef8" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="837" y="184" font-size="16" font-weight="700" text-anchor="middle" fill="#1a5fb4">istio-proxy</text>
+  <text x="837" y="206" font-size="12" text-anchor="middle" fill="#333">sidecar (Envoy)</text>
+  <rect x="1015" y="140" width="130" height="100" rx="8" fill="#ffffff" stroke="#555" stroke-width="2"/>
+  <text x="1080" y="184" font-size="16" font-weight="700" text-anchor="middle" fill="#222">orders</text>
+  <text x="1080" y="206" font-size="12" text-anchor="middle" fill="#555">the REST API</text>
+
+  <!-- arrows -->
+  <line x1="180" y1="190" x2="298" y2="190" stroke="#d9730d" stroke-width="3" marker-end="url(#ao)"/>
+  <text x="239" y="130" font-size="13" text-anchor="middle" fill="#d9730d">plain text</text>
+  <text x="239" y="147" font-size="13" text-anchor="middle" fill="#d9730d">lo, port 15001</text>
+
+  <line x1="425" y1="190" x2="773" y2="190" stroke="#d9730d" stroke-width="3" marker-end="url(#ao)"/>
+  <text x="600" y="172" font-size="14" font-weight="700" text-anchor="middle" fill="#d9730d">encrypted (mTLS)</text>
+  <text x="600" y="214" font-size="13" text-anchor="middle" fill="#d9730d">eth0, port 8080</text>
+
+  <line x1="900" y1="190" x2="1013" y2="190" stroke="#d9730d" stroke-width="3" marker-end="url(#ao)"/>
+  <text x="957" y="130" font-size="13" text-anchor="middle" fill="#d9730d">plain text</text>
+  <text x="957" y="147" font-size="13" text-anchor="middle" fill="#d9730d">lo, port 8080</text>
+
+  <!-- numbered circles -->
+  <circle cx="239" cy="270" r="16" fill="#1a5fb4"/><text x="239" y="276" font-size="16" font-weight="700" text-anchor="middle" fill="#fff">5</text>
+  <circle cx="600" cy="250" r="16" fill="#1a5fb4"/><text x="600" y="256" font-size="16" font-weight="700" text-anchor="middle" fill="#fff">3</text>
+  <circle cx="957" cy="270" r="16" fill="#1a5fb4"/><text x="957" y="276" font-size="16" font-weight="700" text-anchor="middle" fill="#fff">6</text>
+  <circle cx="362" cy="270" r="16" fill="#1a5fb4"/><text x="362" y="276" font-size="16" font-weight="700" text-anchor="middle" fill="#fff">4</text>
+  <circle cx="837" cy="270" r="16" fill="#1a5fb4"/><text x="837" y="276" font-size="16" font-weight="700" text-anchor="middle" fill="#fff">4</text>
+
+  <!-- legend -->
+  <text x="30" y="352" font-size="15" font-weight="700" fill="#222">The numbers are the steps of the exercise</text>
+  <circle cx="44" cy="384" r="12" fill="#1a5fb4"/><text x="44" y="389" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">3</text>
+  <text x="70" y="389" font-size="14" fill="#333">tcpdump on eth0 of the pod orders: packets arrive, the content is encrypted</text>
+  <circle cx="44" cy="418" r="12" fill="#1a5fb4"/><text x="44" y="423" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">4</text>
+  <text x="70" y="423" font-size="14" fill="#333">access log of the sidecar: method, path, status, size, time (no header, no body)</text>
+  <circle cx="44" cy="452" r="12" fill="#1a5fb4"/><text x="44" y="457" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">5</text>
+  <text x="70" y="457" font-size="14" fill="#333">tcpdump on lo in the pod shop: the full call, as the application sends it</text>
+  <circle cx="44" cy="486" r="12" fill="#1a5fb4"/><text x="44" y="491" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">6</text>
+  <text x="70" y="491" font-size="14" fill="#333">tcpdump on lo in the pod orders: the full call and the answer, as the application receives them</text>
+</svg>

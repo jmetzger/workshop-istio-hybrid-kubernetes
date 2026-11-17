@@ -1,5 +1,7 @@
 # Test a connection between two pods, and read a hidden REST call
 
+![One call from pod shop to pod orders and the four places to look: tcpdump on eth0, the access log, tcpdump on lo in both pods](/images/pod-to-pod-where-to-look.svg)
+
 ## What we do
 
 Two pods talk to each other: `shop` calls the REST API of `orders` every five seconds. You do not know what it sends. First you **test the connection** (does the call get through at all?), then you **look into the communication** and read the call: path, header and JSON body. Measured in our lab (Istio 1.29.9, IPv6 only).
