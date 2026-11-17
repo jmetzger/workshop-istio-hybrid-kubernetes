@@ -4,6 +4,13 @@ Diese Datei ist **kein Teilnehmer-Material** (Deutsch, nur für die Arbeit mit C
 Die deutschen Vorbereitungsnotizen (Telekom-Gespräche, Messungen, Probleme, Agenda-Entwurf) liegen im Repo `~/projects/02-training/vorbereitung/training-istio-telekom`.
 Format der Übungen: Skill `workshop-training`. Stand dieser Datei: 2026-11-06.
 
+## Stand 2026-11-17: Zero-Trust-Seite
+
+- **Neu:** `security/02-zero-trust-with-authorization-policies.md` (Grafik `images/zero-trust-bookinfo.svg`, Agenda in der `README.md` unter "Security"). Umbau der Übung 16 aus `training-istio-kubernetes` auf unser Lab: Bookinfo in `default`, Gateway in `istio-ingress` (Principal `cluster.local/ns/istio-ingress/sa/istio-ingressgateway`), Istio-`Gateway` statt Gateway API. Am Lab `tln12` getestet, alle Befehle der Seite komplett durchgelaufen.
+- **Gemessen:** Bookinfo läuft in **beiden** Clustern, beide sind ein Mesh. Eine `AuthorizationPolicy` gilt nur im eigenen Cluster. Nur in Cluster a angelegt: Antworten wechseln dauerhaft zwischen 200 und 403 (ein Teil der Anfragen geht an Cluster b). Deshalb legt die Seite alles per `apply2` in beiden Clustern an.
+- **Gemessen:** Verteilung einer Policy dauert zwischen wenigen Sekunden und mehr als einer Minute (`deny-all` 7 bis über 35 s, `allow-productpage` 6 s bis über 35 s). Ursache nicht untersucht. Die Seite sagt deshalb überall: Prüfung wiederholen, bis die erwartete Antwort kommt.
+- **Offen:** Ursache der schwankenden Verteilungszeit (istiod-Push? istio-csr?).
+
 ## Wiederaufnahme: Stand 2026-11-13 abends (gilt vor dem Abschnitt vom 2026-11-06 darunter)
 
 - **Lab wie beim Kunden mit cert-manager als CA** (`istio-csr`, Skill-Schalter `ISTIO_CA=csr` in `config.env`), Cluster beim Aufbau getrennt (`ISTIO_LINK=ca`), die Teilnehmer verbinden sie selbst. Messungen: Vorbereitungsrepo `netztest-hetzner/ergebnis-cert-manager.md`.
