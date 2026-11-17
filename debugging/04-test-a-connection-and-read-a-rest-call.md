@@ -13,7 +13,7 @@ Two pods talk to each other: `shop` calls the REST API of `orders` every five se
 | Step | Question | Tool |
 |---|---|---|
 | 2 | Does the connection work? | `curl`, EndpointSlice, `istioctl proxy-config endpoints` |
-| 3 | What does the node see? | `tcpdump` on the worker node |
+| 3 | What does the network see? | `tcpdump` on `eth0` of the pod |
 | 4 | What does the access log show? | `Telemetry` API, log of the sidecar |
 | 5 | What does the caller really send? | `tcpdump` inside the pod of `shop` |
 | 6 | What does the server receive? | `tcpdump` inside the pod of `orders` |
@@ -207,25 +207,21 @@ ENDPOINT                            STATUS      OUTLIER CHECK     CLUSTER
 
 The same address twice: the pod of `orders` is known to Kubernetes and to the sidecar of the caller, and it is `HEALTHY`. The connection works.
 
-## Step 3: Look at the wire: tcpdump on the node
+## Step 3: Look at the wire: tcpdump on the network interface
 
-Which pod of `orders` and which node? The pod address, then `tcpdump` on the worker for one packet of port `8080`:
-
-```
-O=$(kubectl get pod -l app=orders -o jsonpath='{.items[0].status.podIP}'); echo $O
-ssh a-w1 "timeout 10 tcpdump -ni any -c 1 -A host $O and tcp port 8080" | cut -c1-100
-```
+On the network of the pod `orders` the call arrives from the other pod. We look at it with `tcpdump` in a **debug container** in the pod of `orders` (more about it in step 5), on the network interface `eth0`, for eight seconds, and keep only the lines that would show the call:
 
 ```
-2a01:4f8:c016:f901::1:bb65
-10:06:08.606521 calia06ecea2836 In  IP6 2a01:4f8:c016:f901::1:bb61.59158 > 2a01:4f8:c016:f901::1:bb6
-`......@*..............a*..............e....W..0U..C....J......
-....MS............0......iJ.....&...j{...c..P......u.BF...!...B......?.k%~.Q..~.......:..d3.R...mdZ.
-1 packet captured
-7 packets received by filter
+kubectl debug -q -it $(kubectl get pod -l app=orders -o name) --image=nicolaka/netshoot --target=orders --profile=netadmin -- sh -c "timeout 8 tcpdump -ni eth0 -A -s0 -l 'tcp port 8080' | grep -a -i -E 'POST|Host:|Api-Key|accepted|packets'"
 ```
 
-(The `tcpdump:` lines at the top are left out.) You see who talks to whom, and nothing else: the content is encrypted (mTLS between the two sidecars). On the wire the hidden call cannot be read.
+```
+6 packets captured
+6 packets received by filter
+0 packets dropped by kernel
+```
+
+Packets arrive (`6 packets captured`), but no line with `POST`, a host name or the key matches: the content is encrypted (mTLS between the two sidecars). On the wire the hidden call cannot be read.
 
 ## Step 4: The access log shows the path, not the content
 
@@ -312,7 +308,7 @@ Two things to see:
 
 | Where | What you see | Use it for |
 |---|---|---|
-| Node, `tcpdump` | addresses and ports, content encrypted | do packets arrive at all? |
+| `tcpdump` on `eth0` | packets, content encrypted | do packets arrive at all? |
 | Access log (sidecar) | method, path, status, sizes, time, request ID | which request, did it work, how long? |
 | `tcpdump` in the pod (debug container) | the full call: header, body, answer | what exactly is sent? |
 
