@@ -1,0 +1,341 @@
+{
+ "title": "My certificates (imported)",
+ "tags": [
+  "lab"
+ ],
+ "timezone": "browser",
+ "schemaVersion": 39,
+ "version": 1,
+ "refresh": "10s",
+ "time": {
+  "from": "now-30m",
+  "to": "now"
+ },
+ "editable": true,
+ "panels": [
+  {
+   "id": 1,
+   "type": "table",
+   "title": "Cluster a: all certificates, the one that expires first on top",
+   "description": "Red: expired. Orange: less than 5 minutes left. Workload certificates live 10 minutes in this lab and are renewed after 5.",
+   "gridPos": {
+    "h": 12,
+    "w": 12,
+    "x": 0,
+    "y": 0
+   },
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus-a"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "prometheus-a"
+     },
+     "expr": "sort(min by (kind, certificate) (label_replace(label_replace(x509_cert_not_after{secret_name=\"istio-ca\"} - time(), \"certificate\", \"$1\", \"subject_CN\", \"(.*)\"), \"kind\", \"CA, nobody renews it\", \"\", \"\")) or min by (kind, certificate) (label_replace(label_replace(certmanager_certificate_expiration_timestamp_seconds - time(), \"certificate\", \"$1\", \"name\", \"(.*)\"), \"kind\", \"istiod, renewed by cert-manager\", \"\", \"\")) or min by (kind, certificate) (label_replace(label_replace(istio_agent_cert_expiry_seconds, \"certificate\", \"$1\", \"pod\", \"(.*)\"), \"kind\", \"workload, renewed by its agent\", \"\", \"\")))",
+     "instant": true,
+     "range": false,
+     "format": "table"
+    }
+   ],
+   "transformations": [
+    {
+     "id": "organize",
+     "options": {
+      "excludeByName": {
+       "Time": true
+      },
+      "indexByName": {
+       "certificate": 0,
+       "kind": 1,
+       "Value": 2
+      },
+      "renameByName": {
+       "certificate": "Certificate",
+       "kind": "Kind",
+       "Value": "Expires in"
+      }
+     }
+    },
+    {
+     "id": "sortBy",
+     "options": {
+      "sort": [
+       {
+        "field": "Expires in",
+        "desc": false
+       }
+      ]
+     }
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "custom": {
+      "align": "auto"
+     }
+    },
+    "overrides": [
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "Expires in"
+      },
+      "properties": [
+       {
+        "id": "unit",
+        "value": "dtdurations"
+       },
+       {
+        "id": "decimals",
+        "value": 0
+       },
+       {
+        "id": "custom.cellOptions",
+        "value": {
+         "type": "color-background"
+        }
+       },
+       {
+        "id": "thresholds",
+        "value": {
+         "mode": "absolute",
+         "steps": [
+          {
+           "color": "red",
+           "value": null
+          },
+          {
+           "color": "orange",
+           "value": 0
+          },
+          {
+           "color": "green",
+           "value": 300
+          }
+         ]
+        }
+       }
+      ]
+     }
+    ]
+   },
+   "options": {
+    "showHeader": true,
+    "cellHeight": "sm"
+   }
+  },
+  {
+   "id": 2,
+   "type": "table",
+   "title": "Cluster b: all certificates, the one that expires first on top",
+   "description": "Red: expired. Orange: less than 5 minutes left. Workload certificates live 10 minutes in this lab and are renewed after 5.",
+   "gridPos": {
+    "h": 12,
+    "w": 12,
+    "x": 12,
+    "y": 0
+   },
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus-b"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "prometheus-b"
+     },
+     "expr": "sort(min by (kind, certificate) (label_replace(label_replace(x509_cert_not_after{secret_name=\"istio-ca\"} - time(), \"certificate\", \"$1\", \"subject_CN\", \"(.*)\"), \"kind\", \"CA, nobody renews it\", \"\", \"\")) or min by (kind, certificate) (label_replace(label_replace(certmanager_certificate_expiration_timestamp_seconds - time(), \"certificate\", \"$1\", \"name\", \"(.*)\"), \"kind\", \"istiod, renewed by cert-manager\", \"\", \"\")) or min by (kind, certificate) (label_replace(label_replace(istio_agent_cert_expiry_seconds, \"certificate\", \"$1\", \"pod\", \"(.*)\"), \"kind\", \"workload, renewed by its agent\", \"\", \"\")))",
+     "instant": true,
+     "range": false,
+     "format": "table"
+    }
+   ],
+   "transformations": [
+    {
+     "id": "organize",
+     "options": {
+      "excludeByName": {
+       "Time": true
+      },
+      "indexByName": {
+       "certificate": 0,
+       "kind": 1,
+       "Value": 2
+      },
+      "renameByName": {
+       "certificate": "Certificate",
+       "kind": "Kind",
+       "Value": "Expires in"
+      }
+     }
+    },
+    {
+     "id": "sortBy",
+     "options": {
+      "sort": [
+       {
+        "field": "Expires in",
+        "desc": false
+       }
+      ]
+     }
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "custom": {
+      "align": "auto"
+     }
+    },
+    "overrides": [
+     {
+      "matcher": {
+       "id": "byName",
+       "options": "Expires in"
+      },
+      "properties": [
+       {
+        "id": "unit",
+        "value": "dtdurations"
+       },
+       {
+        "id": "decimals",
+        "value": 0
+       },
+       {
+        "id": "custom.cellOptions",
+        "value": {
+         "type": "color-background"
+        }
+       },
+       {
+        "id": "thresholds",
+        "value": {
+         "mode": "absolute",
+         "steps": [
+          {
+           "color": "red",
+           "value": null
+          },
+          {
+           "color": "orange",
+           "value": 0
+          },
+          {
+           "color": "green",
+           "value": 300
+          }
+         ]
+        }
+       }
+      ]
+     }
+    ]
+   },
+   "options": {
+    "showHeader": true,
+    "cellHeight": "sm"
+   }
+  },
+  {
+   "id": 3,
+   "type": "timeseries",
+   "title": "Cluster a: workload certificates, time until they expire",
+   "description": "A healthy workload shows a saw: the line falls, the agent renews the certificate, the line jumps up. A line that falls to zero is a certificate that nobody renews.",
+   "gridPos": {
+    "h": 9,
+    "w": 12,
+    "x": 0,
+    "y": 12
+   },
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus-a"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "prometheus-a"
+     },
+     "expr": "istio_agent_cert_expiry_seconds",
+     "legendFormat": "{{pod}}",
+     "range": true
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "dtdurations",
+     "custom": {
+      "lineWidth": 1,
+      "fillOpacity": 0
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  },
+  {
+   "id": 4,
+   "type": "timeseries",
+   "title": "Cluster b: workload certificates, time until they expire",
+   "description": "A healthy workload shows a saw: the line falls, the agent renews the certificate, the line jumps up. A line that falls to zero is a certificate that nobody renews.",
+   "gridPos": {
+    "h": 9,
+    "w": 12,
+    "x": 12,
+    "y": 12
+   },
+   "datasource": {
+    "type": "prometheus",
+    "uid": "prometheus-b"
+   },
+   "targets": [
+    {
+     "refId": "A",
+     "datasource": {
+      "type": "prometheus",
+      "uid": "prometheus-b"
+     },
+     "expr": "istio_agent_cert_expiry_seconds",
+     "legendFormat": "{{pod}}",
+     "range": true
+    }
+   ],
+   "fieldConfig": {
+    "defaults": {
+     "unit": "dtdurations",
+     "custom": {
+      "lineWidth": 1,
+      "fillOpacity": 0
+     }
+    },
+    "overrides": []
+   },
+   "options": {
+    "legend": {
+     "displayMode": "list",
+     "placement": "bottom"
+    },
+    "tooltip": {
+     "mode": "multi"
+    }
+   }
+  }
+ ]
+}

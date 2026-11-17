@@ -10,6 +10,8 @@ The queries in steps 2 and 3 were run against Prometheus in cluster a and cluste
 
 Address of Grafana and the login are in `~/monitoring-access.md`.
 
+**Shortcut:** if you only want the result, import the finished dashboard from this repository: [certificates-dashboard.json](certificates-dashboard.json) (raw file: https://raw.githubusercontent.com/jmetzger/workshop-istio-hybrid-kubernetes/main/observability/certificates-dashboard.json). In Grafana choose **Dashboards**, **New**, **Import**, paste the address of the raw file or the content, click **Load** and **Import**. It is called **My certificates (imported)**. It expects the two data sources of our lab with the identifiers `prometheus-a` and `prometheus-b`. In another Grafana, pick your own data source in the panels afterwards. Then do steps 1 to 3 to understand what the panels ask, and compare it with what you see.
+
 ## Step 1: Where do the numbers come from
 
 A certificate has no metric of its own. Three different components report their own certificates:
@@ -207,7 +209,7 @@ Within a minute the workload rows are green again. Your pods are not restarted.
 A dashboard you click together lives only in the Grafana database. If the Grafana pod is replaced without storage (in our lab it is, the sample add-on has none), it is gone. Two ways to keep it:
 
 - **Export**: at the top of the dashboard choose **Export**, **Export as JSON**, and save the file. You can import it again with **Dashboards**, **New**, **Import**.
-- **As code**: put the JSON into a ConfigMap and mount it into Grafana with a dashboard provider, as the lab does for the ready-made dashboard. The file is `certificates-dashboard.json` in the lab setup.
+- **As code**: the file [certificates-dashboard.json](certificates-dashboard.json) in this folder is such an export. Put the JSON into a ConfigMap and mount it into Grafana with a dashboard provider, as the lab does for the ready-made dashboard. The file is `certificates-dashboard.json` in the lab setup.
 
 Compare your export with the ready-made dashboard: it is the same few parts, a query, two transformations, a unit and thresholds, repeated for each cluster.
 
