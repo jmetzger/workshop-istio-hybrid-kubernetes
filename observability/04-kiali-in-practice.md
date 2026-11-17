@@ -179,3 +179,4 @@ kubectl delete -f 01-virtualservice-reviews-80-20.yml -f 02-destinationrule-revi
 Leave Kiali and the `client` pod for the next exercises.
 
 Previous: [Memory of the sidecars: many services, and the Sidecar object](03-sidecar-memory-and-the-sidecar-object.md)
+Next: [Latency: a pod without a sidecar and a pod with one](05-latency-with-and-without-a-sidecar.md)
