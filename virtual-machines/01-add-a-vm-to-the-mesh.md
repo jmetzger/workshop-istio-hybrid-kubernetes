@@ -4,7 +4,7 @@
 
 > **Attention:** When you use IPv6 only on the VMs (Istio hybrid), be sure that the IPv4 address on the VM is disabled. That is the best and easiest way. Otherwise you need to fiddle around (dual stack switches, `ISTIO_SVC_IP`, health `probe` workarounds).
 
-> **Hint:** This exercise is run by a script: [`vm-in-the-mesh.sh`](vm-in-the-mesh.sh). It is in the folder `~/virtual-machines` on your bastion host. You do not have to type every command: the script shows each step first, you press ENTER, and it runs exactly these commands. Read the commands, they are the exercise.
+> **Hint:** This exercise is run by a script: [`vm-in-the-mesh.sh`](vm-in-the-mesh.sh) (click on the link to get the script). It is in the folder `~/virtual-machines` on your bastion host. You do not have to type every command: the script shows each step first, you press ENTER, and it runs exactly these commands. Read the commands, they are the exercise.
 
 Theory first: [How a VM joins the mesh](00-how-a-vm-joins-the-mesh.md). This page is the exercise.
 
