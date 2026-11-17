@@ -14,6 +14,8 @@ A VM has no namespace label. Which `istiod` it uses is decided by the address in
 
 **Where `istiod-lb` comes from:** It is not part of Istio. The script of the VM exercise creates it ([Add a VM to the mesh](../virtual-machines/01-add-a-vm-to-the-mesh.md), step 2), only in the cluster where the VM joins, so this page needs that exercise first. The VM is outside the cluster and cannot reach the normal Service `istiod` (a `ClusterIP`, valid only inside the cluster). It needs a fixed address on port 15012, so `istiod-lb` is a Service of type `LoadBalancer` with a fixed IPv6 address from MetalLB. In another mesh the VMs may reach `istiod` in another way (for example through a gateway), and then the name and the way to move a VM can be different. We tested only this one.
 
+**Is there downtime?** Only at one moment: when the sidecar on the VM restarts (step 4). Installing the second `istiod` and changing the selector cost nothing, because the VM keeps its open connection. In our run the loop saw 6 calls with 503 in about 3 seconds. With two VMs behind the same app, the default retries of Envoy send the call to the other VM, see [Upgrade two VMs one after the other](05-upgrade-two-vms-one-after-the-other.md). We measured that only with the in-place upgrade, not with revisions.
+
 | Step | What |
 |---|---|
 | 1 | Tell `istio-csr` about the new revision |
