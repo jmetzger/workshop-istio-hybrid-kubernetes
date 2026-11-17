@@ -12,6 +12,8 @@ A VM is in the mesh in cluster a (exercise [Add a VM to the mesh](../virtual-mac
 
 A VM has no namespace label. Which `istiod` it uses is decided by the address in its configuration: in our lab the Service `istiod-lb` (type `LoadBalancer`). Its selector names the `istiod` pods that answer. You move the VM by changing this selector and restarting the sidecar.
 
+**Where `istiod-lb` comes from:** It is not part of Istio. The script of the VM exercise creates it ([Add a VM to the mesh](../virtual-machines/01-add-a-vm-to-the-mesh.md), step 2), only in the cluster where the VM joins, so this page needs that exercise first. The VM is outside the cluster and cannot reach the normal Service `istiod` (a `ClusterIP`, valid only inside the cluster). It needs a fixed address on port 15012, so `istiod-lb` is a Service of type `LoadBalancer` with a fixed IPv6 address from MetalLB. In another mesh the VMs may reach `istiod` in another way (for example through a gateway), and then the name and the way to move a VM can be different. We tested only this one.
+
 | Step | What |
 |---|---|
 | 1 | Tell `istio-csr` about the new revision |
