@@ -1,5 +1,7 @@
 # Upgrade a VM in place
 
+> **Hint:** Upgrade the Istio control plane (`istiod`) first, then the sidecars. The sidecars may be behind the control plane for a while: in our lab sidecars on 1.29.9 worked with an `istiod` on 1.30.8 without an error. Do not do it the other way round.
+
 Theory: [How the sidecar on a VM is upgraded](00-how-the-vm-sidecar-is-upgraded.md)
 
 ## What we do

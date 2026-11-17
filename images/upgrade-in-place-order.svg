@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="po" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
+  </defs>
+  <rect width="1200" height="600" fill="#ffffff"/>
+  <text x="600" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">In-place upgrade: the control plane first, the proxies when they are created again</text>
+
+  <!-- Column 1 -->
+  <rect x="40" y="60" width="310" height="320" rx="10" fill="#f7f7f7" stroke="#999" stroke-width="2"/>
+  <text x="60" y="86" font-weight="bold" font-size="16" fill="#333">Start</text>
+  <rect x="60" y="100" width="270" height="56" rx="6" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="195" y="124" text-anchor="middle" font-weight="bold" fill="#1f5f1f">istiod</text>
+  <text x="195" y="144" text-anchor="middle" fill="#555">1.29.9</text>
+  <rect x="60" y="176" width="270" height="44" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="75" y="203" fill="#1a5fb4">gateway</text><text x="315" y="203" text-anchor="end" fill="#555">sidecar 1.29.9</text>
+  <rect x="60" y="230" width="270" height="44" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="75" y="257" fill="#1a5fb4">productpage</text><text x="315" y="257" text-anchor="end" fill="#555">sidecar 1.29.9</text>
+  <rect x="60" y="284" width="270" height="44" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="75" y="311" fill="#1a5fb4">reviews</text><text x="315" y="311" text-anchor="end" fill="#555">sidecar 1.29.9</text>
+  <text x="195" y="358" text-anchor="middle" fill="#555" font-size="12">everything on the old version</text>
+
+  <!-- Column 2 -->
+  <rect x="440" y="60" width="310" height="320" rx="10" fill="#f7f7f7" stroke="#999" stroke-width="2"/>
+  <text x="460" y="86" font-weight="bold" font-size="16" fill="#333">After the control plane</text>
+  <rect x="460" y="100" width="270" height="56" rx="6" fill="#f3faf3" stroke="#d9730d" stroke-width="3"/>
+  <text x="595" y="124" text-anchor="middle" font-weight="bold" fill="#1f5f1f">istiod</text>
+  <text x="595" y="144" text-anchor="middle" fill="#222" font-weight="bold">1.30.8</text>
+  <rect x="460" y="176" width="270" height="44" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="475" y="203" fill="#1a5fb4">gateway</text><text x="715" y="203" text-anchor="end" fill="#555">sidecar 1.29.9</text>
+  <rect x="460" y="230" width="270" height="44" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="475" y="257" fill="#1a5fb4">productpage</text><text x="715" y="257" text-anchor="end" fill="#555">sidecar 1.29.9</text>
+  <rect x="460" y="284" width="270" height="44" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="475" y="311" fill="#1a5fb4">reviews</text><text x="715" y="311" text-anchor="end" fill="#555">sidecar 1.29.9</text>
+  <text x="595" y="350" text-anchor="middle" fill="#555" font-size="12">old sidecars, served by the new istiod</text>
+  <text x="595" y="367" text-anchor="middle" fill="#555" font-size="12">istioctl proxy-status: column VERSION is the to-do list</text>
+
+  <!-- Column 3 -->
+  <rect x="840" y="60" width="310" height="320" rx="10" fill="#f7f7f7" stroke="#999" stroke-width="2"/>
+  <text x="860" y="86" font-weight="bold" font-size="16" fill="#333">After the restart</text>
+  <rect x="860" y="100" width="270" height="56" rx="6" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="995" y="124" text-anchor="middle" font-weight="bold" fill="#1f5f1f">istiod</text>
+  <text x="995" y="144" text-anchor="middle" fill="#222" font-weight="bold">1.30.8</text>
+  <rect x="860" y="176" width="270" height="44" rx="6" fill="#dbe8f7" stroke="#d9730d" stroke-width="3"/>
+  <text x="875" y="203" fill="#1a5fb4">gateway</text><text x="1115" y="203" text-anchor="end" fill="#222" font-weight="bold">sidecar 1.30.8</text>
+  <rect x="860" y="230" width="270" height="44" rx="6" fill="#dbe8f7" stroke="#d9730d" stroke-width="3"/>
+  <text x="875" y="257" fill="#1a5fb4">productpage</text><text x="1115" y="257" text-anchor="end" fill="#222" font-weight="bold">sidecar 1.30.8</text>
+  <rect x="860" y="284" width="270" height="44" rx="6" fill="#dbe8f7" stroke="#d9730d" stroke-width="3"/>
+  <text x="875" y="311" fill="#1a5fb4">reviews</text><text x="1115" y="311" text-anchor="end" fill="#222" font-weight="bold">sidecar 1.30.8</text>
+  <text x="995" y="358" text-anchor="middle" fill="#555" font-size="12">new pods, new sidecars</text>
+
+  <!-- Arrows -->
+  <path d="M352,220 L438,220" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
+  <circle cx="395" cy="196" r="12" fill="#d9730d"/><text x="395" y="201" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
+  <path d="M752,220 L838,220" stroke="#d9730d" stroke-width="3" fill="none" marker-end="url(#po)"/>
+  <circle cx="795" cy="196" r="12" fill="#d9730d"/><text x="795" y="201" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+
+  <!-- What you do -->
+  <rect x="40" y="405" width="530" height="70" rx="6" fill="#fff" stroke="#d9730d" stroke-width="1.5"/>
+  <circle cx="64" cy="424" r="11" fill="#d9730d"/><text x="64" y="429" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
+  <text x="86" y="429" font-weight="bold">Control plane</text>
+  <text x="60" y="451" fill="#555" font-size="13">helm upgrade istio-base and istiod (14 seconds in our lab)</text>
+  <text x="60" y="467" fill="#555" font-size="12">the old proxies stay connected and keep working</text>
+  <rect x="620" y="405" width="530" height="70" rx="6" fill="#fff" stroke="#d9730d" stroke-width="1.5"/>
+  <circle cx="644" cy="424" r="11" fill="#d9730d"/><text x="644" y="429" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+  <text x="666" y="429" font-weight="bold">Data plane</text>
+  <text x="640" y="451" fill="#555" font-size="13">helm upgrade of the gateway, kubectl rollout restart of the deployments</text>
+  <text x="640" y="467" fill="#555" font-size="12">a sidecar is only as new as its pod</text>
+
+  <!-- Result -->
+  <rect x="40" y="500" width="1110" height="44" rx="6" fill="#f3faf3" stroke="#3b8a3b"/>
+  <text x="595" y="527" text-anchor="middle" fill="#1f5f1f">A loop calls Bookinfo twice per second the whole time: 96 calls, all 200 (one replica each, a small test)</text>
+  <text x="40" y="580" font-size="12" fill="#555">Never the proxies before the control plane. In our lab the new istiod served the old proxies without an error.</text>
+</svg>

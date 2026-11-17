@@ -1,5 +1,7 @@
 # Upgrade two VMs, one after the other
 
+> **Hint:** Upgrade the Istio control plane (`istiod`) first, then the sidecars. The sidecars may be behind the control plane for a while: in our lab sidecars on 1.29.9 worked with an `istiod` on 1.30.8 without an error. Do not do it the other way round.
+
 Theory: [How the sidecar on a VM is upgraded](00-how-the-vm-sidecar-is-upgraded.md). This page continues [Upgrade a VM in place](03-upgrade-the-vm-in-place.md): there one VM lost 5 calls while its sidecar restarted. Here two VMs serve the same Service, and you restart them one after the other.
 
 ## What we do

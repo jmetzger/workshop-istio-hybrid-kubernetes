@@ -1,5 +1,9 @@
 # How the sidecar on a VM is upgraded
 
+> **Hint:** Upgrade the Istio control plane (`istiod`) first, then the sidecars. The sidecars may be behind the control plane for a while: in our lab sidecars on 1.29.9 worked with an `istiod` on 1.30.8 without an error. Do not do it the other way round.
+
+![One VM restarts its sidecar: the call that hits it fails, the retry of the pod goes to the other VM; the order of the upgrade](/images/vm-sidecar-upgrade-two-vms.svg)
+
 A pod gets its sidecar when the pod is created. When you upgrade `istiod`, a running pod keeps its old sidecar until it is created again. A VM is the same, with one difference: **nobody creates it again for you.** The sidecar on a VM is the package `istio-sidecar.deb`, and you install the new package yourself.
 
 ## The order

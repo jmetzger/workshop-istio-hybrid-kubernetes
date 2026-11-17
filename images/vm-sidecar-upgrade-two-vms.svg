@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 660" width="1200" height="660" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="pg" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+    <marker id="po" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
+    <marker id="pr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#b3261e"/></marker>
+  </defs>
+  <rect width="1200" height="660" fill="#ffffff"/>
+  <text x="600" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">One VM restarts its sidecar: the retry of the pod takes the call to the other VM</text>
+
+  <!-- Pod -->
+  <rect x="40" y="80" width="300" height="250" rx="10" fill="#eef4fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="60" y="106" font-weight="bold" font-size="16" fill="#1a5fb4">Pod: client</text>
+  <rect x="60" y="125" width="260" height="50" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="190" y="156" text-anchor="middle" font-weight="bold">application</text>
+  <rect x="60" y="195" width="260" height="115" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="190" y="221" text-anchor="middle" font-weight="bold">sidecar (Envoy)</text>
+  <text x="190" y="246" text-anchor="middle" fill="#555" font-size="12">decides, which VM gets the call</text>
+  <text x="190" y="268" text-anchor="middle" fill="#555" font-size="12">tries a failed call again:</text>
+  <text x="190" y="286" text-anchor="middle" fill="#555" font-size="12">2 retries, another VM first</text>
+  <path d="M190,177 L190,193" stroke="#555" stroke-width="1.5" fill="none" marker-end="url(#pg)"/>
+
+  <!-- VM a -->
+  <rect x="760" y="70" width="400" height="170" rx="10" fill="#fdf3f2" stroke="#b3261e" stroke-width="2" stroke-dasharray="8 5"/>
+  <text x="780" y="96" font-weight="bold" font-size="16" fill="#b3261e">VM a-vm1: the sidecar is stopped</text>
+  <rect x="780" y="112" width="360" height="40" rx="6" fill="#fff" stroke="#b3261e"/>
+  <text x="960" y="137" text-anchor="middle" fill="#b3261e">sidecar: stopped (no redirect rules left)</text>
+  <rect x="780" y="164" width="360" height="62" rx="6" fill="#fff" stroke="#999"/>
+  <text x="960" y="187" text-anchor="middle" font-weight="bold">application, port 8000</text>
+  <text x="960" y="207" text-anchor="middle" fill="#555" font-size="12">still listens, answers in plain text</text>
+
+  <!-- VM b -->
+  <rect x="760" y="290" width="400" height="170" rx="10" fill="#eef4fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="780" y="316" font-weight="bold" font-size="16" fill="#1a5fb4">VM b-vm1: the sidecar runs</text>
+  <rect x="780" y="332" width="360" height="40" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="960" y="357" text-anchor="middle" fill="#1a5fb4">sidecar (mTLS)</text>
+  <rect x="780" y="384" width="360" height="62" rx="6" fill="#fff" stroke="#999"/>
+  <text x="960" y="407" text-anchor="middle" font-weight="bold">application, port 8000</text>
+  <text x="960" y="427" text-anchor="middle" fill="#555" font-size="12">answers: HTTP 200</text>
+
+  <!-- Call 1 -->
+  <path d="M322,225 L756,150" stroke="#b3261e" stroke-width="2.5" fill="none" stroke-dasharray="7 4" marker-end="url(#pr)"/>
+  <circle cx="430" cy="206" r="12" fill="#d9730d"/><text x="430" y="211" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
+  <text x="420" y="112" fill="#b3261e" font-size="13" font-weight="bold">the call fails: mTLS meets plain text</text>
+  <text x="420" y="130" fill="#b3261e" font-size="12">TLS_error, would be a 503 for the caller</text>
+
+  <!-- Retry 2 -->
+  <path d="M322,285 L756,365" stroke="#d9730d" stroke-width="2.5" fill="none" marker-end="url(#po)"/>
+  <circle cx="430" cy="305" r="12" fill="#d9730d"/><text x="430" y="310" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+  <text x="420" y="400" fill="#d9730d" font-size="13" font-weight="bold">the retry goes to the other VM</text>
+  <text x="420" y="418" fill="#d9730d" font-size="12">the caller sees HTTP 200</text>
+
+  <!-- Order -->
+  <text x="40" y="500" font-weight="bold" font-size="16" fill="#222">The order of the upgrade</text>
+  <rect x="40" y="515" width="235" height="80" rx="6" fill="#f3faf3" stroke="#3b8a3b"/>
+  <text x="157" y="546" text-anchor="middle" font-weight="bold">istiod first</text>
+  <text x="157" y="568" text-anchor="middle" fill="#555" font-size="12">in place or as a new revision</text>
+  <path d="M277,555 L328,555" stroke="#555" stroke-width="2" fill="none" marker-end="url(#pg)"/>
+  <rect x="330" y="515" width="235" height="80" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="447" y="546" text-anchor="middle" font-weight="bold">VM a</text>
+  <text x="447" y="568" text-anchor="middle" fill="#555" font-size="12">stop, install package, start</text>
+  <path d="M567,555 L618,555" stroke="#555" stroke-width="2" fill="none" marker-end="url(#pg)"/>
+  <rect x="620" y="515" width="235" height="80" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="737" y="546" text-anchor="middle" font-weight="bold">wait</text>
+  <text x="737" y="568" text-anchor="middle" fill="#555" font-size="12">until proxy-status shows the new version</text>
+  <path d="M857,555 L908,555" stroke="#555" stroke-width="2" fill="none" marker-end="url(#pg)"/>
+  <rect x="910" y="515" width="235" height="80" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="1027" y="546" text-anchor="middle" font-weight="bold">then VM b</text>
+  <text x="1027" y="568" text-anchor="middle" fill="#555" font-size="12">the same, never both at once</text>
+
+  <!-- Legend -->
+  <path d="M40,632 L80,632" stroke="#d9730d" stroke-width="2.5" marker-end="url(#po)"/>
+  <text x="90" y="637" font-size="12" fill="#555">call that works</text>
+  <path d="M230,632 L270,632" stroke="#b3261e" stroke-width="2.5" stroke-dasharray="7 4" marker-end="url(#pr)"/>
+  <text x="280" y="637" font-size="12" fill="#555">call that fails</text>
+  <text x="430" y="637" font-size="12" fill="#555">With one VM the retry has nobody else to go to: the calls fail (5 in our lab).</text>
+</svg>

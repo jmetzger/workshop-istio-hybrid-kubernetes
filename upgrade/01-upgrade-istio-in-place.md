@@ -1,5 +1,9 @@
 # Upgrade Istio: control plane first, then the proxies
 
+> **Hint:** Upgrade the Istio control plane (`istiod`) first, then the sidecars. The sidecars may be behind the control plane for a while: in our lab sidecars on 1.29.9 worked with an `istiod` on 1.30.8 without an error. Do not do it the other way round.
+
+![In-place upgrade: first istiod, then the gateway and the sidecars; the old proxies keep working in between](/images/upgrade-in-place-order.svg)
+
 ## What we do
 
 You upgrade Istio in **cluster b** from 1.29.9 to 1.30.8 with Helm, in the same order as in production: first the control plane, then the data plane (gateway and sidecars). A loop calls Bookinfo all the time, so you see whether the upgrade costs requests.
