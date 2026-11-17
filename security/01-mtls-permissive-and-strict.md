@@ -8,6 +8,8 @@ Two sidecars talk mTLS to each other without any setting. But by default a workl
 
 All commands run on your bastion host as your lab user, in cluster a.
 
+> **Hint: What is a SPIFFE ID?** In mTLS both sides show a certificate. The certificate does not carry a DNS name but the identity of the workload, a SPIFFE ID. It is a URI in the form `spiffe://<trust domain>/ns/<namespace>/sa/<service account>`. Example: the pod `client` in namespace `default` runs with the service account `default`, so its identity is `spiffe://cluster.local/ns/default/sa/default`. `cluster.local` is the trust domain of the mesh. Istio puts this URI into the certificate (field `URI` in the Subject Alternative Name). The identity belongs to the service account, not to the pod or to its IP address: a restarted pod with another IP keeps its identity. `AuthorizationPolicy` uses exactly this value (`principals`) to decide who may call whom (see the exercise on zero trust).
+
 ## Step 1: Two callers
 
 A caller **with** a sidecar (namespace `default`):
