@@ -19,6 +19,9 @@ A caller **with** a sidecar (namespace `default`):
 ```
 kubectl create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
 kubectl rollout status deploy/client
+
+kubectl --context cluster-b create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl --context cluster-b rollout status deploy/client 
 ```
 
 (If the deployment `client` already exists from another exercise, keep it.)
