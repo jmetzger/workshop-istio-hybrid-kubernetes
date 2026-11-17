@@ -4,7 +4,7 @@
   </defs>
   <rect width="1200" height="430" fill="#ffffff"/>
   <text x="600" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">How much time does a sidecar add to one call?</text>
-  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Same client, same server, same node. Once without sidecars, once with a sidecar on each side.</text>
+  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Same client, same server, on two different nodes. Once without sidecars, once with a sidecar on each side.</text>
 
   <!-- variant 1 -->
   <text x="40" y="100" font-weight="bold" fill="#222" font-size="16">A. No mesh</text>
@@ -15,7 +15,7 @@
   <line x1="392" y1="144" x2="756" y2="144" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
   <circle cx="574" cy="144" r="13" fill="#d9730d"/><text x="574" y="149" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
   <text x="574" y="130" text-anchor="middle" fill="#555" font-size="12">plain HTTP</text>
-  <text x="975" y="150" fill="#222" font-size="16" font-weight="bold">median 0.56 ms</text>
+  <text x="975" y="150" fill="#222" font-size="16" font-weight="bold">median 0.72 ms</text>
 
   <!-- variant 2 -->
   <text x="40" y="238" font-weight="bold" fill="#222" font-size="16">B. With sidecars</text>
@@ -34,7 +34,7 @@
   <circle cx="584" cy="301" r="13" fill="#d9730d"/><text x="584" y="306" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
   <circle cx="884" cy="270" r="13" fill="#d9730d"/><text x="884" y="275" text-anchor="middle" fill="#fff" font-weight="bold">3</text>
   <text x="584" y="284" text-anchor="middle" fill="#555" font-size="12">mTLS</text>
-  <text x="1050" y="296" fill="#222" font-size="16" font-weight="bold">median 2.85 ms</text>
+  <text x="1050" y="296" fill="#222" font-size="16" font-weight="bold">median 2.7 ms</text>
 
   <!-- legend -->
   <g fill="#333" font-size="13">

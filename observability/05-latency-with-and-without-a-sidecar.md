@@ -39,7 +39,7 @@ namespace/latency-mesh labeled
 
 ### Step 2: Server and client in both
 
-One file, applied twice. The client is placed on the node of the server, so that no network between nodes is part of the measurement. The container of the client only sleeps in `fortio server` mode, we start the test from inside it.
+One file, applied twice. The client is placed on a **different node** than the server (`podAntiAffinity`), so the call crosses the network between two nodes, as most calls in your mesh do. The container of the client only runs `fortio server`, we start the test from inside it.
 
 ```
 cat > latency.yml <<'EOF'
@@ -90,7 +90,7 @@ spec:
         app: client
     spec:
       affinity:
-        podAffinity:
+        podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - topologyKey: kubernetes.io/hostname
             labelSelector:
@@ -121,20 +121,20 @@ kubectl -n latency-plain rollout status deploy/server
 kubectl -n latency-plain rollout status deploy/client
 kubectl -n latency-mesh rollout status deploy/server
 kubectl -n latency-mesh rollout status deploy/client
-kubectl -n latency-plain get pods
-kubectl -n latency-mesh get pods
+kubectl -n latency-plain get pods -o wide
+kubectl -n latency-mesh get pods -o wide
 ```
 
 ```
-NAME                     READY   STATUS    RESTARTS   AGE
-client-d67bfb987-56k8q   1/1     Running   0          7s
-server-5dd466bd5-dc4jp   1/1     Running   0          7s
-NAME                     READY   STATUS    RESTARTS   AGE
-client-d67bfb987-bpgmg   2/2     Running   0          8s
-server-5dd466bd5-qhm5w   2/2     Running   0          8s
+NAME                      READY   STATUS    RESTARTS   AGE   IP                           NODE            NOMINATED NODE   READINESS GATES
+client-76768f744c-899dv   1/1     Running   0          6s    2a01:4f8:c016:f27b::1:1a0e   v6-tln12-a-cp   <none>           <none>
+server-5dd466bd5-stlb4    1/1     Running   0          6s    2a01:4f8:c016:f901::1:bb48   v6-tln12-a-w1   <none>           <none>
+NAME                      READY   STATUS    RESTARTS   AGE   IP                           NODE            NOMINATED NODE   READINESS GATES
+client-76768f744c-jvs4q   2/2     Running   0          5s    2a01:4f8:c016:f27b::1:1a0f   v6-tln12-a-cp   <none>           <none>
+server-5dd466bd5-tt94v    2/2     Running   0          5s    2a01:4f8:c016:f901::1:bb7d   v6-tln12-a-w1   <none>           <none>
 ```
 
-`1/1` is the application only, `2/2` is the application and the sidecar. Give the pods 20 seconds to settle.
+`1/1` is the application only, `2/2` is the application and the sidecar. Client and server run on different nodes. Give the pods 20 seconds to settle.
 
 ### Step 3: The measurement
 
@@ -151,11 +151,11 @@ L latency-plain
 ```
 
 ```
-calls 6000   average 0.57 ms
-p50   0.56 ms
-p90   0.95 ms
-p99   2.29 ms
-p99.9   4.56 ms
+calls 6000   average 0.94 ms
+p50   0.73 ms
+p90   1.52 ms
+p99   2.16 ms
+p99.9   5.38 ms
 ```
 
 With a sidecar on both sides:
@@ -165,31 +165,32 @@ L latency-mesh
 ```
 
 ```
-calls 6000   average 3.07 ms
-p50   2.92 ms
-p90   3.99 ms
-p99   6.64 ms
-p99.9   10.19 ms
+calls 6000   average 2.8 ms
+p50   2.67 ms
+p90   3.74 ms
+p99   5.21 ms
+p99.9   7.63 ms
 ```
 
 `p90` means: 90 percent of the calls were faster than this. Repeat each measurement two or three times: the values at the end of the list (`p99.9`) jump from run to run.
 
 ## What we measured in our lab
 
-Three runs of 60 seconds each (200 requests per second, 4 connections, Istio 1.29.9, IPv6 only, client and server on the same node, mTLS between the sidecars), values in milliseconds:
+Three runs of 60 seconds each (200 requests per second, 4 connections, Istio 1.29.9, IPv6 only, client and server on two different nodes, mTLS between the sidecars), values in milliseconds:
 
 | | no sidecars | sidecar on both sides |
 |---|---|---|
-| average | 0.56 to 0.66 | 3.1 to 3.2 |
-| p50 (median) | 0.56 | 2.84 to 2.88 |
-| p90 | 0.95 to 0.97 | 4.1 to 4.7 |
-| p99 | 2.0 to 2.6 | 7.0 to 10.3 |
-| p99.9 | 4.0 to 28 | 22 to 25 |
+| average | 0.92 to 0.95 | 2.8 to 3.1 |
+| p50 (median) | 0.70 to 0.77 | 2.67 to 3.09 |
+| p90 | 1.52 to 1.57 | 3.7 to 3.9 |
+| p99 | 2.3 to 2.6 | 5.3 to 5.8 |
+| p99.9 | 4.6 to 16 | 6.9 to 8.4 |
 
-* A call between two pods with sidecars took **about 2.3 ms longer** at the median (0.56 ms against 2.85 ms) in our lab. That is the two Envoys and the mTLS between them, not the network: both pods were on one node.
-* The slow calls get slower in absolute numbers (p99: about 2 ms against 7 to 10 ms).
+* A call between two pods with sidecars took **about 2 ms longer** at the median (0.72 ms against 2.7 ms) in our lab. That is the two Envoys and the mTLS between them.
+* The network between the two nodes is part of both numbers (about 0.15 ms at the median: the same test with both pods on one node gave 0.56 ms without sidecars).
+* The values at the end of the list (`p99.9`) jump from run to run, the median hardly moves.
 * The server answers in a fraction of a millisecond. A real application that needs 20 ms to answer sees the same few milliseconds on top, but a much smaller share of its total time.
-* This is one small test: one request size (the `echo` answer of `fortio`), idle node, CPU and memory of the sidecars were not measured here. Measure with your own services and your own request sizes.
+* This is one small test: one request size (the `echo` answer of `fortio`), an idle lab, CPU and memory of the sidecars were not measured here. Measure with your own services and your own request sizes.
 
 ## Clean up
 
