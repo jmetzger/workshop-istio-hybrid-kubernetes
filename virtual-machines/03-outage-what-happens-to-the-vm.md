@@ -301,7 +301,7 @@ A token is checked by the API server of the cluster that created it. The certifi
 
 ### With the script: the stand-in for an automation job
 
-Typing this by hand during an outage is slow and error-prone. `vm-refresh-token.sh` (in the folder `virtual-machines`) does the same: it looks for the first cluster with a running control plane (first a, then b), gets a token there and points the VM to this cluster.
+Typing this by hand during an outage is slow and error-prone. [`vm-refresh-token.sh`](vm-refresh-token.sh) (in the folder `virtual-machines`) does the same: it looks for the first cluster with a running control plane (first a, then b), gets a token there and points the VM to this cluster.
 
 Switch the control plane of cluster a on again and run the script:
 
