@@ -1,5 +1,7 @@
 # Build the certificate dashboard by hand
 
+![Three parts report their certificates (CAs, istiod, workloads), Prometheus stores the numbers, Grafana shows one table for all of them](/images/certificate-dashboard-sources.svg)
+
 ## What we do
 
 In [Make the expiry of certificates visible](02-certificate-expiry.md) (step 5) you opened a ready-made dashboard. Here you build a smaller copy yourself, click by click, so that you can build the same for your own mesh. You need three things: numbers (metrics), a place that stores them (Prometheus) and a screen (Grafana). In the lab, Prometheus and Grafana are installed. You add the dashboard.

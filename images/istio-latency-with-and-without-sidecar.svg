@@ -4,7 +4,7 @@
   </defs>
   <rect width="1200" height="430" fill="#ffffff"/>
   <text x="600" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">How much time does a sidecar add to one call?</text>
-  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Same client, same server, on two different nodes. Once without sidecars, once with a sidecar on each side.</text>
+  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Same client, same server. Once without sidecars, once with a sidecar on each side. Measured with both pods on two nodes and on one node.</text>
 
   <!-- variant 1 -->
   <text x="40" y="100" font-weight="bold" fill="#222" font-size="16">A. No mesh</text>
@@ -15,7 +15,7 @@
   <line x1="392" y1="144" x2="756" y2="144" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
   <circle cx="574" cy="144" r="13" fill="#d9730d"/><text x="574" y="149" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
   <text x="574" y="130" text-anchor="middle" fill="#555" font-size="12">plain HTTP</text>
-  <text x="975" y="150" fill="#222" font-size="16" font-weight="bold">median 0.72 ms</text>
+  <text x="975" y="138" fill="#222" font-size="15" font-weight="bold">two nodes: 0.72 ms</text><text x="975" y="160" fill="#222" font-size="15" font-weight="bold">same node: 0.56 ms</text>
 
   <!-- variant 2 -->
   <text x="40" y="238" font-weight="bold" fill="#222" font-size="16">B. With sidecars</text>
@@ -34,13 +34,13 @@
   <circle cx="584" cy="301" r="13" fill="#d9730d"/><text x="584" y="306" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
   <circle cx="884" cy="270" r="13" fill="#d9730d"/><text x="884" y="275" text-anchor="middle" fill="#fff" font-weight="bold">3</text>
   <text x="584" y="284" text-anchor="middle" fill="#555" font-size="12">mTLS</text>
-  <text x="1050" y="296" fill="#222" font-size="16" font-weight="bold">median 2.7 ms</text>
+  <text x="1042" y="288" fill="#222" font-size="14" font-weight="bold">two nodes: 2.7 ms</text><text x="1042" y="310" fill="#222" font-size="14" font-weight="bold">same node: 2.85 ms</text>
 
   <!-- legend -->
   <g fill="#333" font-size="13">
     <circle cx="60" cy="372" r="10" fill="#d9730d"/><text x="60" y="376" text-anchor="middle" fill="#fff" font-size="11" font-weight="bold">1</text>
     <text x="80" y="377">Where the request goes, in order</text>
     <rect x="360" y="363" width="14" height="14" rx="2" fill="#1a5fb4"/><text x="382" y="376">Envoy sidecar (istio-proxy)</text>
-    <text x="40" y="408" fill="#555">Numbers on the right: median (p50) in milliseconds, measured in our lab at 200 requests per second, 4 connections, 3 runs of 60 seconds.</text>
+    <text x="40" y="408" fill="#555">Numbers on the right: median (p50) per call, measured in our lab at 200 requests per second, 4 connections, 3 runs of 60 seconds each.</text>
   </g>
 </svg>

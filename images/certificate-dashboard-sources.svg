@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" width="1200" height="520" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="arr" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#d9730d"/></marker>
+  </defs>
+  <rect width="1200" height="520" fill="#ffffff"/>
+  <text x="600" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">One table for all certificates: where the numbers come from</text>
+  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Three parts report their own certificates. Prometheus collects, Grafana shows. Same picture in cluster a and cluster b.</text>
+
+  <!-- column titles -->
+  <text x="40" y="96" font-weight="bold" fill="#222">1. Who reports</text>
+  <text x="520" y="96" font-weight="bold" fill="#222">2. Who stores</text>
+  <text x="840" y="96" font-weight="bold" fill="#222">3. Who shows</text>
+
+  <!-- source 1: CAs -->
+  <rect x="40" y="110" width="380" height="100" rx="8" fill="#f3f6fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="56" y="134" font-weight="bold" fill="#222">root CA and intermediate CA</text>
+  <text x="56" y="154" fill="#555" font-size="13">read from the secret istio-ca by the x509-certificate-exporter</text>
+  <text x="56" y="178" fill="#1a5fb4" font-size="13" font-family="Consolas, monospace">x509_cert_not_after</text>
+  <text x="56" y="198" fill="#555" font-size="13">a point in time: subtract time()</text>
+
+  <!-- source 2: istiod -->
+  <rect x="40" y="226" width="380" height="100" rx="8" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="56" y="250" font-weight="bold" fill="#222">certificate of istiod</text>
+  <text x="56" y="270" fill="#555" font-size="13">renewed and reported by cert-manager</text>
+  <text x="56" y="294" fill="#1a5fb4" font-size="11" font-family="Consolas, monospace">certmanager_certificate_expiration_timestamp_seconds</text>
+  <text x="56" y="314" fill="#555" font-size="13">a point in time: subtract time()</text>
+
+  <!-- source 3: workloads -->
+  <rect x="40" y="342" width="380" height="100" rx="8" fill="#f3f6fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="56" y="366" font-weight="bold" fill="#222">workload certificates</text>
+  <text x="56" y="386" fill="#555" font-size="13">every sidecar and the ingress gateway report their own</text>
+  <text x="56" y="410" fill="#1a5fb4" font-size="13" font-family="Consolas, monospace">istio_agent_cert_expiry_seconds</text>
+  <text x="56" y="430" fill="#555" font-size="13">already the time left in seconds</text>
+
+  <!-- prometheus -->
+  <rect x="520" y="150" width="200" height="250" rx="8" fill="#ffffff" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="620" y="190" text-anchor="middle" font-weight="bold" fill="#222" font-size="16">Prometheus</text>
+  <text x="620" y="214" text-anchor="middle" fill="#555" font-size="13">one in each cluster</text>
+  <text x="620" y="260" text-anchor="middle" fill="#555" font-size="13">collects the three</text>
+  <text x="620" y="280" text-anchor="middle" fill="#555" font-size="13">metrics from time to time</text>
+  <text x="620" y="330" text-anchor="middle" fill="#555" font-size="13">answers the query of</text>
+  <text x="620" y="350" text-anchor="middle" fill="#555" font-size="13">the panel</text>
+
+  <!-- arrows sources -> prometheus -->
+  <line x1="422" y1="160" x2="516" y2="230" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="422" y1="276" x2="516" y2="276" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="422" y1="392" x2="516" y2="320" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+
+  <!-- grafana -->
+  <rect x="840" y="110" width="320" height="332" rx="8" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="856" y="136" font-weight="bold" fill="#222" font-size="16">Grafana (cluster a)</text>
+  <text x="856" y="156" fill="#555" font-size="13">data sources: Prometheus cluster a and b</text>
+  <!-- mini table -->
+  <rect x="856" y="176" width="288" height="26" fill="#e4e9f1"/>
+  <text x="866" y="194" font-weight="bold" fill="#222" font-size="12">Certificate</text>
+  <text x="1070" y="194" font-weight="bold" fill="#222" font-size="12">Expires in</text>
+  <rect x="856" y="202" width="288" height="26" fill="#ffffff" stroke="#e4e9f1"/>
+  <text x="866" y="220" fill="#222" font-size="12">reviews-v2-...</text>
+  <rect x="1050" y="204" width="92" height="22" fill="#e8a33d"/><text x="1096" y="220" text-anchor="middle" fill="#222" font-size="12">4m 20s</text>
+  <rect x="856" y="228" width="288" height="26" fill="#ffffff" stroke="#e4e9f1"/>
+  <text x="866" y="246" fill="#222" font-size="12">productpage-v1-...</text>
+  <rect x="1050" y="230" width="92" height="22" fill="#5aa65a"/><text x="1096" y="246" text-anchor="middle" fill="#222" font-size="12">7m 15s</text>
+  <rect x="856" y="254" width="288" height="26" fill="#ffffff" stroke="#e4e9f1"/>
+  <text x="866" y="272" fill="#222" font-size="12">istiod</text>
+  <rect x="1050" y="256" width="92" height="22" fill="#5aa65a"/><text x="1096" y="272" text-anchor="middle" fill="#222" font-size="12">51m 8s</text>
+  <rect x="856" y="280" width="288" height="26" fill="#ffffff" stroke="#e4e9f1"/>
+  <text x="866" y="298" fill="#222" font-size="12">Lab Root CA</text>
+  <rect x="1050" y="282" width="92" height="22" fill="#5aa65a"/><text x="1096" y="298" text-anchor="middle" fill="#222" font-size="12">28d 18h</text>
+  <text x="856" y="338" fill="#555" font-size="13">Colors: red = expired, orange = under 5 minutes,</text>
+  <text x="856" y="358" fill="#555" font-size="13">green = more. The one that expires first is on top.</text>
+  <text x="856" y="398" fill="#555" font-size="13">Below the table: a saw line per workload,</text>
+  <text x="856" y="418" fill="#555" font-size="13">the agent renews after half of the lifetime.</text>
+
+  <!-- arrow prometheus -> grafana -->
+  <line x1="722" y1="276" x2="836" y2="276" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <circle cx="779" cy="276" r="13" fill="#d9730d"/><text x="779" y="281" text-anchor="middle" fill="#fff" font-weight="bold">Q</text>
+  <text x="779" y="252" text-anchor="middle" fill="#555" font-size="12">query</text>
+
+  <!-- legend -->
+  <text x="40" y="488" fill="#555" font-size="13">Orange arrow: the numbers travel. The values in the mini table are examples, the real ones are in your Grafana.</text>
+  <text x="40" y="508" fill="#555" font-size="13">VM certificates are not in the table: Prometheus does not collect from the VM in our lab.</text>
+</svg>
