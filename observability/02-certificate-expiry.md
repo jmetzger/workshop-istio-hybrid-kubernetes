@@ -1,5 +1,7 @@
 # Make the expiry of certificates visible
 
+![The certificates of a mesh: root CA and intermediate CA live 30 days and nobody renews them, the certificate of istiod lives 1 hour and cert-manager renews it, the workload certificate lives 10 minutes and the agent renews it](/images/certificate-lifetimes.svg)
+
 ## What we do
 
 A mesh has several certificates with very different lifetimes. You look at each of them and learn which one you must watch. Measured in our lab (Istio 1.29.9, cert-manager with istio-csr).

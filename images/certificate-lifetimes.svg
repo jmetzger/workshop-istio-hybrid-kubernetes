@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" width="1200" height="470" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+  <rect width="1200" height="470" fill="#ffffff"/>
+  <text x="600" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">The certificates of a mesh: the short ones renew themselves, the long ones do not</text>
+  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Lifetimes as measured in our lab (Istio 1.29.9, cert-manager with istio-csr)</text>
+
+  <!-- chain -->
+  <rect x="40" y="90" width="320" height="230" rx="8" fill="#fdf1f1" stroke="#c01c28" stroke-width="2"/>
+  <text x="200" y="120" text-anchor="middle" font-weight="bold" font-size="17" fill="#222">1  Root CA</text>
+  <text x="200" y="150" text-anchor="middle" fill="#222">Lifetime: <tspan font-weight="bold">30 days</tspan></text>
+  <text x="200" y="176" text-anchor="middle" fill="#222">Renewed by: <tspan font-weight="bold" fill="#c01c28">nobody</tspan></text>
+  <text x="200" y="212" text-anchor="middle" fill="#555" font-size="13">If it expires:</text>
+  <text x="200" y="232" text-anchor="middle" fill="#222" font-size="13">every workload certificate</text>
+  <text x="200" y="252" text-anchor="middle" fill="#222" font-size="13">becomes invalid,</text>
+  <text x="200" y="272" text-anchor="middle" fill="#c01c28" font-weight="bold" font-size="13">the whole mesh stops</text>
+
+  <rect x="440" y="90" width="320" height="230" rx="8" fill="#fdf1f1" stroke="#c01c28" stroke-width="2"/>
+  <text x="600" y="120" text-anchor="middle" font-weight="bold" font-size="17" fill="#222">2  Intermediate CA of a cluster</text>
+  <text x="600" y="150" text-anchor="middle" fill="#222">Lifetime: <tspan font-weight="bold">30 days</tspan></text>
+  <text x="600" y="176" text-anchor="middle" fill="#222">Renewed by: <tspan font-weight="bold" fill="#c01c28">nobody</tspan></text>
+  <text x="600" y="212" text-anchor="middle" fill="#555" font-size="13">If it expires:</text>
+  <text x="600" y="232" text-anchor="middle" fill="#222" font-size="13">no new workload certificates</text>
+  <text x="600" y="252" text-anchor="middle" fill="#222" font-size="13">in this cluster</text>
+
+  <rect x="840" y="90" width="320" height="230" rx="8" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="1000" y="120" text-anchor="middle" font-weight="bold" font-size="17" fill="#222">3  Workload certificate</text>
+  <text x="1000" y="140" text-anchor="middle" fill="#555" font-size="12">sidecar, gateway, VM</text>
+  <text x="1000" y="168" text-anchor="middle" fill="#222">Lifetime: <tspan font-weight="bold">10 minutes</tspan></text>
+  <text x="1000" y="192" text-anchor="middle" fill="#222">Renewed by: <tspan font-weight="bold" fill="#3b8a3b">the agent</tspan></text>
+  <text x="1000" y="210" text-anchor="middle" fill="#222" font-size="13">after half of the lifetime</text>
+  <text x="1000" y="244" text-anchor="middle" fill="#555" font-size="13">If it expires:</text>
+  <text x="1000" y="264" text-anchor="middle" fill="#222" font-size="13">new connections of this workload fail,</text>
+  <text x="1000" y="284" text-anchor="middle" fill="#222" font-size="13">open connections keep working</text>
+
+  <line x1="360" y1="205" x2="438" y2="205" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="760" y1="205" x2="838" y2="205" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="400" y="195" text-anchor="middle" fill="#555" font-size="12">signs</text>
+  <text x="800" y="195" text-anchor="middle" fill="#555" font-size="12">signs</text>
+
+  <!-- istiod -->
+  <rect x="40" y="345" width="720" height="62" rx="8" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="60" y="371" fill="#222" font-weight="bold">Certificate of istiod</text>
+  <text x="60" y="393" fill="#222" font-size="13">Lifetime: 1 hour. Renewed by cert-manager. If it expires: proxies cannot connect to istiod.</text>
+
+  <!-- legend -->
+  <rect x="800" y="351" width="14" height="14" rx="2" fill="#fdf1f1" stroke="#c01c28" stroke-width="2"/><text x="822" y="363" fill="#333" font-size="13">long, nobody renews: you must watch it</text>
+  <rect x="800" y="377" width="14" height="14" rx="2" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/><text x="822" y="389" fill="#333" font-size="13">short, renews itself</text>
+  <text x="600" y="445" text-anchor="middle" fill="#555" font-size="13">The dangerous certificates are the long ones: nobody renews them and nobody looks at them for months.</text>
+</svg>
