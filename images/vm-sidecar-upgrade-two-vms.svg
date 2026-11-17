@@ -8,15 +8,16 @@
   <text x="600" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">One VM restarts its sidecar: the retry of the pod takes the call to the other VM</text>
 
   <!-- Pod -->
-  <rect x="40" y="80" width="300" height="250" rx="10" fill="#eef4fb" stroke="#4a6fa5" stroke-width="2"/>
+  <rect x="40" y="80" width="300" height="270" rx="10" fill="#eef4fb" stroke="#4a6fa5" stroke-width="2"/>
   <text x="60" y="106" font-weight="bold" font-size="16" fill="#1a5fb4">Pod: client</text>
   <rect x="60" y="125" width="260" height="50" rx="6" fill="#fff" stroke="#4a6fa5"/>
   <text x="190" y="156" text-anchor="middle" font-weight="bold">application</text>
-  <rect x="60" y="195" width="260" height="115" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <rect x="60" y="195" width="260" height="135" rx="6" fill="#fff" stroke="#4a6fa5"/>
   <text x="190" y="221" text-anchor="middle" font-weight="bold">sidecar (Envoy)</text>
   <text x="190" y="246" text-anchor="middle" fill="#555" font-size="12">decides, which VM gets the call</text>
-  <text x="190" y="268" text-anchor="middle" fill="#555" font-size="12">tries a failed call again:</text>
+  <text x="190" y="268" text-anchor="middle" fill="#555" font-size="12">tries a failed call again, by default:</text>
   <text x="190" y="286" text-anchor="middle" fill="#555" font-size="12">2 retries, another VM first</text>
+  <text x="190" y="303" text-anchor="middle" fill="#555" font-size="12">(Istio default, nobody set it in our lab)</text>
   <path d="M190,177 L190,193" stroke="#555" stroke-width="1.5" fill="none" marker-end="url(#pg)"/>
 
   <!-- VM a -->
