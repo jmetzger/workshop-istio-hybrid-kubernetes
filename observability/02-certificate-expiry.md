@@ -93,7 +93,31 @@ ssh a-vm1 "openssl x509 -noout -enddate -in /etc/certs/cert-chain.pem"
 
 If the time shown is in the past, the VM cannot open new connections in the mesh. For a pod, `istioctl proxy-config secret` shows `false` in the column `VALID CERT`. See [Outage: what happens to the VM](../virtual-machines/03-outage-what-happens-to-the-vm.md).
 
-## Step 5: All certificates at a glance in Grafana
+## Step 5: The certificate of every proxy in one command
+
+`istioctl proxy-status` lists every proxy that is connected to `istiod`: pods with a sidecar, the gateways, and the VM. This loop asks each of them for its workload certificate and prints when it expires:
+
+```
+for p in $(istioctl proxy-status | awk 'NR>1{print $1}'); do echo "$p  $(istioctl proxy-config secret $p -o json 2>/dev/null | jq -r '.dynamicActiveSecrets[]|select(.name=="default")|.secret.tlsCertificate.certificateChain.inlineBytes' | base64 -d | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2)"; done
+```
+
+```
+client-7b7df66fb8-v6kkw.default  Nov 17 15:07:08 2026 GMT
+details-v1-6cc9f5cc44-nl5vq.default  Nov 17 15:05:23 2026 GMT
+istio-ingressgateway-5dc49cc6bf-4jcdm.istio-ingress  Nov 17 15:06:54 2026 GMT
+productpage-v1-7f885b46fc-kdtg8.default  Nov 17 15:09:03 2026 GMT
+reviews-v1-fdbf79cd8-n7r8k.default  Nov 17 15:07:44 2026 GMT
+...
+v6-tln1-a-vm1.vm
+```
+
+Every workload certificate runs out within the next ten minutes, and each one is renewed by its agent before that. This is what you expect. A proxy whose date is in the past is a proxy that did not renew.
+
+The line of the VM stays empty: `istioctl proxy-config secret` cannot read it. Read the file on the VM as in step 4.
+
+The loop only sees the proxies of the cluster you are in. For cluster b, write `istioctl --context cluster-b` in both places.
+
+## Step 6: All certificates at a glance in Grafana
 
 Open Grafana (address and password are in `~/monitoring-access.md`). Choose **Dashboards**, the folder **lab**, and the dashboard **Lab: certificates and when they expire**.
 
@@ -142,7 +166,7 @@ The certificate of a VM is not in the table: Prometheus does not collect from th
 
 **A trap:** Envoy has a metric `envoy_server_days_until_first_cert_expiring`. It counts whole days. With certificates that live one hour it always showed `0` in our lab (and ten minutes are less than a day, too), so it is useless for an alert here.
 
-The alerts in the last column are ideas, not tested rules. The three metrics of step 5 are the numbers such rules would use: an alert is the same question as the table, with a limit.
+The alerts in the last column are ideas, not tested rules. The three metrics of step 6 are the numbers such rules would use: an alert is the same question as the table, with a limit.
 
 Previous: [Monitoring: Prometheus, Grafana, Kiali](01-prometheus-grafana-kiali.md)
 Next: [Memory of the sidecars: many services, and the Sidecar object](03-sidecar-memory-and-the-sidecar-object.md)

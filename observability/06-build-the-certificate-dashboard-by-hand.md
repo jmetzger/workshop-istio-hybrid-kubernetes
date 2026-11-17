@@ -4,7 +4,7 @@
 
 ## What we do
 
-In [Make the expiry of certificates visible](02-certificate-expiry.md) (step 5) you opened a ready-made dashboard. Here you build a smaller copy yourself, click by click, so that you can build the same for your own mesh. You need three things: numbers (metrics), a place that stores them (Prometheus) and a screen (Grafana). In the lab, Prometheus and Grafana are installed. You add the dashboard.
+In [Make the expiry of certificates visible](02-certificate-expiry.md) (step 6) you opened a ready-made dashboard. Here you build a smaller copy yourself, click by click, so that you can build the same for your own mesh. You need three things: numbers (metrics), a place that stores them (Prometheus) and a screen (Grafana). In the lab, Prometheus and Grafana are installed. You add the dashboard.
 
 The dashboard you build is called **My certificates**. It does not touch the ready-made one **Lab: certificates and when they expire** (folder **lab**), you can open both side by side and compare.
 
