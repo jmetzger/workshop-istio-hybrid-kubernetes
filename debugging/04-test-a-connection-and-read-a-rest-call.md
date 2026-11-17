@@ -26,8 +26,16 @@ All commands run on your bastion host as your lab user, in cluster a.
 
 Create the file `orders-and-shop.yml`. **Do not read the `shop` part closely**: the point of the exercise is that you find out what it sends without looking into the file.
 
-<details>
-<summary>orders-and-shop.yml</summary>
+```
+cd
+mkdir -p manifests/debug-traffik
+cd manifests/debug-traffik
+```
+
+```
+nano  orders-and-shop.yml
+```
+
 
 ```
 apiVersion: v1
@@ -125,7 +133,6 @@ spec:
               done
 ```
 
-</details>
 
 ```
 kubectl apply -f orders-and-shop.yml
