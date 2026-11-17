@@ -81,7 +81,7 @@ Effective PeerAuthentication:
 
 ```
 cd
-mkdir manifests/perms/
+mkdir -p manifests/perms/
 cd manifests/perms/
 ```
 
