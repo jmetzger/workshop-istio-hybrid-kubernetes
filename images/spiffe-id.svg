@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" width="1200" height="560" font-family="Segoe UI, Arial, sans-serif" font-size="15">
+  <defs>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+  <rect width="1200" height="560" fill="#ffffff"/>
+  <text x="600" y="36" text-anchor="middle" font-size="22" font-weight="bold" fill="#222">SPIFFE ID: the identity of a workload in the mesh</text>
+
+  <rect x="40" y="70" width="290" height="100" rx="8" fill="#eef3fa" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="185" y="104" text-anchor="middle" font-weight="bold" fill="#1a5fb4" font-size="17">Pod client</text>
+  <text x="185" y="130" text-anchor="middle" font-size="13" fill="#555">namespace default</text>
+  <text x="185" y="152" text-anchor="middle" font-size="13" fill="#555">sidecar (Envoy)</text>
+
+  <path d="M332,120 L428,120" stroke="#555" stroke-width="2" fill="none" marker-end="url(#g)"/>
+  <text x="380" y="108" text-anchor="middle" font-size="13" fill="#555">runs as</text>
+
+  <rect x="430" y="70" width="290" height="100" rx="8" fill="#fff" stroke="#888" stroke-width="2"/>
+  <text x="575" y="104" text-anchor="middle" font-weight="bold" fill="#222" font-size="17">ServiceAccount</text>
+  <text x="575" y="136" text-anchor="middle" font-family="Consolas, monospace" font-size="16" fill="#222">default</text>
+
+  <path d="M722,120 L818,120" stroke="#555" stroke-width="2" fill="none" marker-end="url(#g)"/>
+  <text x="770" y="108" text-anchor="middle" font-size="13" fill="#555">becomes</text>
+
+  <rect x="820" y="70" width="340" height="100" rx="8" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="990" y="104" text-anchor="middle" font-weight="bold" fill="#2a6b2a" font-size="17">Workload certificate</text>
+  <text x="990" y="130" text-anchor="middle" font-size="13" fill="#555">Subject Alternative Name</text>
+  <text x="990" y="152" text-anchor="middle" font-size="13" fill="#555">field URI = the SPIFFE ID</text>
+
+  <path d="M990,172 L990,222 L840,222 L840,252" stroke="#3b8a3b" stroke-width="2" fill="none" marker-end="url(#g)"/>
+
+  <text x="40" y="262" font-size="13" fill="#555">The SPIFFE ID of this pod:</text>
+  <text x="230" y="300" font-family="Consolas, 'Courier New', monospace" font-size="28" font-weight="bold" fill="#777" textLength="153" lengthAdjust="spacing">spiffe://</text>
+  <text x="383" y="300" font-family="Consolas, 'Courier New', monospace" font-size="28" font-weight="bold" fill="#3b8a3b" textLength="221" lengthAdjust="spacing">cluster.local</text>
+  <text x="604" y="300" font-family="Consolas, 'Courier New', monospace" font-size="28" font-weight="bold" fill="#1a5fb4" textLength="187" lengthAdjust="spacing">/ns/default</text>
+  <text x="791" y="300" font-family="Consolas, 'Courier New', monospace" font-size="28" font-weight="bold" fill="#d9730d" textLength="187" lengthAdjust="spacing">/sa/default</text>
+
+  <path d="M230,318 L230,326 L380,326 L380,318" stroke="#777" stroke-width="2" fill="none"/>
+  <path d="M383,318 L383,326 L602,326 L602,318" stroke="#3b8a3b" stroke-width="2" fill="none"/>
+  <path d="M604,318 L604,326 L789,326 L789,318" stroke="#1a5fb4" stroke-width="2" fill="none"/>
+  <path d="M791,318 L791,326 L978,326 L978,318" stroke="#d9730d" stroke-width="2" fill="none"/>
+
+  <text x="305" y="352" text-anchor="middle" font-weight="bold" fill="#555">1</text>
+  <text x="493" y="352" text-anchor="middle" font-weight="bold" fill="#3b8a3b">2</text>
+  <text x="697" y="352" text-anchor="middle" font-weight="bold" fill="#1a5fb4">3</text>
+  <text x="885" y="352" text-anchor="middle" font-weight="bold" fill="#d9730d">4</text>
+
+  <text x="60" y="400" font-size="15" fill="#222"><tspan font-weight="bold" fill="#555">1</tspan>  Scheme: this URI is a SPIFFE ID</text>
+  <text x="60" y="428" font-size="15" fill="#222"><tspan font-weight="bold" fill="#3b8a3b">2</tspan>  Trust domain: the mesh (here the default, cluster.local)</text>
+  <text x="60" y="456" font-size="15" fill="#222"><tspan font-weight="bold" fill="#1a5fb4">3</tspan>  Namespace of the pod</text>
+  <text x="60" y="484" font-size="15" fill="#222"><tspan font-weight="bold" fill="#d9730d">4</tspan>  Service account of the pod: the identity belongs to it, not to the pod or its IP</text>
+
+  <rect x="40" y="505" width="1120" height="40" rx="6" fill="#fff4e0" stroke="#d9730d" stroke-width="1.5"/>
+  <text x="600" y="530" text-anchor="middle" font-size="15" fill="#8a4500">AuthorizationPolicy uses this value as <tspan font-family="Consolas, monospace" font-weight="bold">principals</tspan>, written without <tspan font-family="Consolas, monospace">spiffe://</tspan>: <tspan font-family="Consolas, monospace" font-weight="bold">cluster.local/ns/default/sa/default</tspan></text>
+</svg>
