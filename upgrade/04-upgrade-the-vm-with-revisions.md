@@ -2,6 +2,8 @@
 
 > **Hint:** Upgrade the Istio control plane (`istiod`) first, then the sidecars. The sidecars may be behind the control plane for a while: in our lab sidecars on 1.29.9 worked with an `istiod` on 1.30.8 without an error. Do not do it the other way round.
 
+![A VM moves to the new istiod with its restart, not with the selector: step 2 two istiod, step 3 switch the selector of istiod-lb, step 4 restart the VM](/images/vm-upgrade-with-revisions.svg)
+
 Theory: [How the sidecar on a VM is upgraded](00-how-the-vm-sidecar-is-upgraded.md). The control plane steps are the same as in [Upgrade Istio with revisions](02-upgrade-istio-with-revisions.md), read that page first.
 
 ## What we do
