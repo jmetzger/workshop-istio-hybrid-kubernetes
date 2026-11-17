@@ -59,6 +59,7 @@ All material in this repository is in English.
      * [Logs and log levels](debugging/01-logs-and-log-levels.md)
      * [ControlZ: the debug page of istiod](debugging/02-controlz.md)
      * [See the traffic: access logs instead of tcpdump](debugging/03-access-logs-instead-of-tcpdump.md)
+     * [Test a connection between two pods, and read a hidden REST call](debugging/04-test-a-connection-and-read-a-rest-call.md)
 
   1. Monitoring
      * [What Istio costs: CPU and memory of the sidecars and of istiod](observability/00-what-istio-costs.md)

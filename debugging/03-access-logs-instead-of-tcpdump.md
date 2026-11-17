@@ -123,3 +123,5 @@ kubectl delete -f telemetry-access-log.yml
 ```
 
 Previous: [ControlZ](02-controlz.md)
+
+Next: [Test a connection between two pods, and read a hidden REST call](04-test-a-connection-and-read-a-rest-call.md)
