@@ -2,6 +2,8 @@
 
 > **Hint:** Upgrade the Istio control plane (`istiod`) first, then the sidecars. The sidecars may be behind the control plane for a while: in our lab sidecars on 1.29.9 worked with an `istiod` on 1.30.8 without an error. Do not do it the other way round.
 
+![Upgrade with revisions: a second istiod next to the old one, the workloads move with label and restart, then the old istiod is removed](/images/upgrade-with-revisions-order.svg)
+
 ## What we do
 
 You upgrade Istio from 1.29.9 to 1.30.8 without replacing the running `istiod`. A second `istiod` with the new version is installed next to the old one. Then you move the workloads to it, namespace by namespace, and remove the old one at the end. The Istio documentation calls this a canary upgrade and recommends it: "Canary Upgrade is safer than doing an in-place upgrade and is the recommended upgrade method."
