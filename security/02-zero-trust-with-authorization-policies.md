@@ -8,7 +8,7 @@ mTLS (the previous exercise) tells every sidecar **who** is calling: each worklo
 
 Zero trust means: nothing is allowed by default. In this exercise you
 
-1. make mTLS mandatory (`PeerAuthentication` with `STRICT`), so that every caller need an identity,
+1. make mTLS mandatory (`PeerAuthentication` with `STRICT`), so that every caller needs an identity,
 2. lock the whole namespace `default` with one empty policy (`deny-all`), and see why this is not enough with two connected clusters,
 3. read in the log of the sidecar **why** a request was refused,
 4. allow exactly the four calls Bookinfo needs, one policy each (the numbers in the picture),
