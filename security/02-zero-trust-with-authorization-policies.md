@@ -177,18 +177,21 @@ metadata:
   namespace: default
 spec: {}
 EOF
+
 ```
 
 First only in cluster a:
 
 ```
 kubectl --context cluster-a apply -f deny-all.yml
+
 ```
 
 Wait 30 seconds. Then call the page ten times:
 
 ```
 for i in $(seq 1 10); do curl -6 -s -o /dev/null -m 8 -w "%{http_code} " "http://[$GATEWAY]/productpage"; sleep 1; done; echo
+
 ```
 
 ```
@@ -201,6 +204,7 @@ Now the same policy in cluster b, with the helper `apply2` from step 2:
 
 ```
 apply2 -f deny-all.yml
+
 ```
 
 ```
@@ -213,6 +217,7 @@ A new policy needs time to reach all sidecars: in our lab between a few seconds 
 ```
 for i in $(seq 1 10); do curl -6 -s -o /dev/null -m 8 -w "%{http_code} " "http://[$GATEWAY]/productpage"; sleep 1; done; echo
 curl -6 -s -m 8 "http://[$GATEWAY]/productpage"; echo
+
 ```
 
 ```
@@ -232,6 +237,7 @@ The sidecar only logs its decisions at log level `debug` of the component `rbac`
 
 ```
 istioctl proxy-config log deploy/productpage-v1 --level rbac:debug | grep rbac
+
 ```
 
 ```
@@ -243,6 +249,7 @@ Call the page a few times and read the log. The gateway shares the requests betw
 ```
 for i in 1 2 3 4 5 6; do curl -6 -s -o /dev/null -w "HTTP %{http_code}\n" "http://[$GATEWAY]/productpage"; done
 kubectl logs deploy/productpage-v1 -c istio-proxy --tail=20 | grep rbac_filter | tail -2
+
 ```
 
 Every request that arrives in cluster a gives two lines (shortened here). The first one is the important one:
@@ -250,6 +257,7 @@ Every request that arrives in cluster a gives two lines (shortened here). The fi
 ```
 ... checking request: requestedServerName: outbound_.9080_._.productpage.default.svc.cluster.local, ... ssl: uriSanPeerCertificate: spiffe://cluster.local/ns/istio-ingress/sa/istio-ingressgateway, ...
 ... enforced denied, matched policy none
+
 ```
 
 * `uriSanPeerCertificate` is **who is calling**: the principal of the caller, here the ingress gateway. This is the value you need for the policy in the next step.
@@ -259,6 +267,7 @@ You can also ask which policies apply to a workload:
 
 ```
 istioctl x authz check deploy/productpage-v1
+
 ```
 
 ```
@@ -272,6 +281,7 @@ The principal of the gateway is `cluster.local/ns/istio-ingress/sa/istio-ingress
 
 ```
 kubectl -n istio-ingress get pod -l istio=ingressgateway -o jsonpath='{.items[0].spec.serviceAccountName}{"\n"}'
+
 ```
 
 ```
@@ -301,10 +311,12 @@ spec:
         methods: ["GET"]
         paths: ["/productpage", "/static/*", "/login", "/logout", "/api/v1/products*"]
 EOF
+
 ```
 
 ```
 apply2 -f allow-productpage.yml
+
 ```
 
 Two things in the policy: `selector` limits it to the pods with the label `app: productpage` (without a selector it applies to the whole namespace). `from` and `to` are both required: **who** (principal) and **what** (method and path).
@@ -314,6 +326,7 @@ Repeat the next call until it answers `200` (in our lab sometimes more than a mi
 ```
 curl -6 -s -o /dev/null -w "HTTP %{http_code}\n" "http://[$GATEWAY]/productpage"
 curl -6 -s "http://[$GATEWAY]/productpage" | grep -E "Error fetching|currently unavailable"
+
 ```
 
 ```
@@ -329,11 +342,13 @@ The page comes, but without details and reviews: `productpage` may be called now
 ```
 for i in 1 2 3 4 5 6; do curl -6 -s -o /dev/null "http://[$GATEWAY]/productpage"; done
 kubectl logs deploy/productpage-v1 -c istio-proxy --tail=80 | grep rbac_filter | grep allowed | tail -2
+
 ```
 
 ```
 ... enforced allowed, matched policy ns[default]-policy[allow-productpage]-rule[0]
 ... allowed by default or by policy
+
 ```
 
 ## Step 6: Allow the rest of the chain
@@ -363,6 +378,7 @@ spec:
         methods: ["GET"]
         paths: ["/details/*"]
 EOF
+
 ```
 
 Create `allow-reviews.yml`:
@@ -388,6 +404,7 @@ spec:
         methods: ["GET"]
         paths: ["/reviews/*"]
 EOF
+
 ```
 
 Create `allow-ratings.yml`:
@@ -413,16 +430,19 @@ spec:
         methods: ["GET"]
         paths: ["/ratings/*"]
 EOF
+
 ```
 
 ```
 apply2 -f allow-details.yml -f allow-reviews.yml -f allow-ratings.yml
+
 ```
 
 Repeat the call until the error messages are gone (in our lab sometimes more than a minute, for a while some calls still fail):
 
 ```
 curl -6 -s "http://[$GATEWAY]/productpage" | grep -c -E "Error fetching"
+
 ```
 
 ```
@@ -433,6 +453,7 @@ Open the page in a browser: `http://[<GATEWAY>]/productpage` (the address from s
 
 ```
 kubectl get authorizationpolicy
+
 ```
 
 ```
@@ -442,6 +463,7 @@ allow-productpage   ALLOW    18s
 allow-ratings       ALLOW    15s
 allow-reviews       ALLOW    16s
 deny-all                     21s
+
 ```
 
 ## Step 7: Everything else is still refused
@@ -454,6 +476,7 @@ Each call below is not in the picture (or not allowed by the policy), so each on
 kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "client to productpage: HTTP %{http_code}\n" http://productpage:9080/productpage
 kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "client to details:     HTTP %{http_code}\n" http://details:9080/details/0
 kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "client to ratings:     HTTP %{http_code}\n" http://ratings:9080/ratings/0
+
 ```
 
 ```
@@ -468,15 +491,18 @@ The pod without a sidecar has no certificate and so no principal. It does not ev
 kubectl -n zt-plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain: HTTP %{http_code}\n" http://productpage.default:9080/productpage
 ```
 
+
 ```
 plain: HTTP 000
 command terminated with exit code 56
+
 ```
 
 The right caller with the wrong method: the gateway may call `productpage`, but only with `GET`:
 
 ```
 curl -6 -s -o /dev/null -w "POST through the gateway: HTTP %{http_code}\n" -X POST "http://[$GATEWAY]/productpage"
+
 ```
 
 ```
@@ -488,6 +514,7 @@ Last test: a call from a pod that has the identity of `reviews`. A debug contain
 ```
 POD=$(kubectl get pod -l app=reviews,version=v1 -o jsonpath='{.items[0].metadata.name}')
 kubectl debug $POD -i -q --image=curlimages/curl:8.11.1 --target=reviews --profile=general -- sh -c 'curl -s -o /dev/null -m 5 -w "reviews to ratings: HTTP %{http_code}\n" http://ratings:9080/ratings/0; curl -s -o /dev/null -m 5 -w "reviews to details: HTTP %{http_code}\n" http://details:9080/details/0'
+
 ```
 
 ```
@@ -520,16 +547,19 @@ spec:
     - key: request.headers[x-debug]
       values: ["true"]
 EOF
+
 ```
 
 ```
 apply2 -f deny-ratings-debug.yml
+
 ```
 
 The same debug container, now with and without the header. The call with the header is repeated until it is refused (it can take more than a minute):
 
 ```
 kubectl debug $POD -i -q --image=curlimages/curl:8.11.1 --target=reviews --profile=general -- sh -c 'for i in $(seq 1 40); do r=$(curl -s -o /dev/null -m 5 -w "%{http_code}" -H "x-debug: true" http://ratings:9080/ratings/0); [ "$r" = 403 ] && break; sleep 2; done; echo "x-debug:  HTTP $r"; curl -s -o /dev/null -m 5 -w "normal:   HTTP %{http_code}\n" http://ratings:9080/ratings/0'
+
 ```
 
 ```
@@ -563,7 +593,8 @@ The order in which Istio evaluates the policies of a workload (Istio documentati
 for c in cluster-a cluster-b; do kubectl --context $c delete authorizationpolicy --all; kubectl --context $c delete peerauthentication default; done
 istioctl proxy-config log deploy/productpage-v1 --level rbac:warning | grep rbac
 cd ..
-rm -r zero-trust
+rm -fr zero-trust
+
 ```
 
 ```
@@ -575,6 +606,7 @@ After a while (repeat the calls) all calls work again:
 ```
 curl -6 -s -o /dev/null -w "HTTP %{http_code}\n" "http://[$GATEWAY]/productpage"
 kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "HTTP %{http_code}\n" http://ratings:9080/ratings/0
+
 ```
 
 ```
