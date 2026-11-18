@@ -162,7 +162,7 @@ extra.default                                           cluster-a     istiod-66d
 Now start a pod in a namespace without sidecar injection and compare:
 
 ```
-kubectl create namespace plain
+kubectl create ns plain --dry-run=client -o yaml | kubectl apply -f -
 kubectl get namespace plain -L istio-injection
 kubectl run plain-web -n plain --image=nginx:1.27
 kubectl wait -n plain --for=condition=Ready pod/plain-web --timeout=120s

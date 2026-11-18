@@ -40,13 +40,13 @@ Two more callers, the same as in the previous exercise. One **with** a sidecar (
 
 ```
 kubectl create deploy client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
-kubectl create ns plain
+kubectl create ns plain --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n plain create deploy plain --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl -n plain apply -f -
 kubectl rollout status deploy/client
 kubectl -n plain rollout status deploy/plain
 ```
 
-(If `client` and `plain` already exist from the previous exercise, keep them.)
+(You can run this again at any time: if `client` and `plain` already exist, nothing breaks.)
 
 Both reach `productpage`. There is no policy yet:
 

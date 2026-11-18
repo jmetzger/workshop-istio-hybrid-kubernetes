@@ -29,7 +29,7 @@ kubectl --context cluster-b rollout status deploy/client
 A caller **without** a sidecar, in a namespace that has no injection label:
 
 ```
-kubectl create ns plain
+kubectl create ns plain --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n plain create deploy plain --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl -n plain apply -f -
 kubectl -n plain rollout status deploy/plain
 kubectl -n plain get pods
