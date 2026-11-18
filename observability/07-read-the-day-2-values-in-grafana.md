@@ -19,7 +19,19 @@ In Grafana choose **Dashboards**. You find the folder **istio** with the dashboa
 | Istio Service Dashboard | **Client Request Duration**, **Server Success Rate** | one service: how fast, how many errors |
 | Lab: certificates and when they expire (folder **lab**) | the table and the saw | which certificate ends when |
 
-Open each one and write down one number from it. Set the time range to **Last 1 hour**.
+Open each one and write down one number from it. Set the time range to **Last 1 hour**. In the pictures the red frames show where to look.
+
+**Istio Control Plane Dashboard:** four panels. **Memory Usage**: the memory of `istiod` stays flat. **Connections**: the number of connected proxies, a flat line; a drop means proxies lost the connection. **Push Errors**: should say `No data`, that is good. **Push Time**: most pushes take less than 100 ms; a block that moves up to seconds is a warning.
+
+![Istio Control Plane Dashboard with red frames around Memory Usage, Connections, Push Errors and Push Time](/images/grafana-1-control-plane.png)
+
+**Istio Mesh Dashboard:** three numbers at the top. **Traffic Volume**: requests per second in the whole mesh. **Success Rate**: should be close to 100 %. **5xxs**: should be 0. The table below shows the same per service, with the latency. Rows with `NaN` are services that got no request in this hour, not errors.
+
+![Istio Mesh Dashboard with red frames around Traffic Volume, Success Rate and 5xxs](/images/grafana-2-mesh.png)
+
+**Lab: certificates and when they expire:** the tables list every certificate with the one that ends first on top, for cluster a and cluster b. A workload certificate lives 10 minutes in our lab, so `5 minutes` is normal. The saw below shows how every certificate is renewed again and again; a line that runs down to `0 seconds` and does not come back is a certificate that nobody renews.
+
+![Lab dashboard with all certificates of cluster a and cluster b in two tables and two saw graphs, framed in red](/images/grafana-3-certificates.png)
 
 ## Step 2: Ask Prometheus for the same numbers
 
@@ -31,7 +43,9 @@ In Grafana choose **Explore** and the data source `prometheus-a` (cluster a). Ru
 sum(pilot_xds)
 ```
 
-We got `9` in each cluster. The value should match the number of pods with a sidecar plus the VMs. A value that drops and stays low means proxies lost the connection.
+We got `9` in each cluster in an idle lab, and `13` in the picture below, where more pods ran. The value should match the number of pods with a sidecar plus the VMs. A value that drops and stays low means proxies lost the connection. The red frames show where you type the query and where the number appears (switch the result to **Raw**).
+
+![Grafana Explore with the query sum(pilot_xds) framed in red and the result 13 in the raw table](/images/grafana-4-explore.png)
 
 2. How long does it take until a configuration change arrives in the proxies (99 % of the cases)?
 
