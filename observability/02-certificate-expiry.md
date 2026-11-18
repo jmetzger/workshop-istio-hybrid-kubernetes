@@ -171,24 +171,26 @@ kubectl -n istio-system exec deploy/prometheus -c prometheus-server -- wget -qO-
 istio_agent_cert_expiry_seconds{resource_name="default"} 578.7
 ```
 
-Now add a job to the Prometheus of cluster a. Open the configuration:
+Now add a job to the Prometheus of cluster a. The configuration of this Prometheus is in the ConfigMap `prometheus` (it is the sample of Istio, not the Prometheus Operator). The command reads the configuration, adds the job `vm-agents` with the address of your VM, and writes it back. The label `pod` is what the table shows as the name. Run it again at any time, it replaces the job and does not add a second one:
 
 ```
-kubectl -n istio-system edit cm prometheus
+kubectl -n istio-system get cm prometheus -o jsonpath='{.data.prometheus\.yml}' | python3 -c '
+import sys, json, yaml
+c = yaml.safe_load(sys.stdin)
+c["scrape_configs"] = [j for j in c["scrape_configs"] if j["job_name"] != "vm-agents"]
+c["scrape_configs"].append({"job_name": "vm-agents", "static_configs": [{"targets": ["v6-" + sys.argv[1] + "-a-vm1.do.t3isp.de:15020"], "labels": {"pod": "a-vm1"}}]})
+print(json.dumps({"data": {"prometheus.yml": yaml.safe_dump(c)}}))' $(whoami) > /tmp/prom-patch.json
+kubectl -n istio-system patch cm prometheus --type merge --patch-file /tmp/prom-patch.json
+rm /tmp/prom-patch.json
 ```
 
-Find the line `scrape_configs:` and add this job below it, with the same indentation as the other jobs (replace `tlnX` with your user name; the label `pod` is what the table shows as the name):
-
 ```
-- job_name: vm-agents
-  static_configs:
-  - targets:
-    - v6-tlnX-a-vm1.do.t3isp.de:15020
-    labels:
-      pod: a-vm1
+configmap/prometheus patched
 ```
 
-Save and close. Prometheus reloads its configuration by itself, after at most a minute. Check the target:
+With the Prometheus Operator you would not edit a ConfigMap. You would create a `ScrapeConfig` with the same address and label.
+
+Prometheus reloads its configuration by itself, after at most a minute. Check the target:
 
 ```
 kubectl -n istio-system exec deploy/prometheus -c prometheus-server -- wget -qO- 'http://localhost:9090/api/v1/query?query=up%7Bjob%3D%22vm-agents%22%7D' | jq -r '.data.result[] | [.metric.instance, .value[1]] | @tsv'
