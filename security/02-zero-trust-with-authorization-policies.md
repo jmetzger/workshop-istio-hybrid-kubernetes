@@ -42,8 +42,13 @@ Two more callers, one **with** a sidecar (namespace `default`) and one **without
 ```
 # Starting client in deploy (sidecar)
 kubectl create deploy zt-client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
+
+# Creating namespace for 2nd client->zt-plain
 kubectl create ns zt-plain --dry-run=client -o yaml | kubectl apply -f -
+# Creating the client plain 
 kubectl -n zt-plain create deploy plain --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl -n zt-plain apply -f -
+
+# Waiting for rollout 
 kubectl rollout status deploy/zt-client
 kubectl -n zt-plain rollout status deploy/plain
 ```
