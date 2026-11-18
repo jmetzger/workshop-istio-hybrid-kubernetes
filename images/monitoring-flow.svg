@@ -1,44 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" font-family="Arial,sans-serif" font-size="14">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" font-family="Arial,sans-serif" font-size="14">
 <defs><marker id="a" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8z" fill="#e8710a"/></marker>
 <marker id="g" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8z" fill="#555"/></marker></defs>
-<rect width="960" height="560" fill="#fff"/>
-<text x="480" y="28" text-anchor="middle" font-size="20" font-weight="bold">Monitoring in our lab: who reports, who stores, who shows</text>
-<rect x="20" y="50" width="600" height="400" rx="10" fill="#f4f8ff" stroke="#4a78c2" stroke-width="2"/>
+<rect width="1000" height="560" fill="#fff"/>
+<text x="500" y="28" text-anchor="middle" font-size="20" font-weight="bold">Monitoring in our lab: who reports, who stores, who shows</text>
+<rect x="20" y="50" width="640" height="400" rx="10" fill="#f4f8ff" stroke="#4a78c2" stroke-width="2"/>
 <text x="35" y="72" font-weight="bold" fill="#2b4f8c">Cluster a  (cluster b is the same, with its own Prometheus)</text>
-<rect x="40" y="90" width="270" height="195" rx="8" fill="#fff" stroke="#888"/>
+<rect x="40" y="90" width="305" height="195" rx="8" fill="#fff" stroke="#888"/>
 <text x="50" y="110" font-weight="bold">1. Who reports (metrics endpoint)</text>
-<text x="50" y="134">Sidecar / gateway (15020, /stats/prometheus)</text><text x="50" y="152" fill="#555">requests, latency, memory, cert expiry</text>
-<text x="50" y="176">istiod (15014, /metrics)</text><text x="50" y="194" fill="#555">control plane, push, cert signing</text>
-<text x="50" y="218">cert-manager (9402), x509-exporter (9793)</text><text x="50" y="234" fill="#555">/metrics: istiod cert, root + intermediate CA</text><text x="50" y="258">kubelet cAdvisor (via API server)</text><text x="50" y="273" font-size="12" fill="#555" >memory and CPU of the sidecars</text>
+<text x="50" y="134" font-size="13">Sidecar / gateway (15020, /stats/prometheus)</text><text x="50" y="152" font-size="12" fill="#555">requests, latency, memory, cert expiry</text>
+<text x="50" y="176" font-size="13">istiod (15014, /metrics)</text><text x="50" y="194" font-size="12" fill="#555">control plane, push, cert signing</text>
+<text x="50" y="218" font-size="13">cert-manager (9402), x509-exporter (9793)</text><text x="50" y="234" font-size="12" fill="#555">/metrics: istiod cert, root + intermediate CA</text><text x="50" y="258">kubelet cAdvisor (via API server)</text><text x="50" y="273" font-size="12" fill="#555" >memory and CPU of the sidecars</text>
+<g transform="translate(40,0)">
 <rect x="360" y="110" width="240" height="110" rx="8" fill="#fff4e0" stroke="#e8710a" stroke-width="2"/>
 <text x="480" y="136" text-anchor="middle" font-weight="bold">2. Prometheus</text>
 <text x="480" y="160" text-anchor="middle">scrapes (pulls) every few seconds</text><text x="480" y="180" text-anchor="middle">finds pods by itself</text><text x="480" y="200" text-anchor="middle" fill="#555">(Kubernetes service discovery)</text>
-<line x1="360" y1="165" x2="310" y2="165" stroke="#e8710a" stroke-width="3" marker-end="url(#a)"/>
-<text x="335" y="150" text-anchor="middle" font-size="11" fill="#e8710a">scrape</text>
+</g>
+<line x1="400" y1="165" x2="347" y2="165" stroke="#e8710a" stroke-width="3" marker-end="url(#a)"/>
+<text x="373" y="150" text-anchor="middle" font-size="11" fill="#e8710a">scrape</text>
+<g transform="translate(40,0)">
 <rect x="360" y="290" width="110" height="70" rx="8" fill="#e8f7ec" stroke="#2e9e50" stroke-width="2"/>
 <text x="415" y="320" text-anchor="middle" font-weight="bold">Grafana</text><text x="415" y="340" text-anchor="middle" font-size="12">dashboards</text>
 <rect x="490" y="290" width="110" height="70" rx="8" fill="#e8f7ec" stroke="#2e9e50" stroke-width="2"/>
 <text x="545" y="320" text-anchor="middle" font-weight="bold">Kiali</text><text x="545" y="340" text-anchor="middle" font-size="12">mesh graph</text>
 <line x1="415" y1="290" x2="450" y2="222" stroke="#555" stroke-width="2" marker-end="url(#g)"/>
 <line x1="545" y1="290" x2="515" y2="222" stroke="#555" stroke-width="2" marker-end="url(#g)"/>
-<text x="560" y="262" font-size="11" fill="#555">PromQL query</text>
-<rect x="40" y="290" width="270" height="140" rx="8" fill="#fff" stroke="#888"/>
+<text x="485" y="262" text-anchor="middle" font-size="11" fill="#555">PromQL query</text>
+</g>
+<rect x="40" y="290" width="305" height="140" rx="8" fill="#fff" stroke="#888"/>
 <text x="50" y="312" font-weight="bold">Certificates (3 metrics)</text>
 <text x="50" y="336" font-size="12">x509_cert_not_after  (CAs, 30 days)</text>
 <text x="50" y="356" font-size="12">certmanager_certificate_expiration_...  (istiod, 1 h)</text>
-<text x="50" y="376" font-size="12">istio_agent_cert_expiry_seconds  (workload, 10 min)</text>
+<text x="50" y="376" font-size="12">istio_agent_cert_expiry_seconds (workload, 10 min)</text>
 <text x="50" y="402" font-size="12" fill="#555">Grafana: one table, shortest time on top</text>
 <text x="50" y="420" font-size="12" fill="#555">Grafana in a asks Prometheus a and b</text>
-<rect x="650" y="150" width="290" height="190" rx="10" fill="#f6f6f6" stroke="#888" stroke-width="2"/>
-<text x="795" y="174" text-anchor="middle" font-weight="bold">3. Your browser</text>
-<text x="795" y="200" text-anchor="middle" font-size="13">https://grafana.tlnX.do.t3isp.de</text>
-<text x="795" y="218" text-anchor="middle" font-size="13">kiali. / prometheus-a. / prometheus-b.</text>
-<text x="795" y="246" text-anchor="middle" font-size="13">Caddy on the jump host:</text>
-<text x="795" y="264" text-anchor="middle" font-size="13">Let's Encrypt certificate + password</text>
-<text x="795" y="288" text-anchor="middle" font-size="13">Ingress gateway: header x-lab-key</text>
-<text x="795" y="306" text-anchor="middle" font-size="13" fill="#555">(otherwise 404)</text>
-<line x1="650" y1="245" x2="622" y2="245" stroke="#555" stroke-width="2" marker-end="url(#g)" />
-<text x="480" y="480" text-anchor="middle" font-size="13" fill="#e8710a" font-weight="bold">Orange: Prometheus pulls (scrapes) the metrics endpoints, the sources never push.  Grey: someone asks.</text>
-<text x="480" y="505" text-anchor="middle" font-size="13">You open Grafana and Kiali (and the two Prometheus UIs) in the browser; they are not reachable without the password.</text>
-<text x="480" y="528" text-anchor="middle" font-size="12" fill="#555">Add-ons are Istio samples: no storage, no access control of their own (good for a lab, not production).</text>
+<rect x="690" y="150" width="290" height="190" rx="10" fill="#f6f6f6" stroke="#888" stroke-width="2"/>
+<text x="835" y="174" text-anchor="middle" font-weight="bold">3. Your browser</text>
+<text x="835" y="200" text-anchor="middle" font-size="13">https://grafana.tlnX.do.t3isp.de</text>
+<text x="835" y="218" text-anchor="middle" font-size="13">kiali. / prometheus-a. / prometheus-b.</text>
+<text x="835" y="246" text-anchor="middle" font-size="13">Caddy on the jump host:</text>
+<text x="835" y="264" text-anchor="middle" font-size="13">Let's Encrypt certificate + password</text>
+<text x="835" y="288" text-anchor="middle" font-size="13">Ingress gateway: header x-lab-key</text>
+<text x="835" y="306" text-anchor="middle" font-size="13" fill="#555">(otherwise 404)</text>
+<line x1="690" y1="245" x2="662" y2="245" stroke="#555" stroke-width="2" marker-end="url(#g)" />
+<text x="500" y="480" text-anchor="middle" font-size="13" fill="#e8710a" font-weight="bold">Orange: Prometheus pulls (scrapes) the metrics endpoints, the sources never push.  Grey: someone asks.</text>
+<text x="500" y="505" text-anchor="middle" font-size="13">You open Grafana and Kiali (and the two Prometheus UIs) in the browser; they are not reachable without the password.</text>
+<text x="500" y="528" text-anchor="middle" font-size="12" fill="#555">Add-ons are Istio samples: no storage, no access control of their own (good for a lab, not production).</text>
 </svg>
