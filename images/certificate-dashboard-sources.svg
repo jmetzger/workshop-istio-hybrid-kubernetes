@@ -4,7 +4,7 @@
   </defs>
   <rect width="1200" height="520" fill="#ffffff"/>
   <text x="600" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">One table for all certificates: where the numbers come from</text>
-  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Three parts report their own certificates. Prometheus collects, Grafana shows. Same picture in cluster a and cluster b.</text>
+  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Three parts report their own certificates. Prometheus pulls, Grafana shows. Same picture in cluster a and cluster b.</text>
 
   <!-- column titles -->
   <text x="40" y="96" font-weight="bold" fill="#222">1. Who reports</text>
@@ -77,6 +77,6 @@
   <text x="779" y="252" text-anchor="middle" fill="#555" font-size="12">query</text>
 
   <!-- legend -->
-  <text x="40" y="488" fill="#555" font-size="13">Orange arrow: who asks whom (Prometheus pulls from the reporters, Grafana queries Prometheus). The numbers come back in the answer. The values in the mini table are examples, the real ones are in your Grafana.</text>
-  <text x="40" y="508" fill="#555" font-size="13">VM certificates are not in the table: Prometheus does not collect from the VM in our lab.</text>
+  <text x="40" y="488" fill="#555" font-size="13">Orange arrow: who asks whom (Prometheus pulls, Grafana queries). The numbers come back in the answer. Table values are examples.</text>
+  <text x="40" y="508" fill="#555" font-size="13">A VM is not a pod: Prometheus does not find it by itself. Add it as a static target (port 15020), then it shows up in the same table.</text>
 </svg>
