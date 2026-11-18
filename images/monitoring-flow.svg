@@ -37,8 +37,8 @@
 <text x="795" y="264" text-anchor="middle" font-size="13">Let's Encrypt certificate + password</text>
 <text x="795" y="288" text-anchor="middle" font-size="13">Ingress gateway: header x-lab-key</text>
 <text x="795" y="306" text-anchor="middle" font-size="13" fill="#555">(otherwise 404)</text>
-<line x1="650" y1="325" x2="600" y2="335" stroke="#555" stroke-width="2" marker-end="url(#g)" />
+<line x1="650" y1="245" x2="622" y2="245" stroke="#555" stroke-width="2" marker-end="url(#g)" />
 <text x="480" y="480" text-anchor="middle" font-size="13" fill="#e8710a" font-weight="bold">Orange: Prometheus pulls (scrapes) the metrics endpoints, the sources never push.  Grey: someone asks.</text>
-<text x="480" y="505" text-anchor="middle" font-size="13">Metrics are plain HTTP inside the cluster. mTLS between workloads is separate: the certificates above are what makes it work.</text>
+<text x="480" y="505" text-anchor="middle" font-size="13">You open Grafana and Kiali (and the two Prometheus UIs) in the browser; they are not reachable without the password.</text>
 <text x="480" y="528" text-anchor="middle" font-size="12" fill="#555">Add-ons are Istio samples: no storage, no access control of their own (good for a lab, not production).</text>
 </svg>
