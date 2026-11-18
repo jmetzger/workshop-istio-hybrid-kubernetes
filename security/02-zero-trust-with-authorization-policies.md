@@ -45,6 +45,7 @@ kubectl create ns zt-plain --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n zt-plain create deploy plain --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl -n zt-plain apply -f -
 kubectl rollout status deploy/zt-client
 kubectl -n zt-plain rollout status deploy/plain
+
 ```
 
 (You can run this block again at any time.)
