@@ -81,6 +81,7 @@ Bookinfo also runs in cluster b, in the same namespace:
 
 ```
 kubectl --context cluster-b get pods -n default -l app=productpage
+
 ```
 
 ```
