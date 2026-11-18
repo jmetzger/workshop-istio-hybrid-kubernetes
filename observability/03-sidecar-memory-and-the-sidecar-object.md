@@ -14,12 +14,14 @@ You make the mesh bigger by 500 services and watch the memory of every sidecar g
 
 ## Before you start
 
-* Prometheus and the pod `client` from [Prometheus, Grafana, Kiali, and what Istio costs](01-prometheus-grafana-kiali.md) are running.
+* Prometheus is running (it is part of the lab) and the pod `client` from [Prometheus, Grafana, Kiali, and what Istio costs](01-prometheus-grafana-kiali.md) exists.
 * All commands run on your bastion host as your lab user, in cluster a.
-* The helper `Q` from that page, once per shell:
+* The test pod `curl` in `istio-system` and the helper `Q`, once per shell. The pod has no sidecar on purpose: a pod with a sidecar would ask the Prometheus of both clusters in turn.
 
 ```
-Q() { kubectl exec deploy/client -c curl -- curl -s -G "http://prometheus.istio-system:9090/api/v1/query" --data-urlencode "query=$1" | jq -r '.data.result[] | [(.metric | to_entries | map(.value) | join(" ")), .value[1]] | @tsv'; }
+kubectl -n istio-system get deploy curl > /dev/null 2>&1 || kubectl -n istio-system create deploy curl --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl -n istio-system rollout status deploy/curl
+Q() { kubectl -n istio-system exec deploy/curl -- curl -s -G "http://prometheus:9090/api/v1/query" --data-urlencode "query=$1" | jq -r '.data.result[] | [(.metric | to_entries | map(.value) | join(" ")), .value[1]] | @tsv'; }
 ```
 
 ## The steps

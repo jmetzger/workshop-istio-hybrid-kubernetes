@@ -23,26 +23,28 @@ All commands run on your bastion host as your lab user, in cluster a. Prometheus
 
 ## Step 0: Prepare
 
-You ask Prometheus from a small test pod (`client`) inside the mesh. Create it, if it does not exist yet, and wait until it runs:
+You ask Prometheus from a small test pod (`curl`) in the namespace `istio-system`. Create it, if it does not exist yet, and wait until it runs:
 
 ```
-kubectl get deploy client > /dev/null 2>&1 || kubectl create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
-kubectl rollout status deploy/client
+kubectl -n istio-system get deploy curl > /dev/null 2>&1 || kubectl -n istio-system create deploy curl --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl -n istio-system rollout status deploy/curl
 ```
+
+This pod is in `istio-system` on purpose and has no sidecar. A pod with a sidecar (like `client`) would send the call to `prometheus` to the Prometheus of **both** clusters, one after the other, because the two clusters are one mesh: you would see the numbers of cluster a and of cluster b in turn.
 
 Then define a small helper `Q` in your shell. It sends a query to Prometheus and prints one line per result: first the labels, then the value. If you open a new shell, define it again:
 
 ```
-Q() { kubectl exec deploy/client -c curl -- curl -s -G "http://prometheus.istio-system:9090/api/v1/query" --data-urlencode "query=$1" | jq -r '.data.result[] | [(.metric | to_entries | map(.value) | join(" ")), .value[1]] | @tsv'; }
+Q() { kubectl -n istio-system exec deploy/curl -- curl -s -G "http://prometheus:9090/api/v1/query" --data-urlencode "query=$1" | jq -r '.data.result[] | [(.metric | to_entries | map(.value) | join(" ")), .value[1]] | @tsv'; }
 ```
 
-Test it. Every sidecar reports how long its certificate is still valid, so you get one line per proxy:
+Test it. Every sidecar reports how long its certificate is still valid, so you get the number of proxies with a certificate in cluster a:
 
 ```
 Q 'count(istio_agent_cert_expiry_seconds)'
 ```
 
-You see one number, the count of proxies with a certificate in cluster a (11 in our lab, it depends on what runs in your cluster). If the answer is empty, run the command again: the first call after the start of the pod can fail.
+You see one number (14 in our lab: 13 pods with a sidecar and one VM. It depends on what runs in your cluster, and the VM is only there after step 7). The number must stay the same when you ask again.
 
 ## Step 1: The whole chain of one workload
 
@@ -205,7 +207,7 @@ First check that the VM answers (the agent listens on all addresses, and your cl
 
 ```
 VM=v6-$(whoami)-a-vm1.do.t3isp.de
-kubectl exec deploy/client -c curl -- curl -s -m 5 "http://$VM:15020/metrics" | grep ^istio_agent_cert_expiry_seconds
+kubectl -n istio-system exec deploy/curl -- curl -s -m 5 "http://$VM:15020/metrics" | grep ^istio_agent_cert_expiry_seconds
 ```
 
 ```

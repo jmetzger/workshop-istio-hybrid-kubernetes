@@ -34,10 +34,19 @@ kubectl exec deploy/client -c curl -- sh -c 'for i in $(seq 1 100); do curl -s -
 
 ## Step 3: Ask Prometheus
 
-Every sidecar counts its requests. Prometheus collects the numbers from all sidecars. We ask it from the test pod, with a small helper that prints one line per result:
+Every sidecar counts its requests. Prometheus collects the numbers from all sidecars. We ask it from a test pod, with a small helper that prints one line per result. First the pod:
 
 ```
-Q() { kubectl exec deploy/client -c curl -- curl -s -G "http://prometheus.istio-system:9090/api/v1/query" --data-urlencode "query=$1" | jq -r '.data.result[] | [(.metric | to_entries | map(.value) | join(" ")), .value[1]] | @tsv'; }
+kubectl -n istio-system get deploy curl > /dev/null 2>&1 || kubectl -n istio-system create deploy curl --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl -n istio-system rollout status deploy/curl
+```
+
+This pod is in `istio-system` on purpose and has no sidecar. A pod with a sidecar (like `client`) would send the call to `prometheus` to the Prometheus of **both** clusters, one after the other, because the two clusters are one mesh: you would see the numbers of cluster a and of cluster b in turn.
+
+Then the helper:
+
+```
+Q() { kubectl -n istio-system exec deploy/curl -- curl -s -G "http://prometheus:9090/api/v1/query" --data-urlencode "query=$1" | jq -r '.data.result[] | [(.metric | to_entries | map(.value) | join(" ")), .value[1]] | @tsv'; }
 ```
 
 **Who talks to whom, and with which result?**
