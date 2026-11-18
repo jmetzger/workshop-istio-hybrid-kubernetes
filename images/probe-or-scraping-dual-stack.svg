@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+  <rect width="1200" height="640" fill="#ffffff"/>
+  <text x="600" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">VM with IPv4 and IPv6: the health check or the scraping, not both</text>
+
+  <!-- Left: DUAL_STACK -->
+  <rect x="30" y="60" width="560" height="470" rx="10" fill="#eef4fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="310" y="88" text-anchor="middle" font-weight="bold" font-size="16" fill="#1d3b66">cluster.env: DUAL_STACK='true'</text>
+  <rect x="50" y="108" width="190" height="70" rx="6" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="145" y="134" text-anchor="middle" font-weight="bold">Prometheus</text>
+  <text x="145" y="156" text-anchor="middle" fill="#555" font-size="12">outside, only IPv6 reaches the VM</text>
+  <rect x="270" y="108" width="300" height="400" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="420" y="132" text-anchor="middle" font-weight="bold">VM</text>
+  <rect x="285" y="150" width="270" height="62" rx="5" fill="#fdeaea" stroke="#b00020"/>
+  <text x="420" y="174" text-anchor="middle" font-size="13">Envoy 15090 (metrics), 15021</text>
+  <text x="420" y="194" text-anchor="middle" fill="#b00020" font-size="12">listen on 0.0.0.0 only (IPv4)</text>
+  <rect x="285" y="226" width="270" height="62" rx="5" fill="#fff" stroke="#999"/>
+  <text x="420" y="250" text-anchor="middle" font-size="13">Envoy admin 15000</text>
+  <text x="420" y="270" text-anchor="middle" fill="#555" font-size="12">stays on 127.0.0.1</text>
+  <rect x="285" y="302" width="270" height="76" rx="5" fill="#fff" stroke="#999"/>
+  <text x="420" y="326" text-anchor="middle" font-size="13">pilot-agent: health check</text>
+  <text x="420" y="346" text-anchor="middle" fill="#555" font-size="12">asks 127.0.0.1:15000 (IPv4)</text>
+  <text x="420" y="364" text-anchor="middle" fill="#1f5f1f" font-size="12">finds Envoy, probe (host 127.0.0.1) ok</text>
+  <rect x="285" y="392" width="270" height="100" rx="5" fill="#fff" stroke="#999"/>
+  <text x="420" y="416" text-anchor="middle" font-size="13">pilot-agent 15020</text>
+  <text x="420" y="436" text-anchor="middle" fill="#555" font-size="12">listens on all addresses,</text>
+  <text x="420" y="454" text-anchor="middle" fill="#555" font-size="12">agent metrics reachable over IPv6</text>
+  <path d="M240,168 L283,168" stroke="#b00020" stroke-width="2.5" stroke-dasharray="6,4" marker-end="url(#ar)"/>
+  <text x="262" y="156" text-anchor="middle" fill="#b00020" font-weight="bold" font-size="18">&#x2715;</text>
+  <text x="310" y="552" text-anchor="middle" font-weight="bold" fill="#1f5f1f">Health check works, Healthy=True</text>
+  <text x="310" y="574" text-anchor="middle" font-weight="bold" fill="#b00020">Scraping of 15090: no connection (curl exit 7)</text>
+
+  <!-- Right: ISTIO_DUAL_STACK -->
+  <rect x="610" y="60" width="560" height="470" rx="10" fill="#eef4fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="890" y="88" text-anchor="middle" font-weight="bold" font-size="16" fill="#1d3b66">cluster.env: ISTIO_DUAL_STACK='true'</text>
+  <rect x="630" y="108" width="190" height="70" rx="6" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="725" y="134" text-anchor="middle" font-weight="bold">Prometheus</text>
+  <text x="725" y="156" text-anchor="middle" fill="#555" font-size="12">outside, only IPv6 reaches the VM</text>
+  <rect x="850" y="108" width="300" height="400" rx="6" fill="#fff" stroke="#4a6fa5"/>
+  <text x="1000" y="132" text-anchor="middle" font-weight="bold">VM</text>
+  <rect x="865" y="150" width="270" height="62" rx="5" fill="#eaf6ea" stroke="#3b8a3b"/>
+  <text x="1000" y="174" text-anchor="middle" font-size="13">Envoy 15090 (metrics), 15021</text>
+  <text x="1000" y="194" text-anchor="middle" fill="#1f5f1f" font-size="12">listen on 0.0.0.0 and [::]</text>
+  <rect x="865" y="226" width="270" height="62" rx="5" fill="#fdeaea" stroke="#b00020"/>
+  <text x="1000" y="250" text-anchor="middle" font-size="13">Envoy admin 15000</text>
+  <text x="1000" y="270" text-anchor="middle" fill="#b00020" font-size="12">moved to [::1] only</text>
+  <rect x="865" y="302" width="270" height="76" rx="5" fill="#fff" stroke="#999"/>
+  <text x="1000" y="326" text-anchor="middle" font-size="13">pilot-agent: health check</text>
+  <text x="1000" y="346" text-anchor="middle" fill="#555" font-size="12">asks 127.0.0.1:15000 (IPv4)</text>
+  <text x="1000" y="364" text-anchor="middle" fill="#b00020" font-size="12">nobody answers: Envoy not ready</text>
+  <rect x="865" y="392" width="270" height="100" rx="5" fill="#fff" stroke="#999"/>
+  <text x="1000" y="416" text-anchor="middle" font-size="13">pilot-agent 15020</text>
+  <text x="1000" y="436" text-anchor="middle" fill="#555" font-size="12">listens on all addresses,</text>
+  <text x="1000" y="454" text-anchor="middle" fill="#555" font-size="12">agent metrics reachable over IPv6</text>
+  <path d="M820,168 L863,168" stroke="#3b8a3b" stroke-width="2.5" marker-end="url(#ar)"/>
+  <text x="890" y="552" text-anchor="middle" font-weight="bold" fill="#b00020">Health check fails, Healthy=False always</text>
+  <text x="890" y="574" text-anchor="middle" font-weight="bold" fill="#1f5f1f">Scraping of 15090: HTTP 200</text>
+
+  <text x="600" y="618" text-anchor="middle" fill="#333" font-size="13">Both lines together behave like ISTIO_DUAL_STACK alone. Measured on the lab VM, Istio 1.29.x (1.29.9).</text>
+</svg>

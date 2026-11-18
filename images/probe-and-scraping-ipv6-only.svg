@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+  <rect width="1200" height="420" fill="#ffffff"/>
+  <text x="600" y="32" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">The way out: a VM with IPv6 only has no conflict</text>
+
+  <rect x="40" y="60" width="520" height="290" rx="10" fill="#fdf3f3" stroke="#b00020" stroke-width="2"/>
+  <text x="300" y="88" text-anchor="middle" font-weight="bold" font-size="16" fill="#7a1020">VM with IPv4 and IPv6 (mode Dual)</text>
+  <text x="70" y="124" fill="#333">The agent checks over IPv4 (127.0.0.1, 127.0.0.6)</text>
+  <text x="70" y="152" fill="#333">Metrics ports reach the outside only with ISTIO_DUAL_STACK</text>
+  <text x="70" y="180" fill="#333">ISTIO_DUAL_STACK moves the admin port to [::1]</text>
+  <text x="70" y="208" fill="#333">the IPv4 check of the agent no longer finds it</text>
+  <text x="300" y="262" text-anchor="middle" font-weight="bold" fill="#b00020">Choose: health check or scraping</text>
+  <text x="300" y="290" text-anchor="middle" fill="#555" font-size="12">(workarounds: DUAL_STACK, host: 127.0.0.1, delete a line by hand)</text>
+
+  <path d="M565,205 L635,205" stroke="#555" stroke-width="3" marker-end="url(#ar)"/>
+  <text x="600" y="190" text-anchor="middle" fill="#555" font-size="12">switch IPv4</text>
+  <text x="600" y="232" text-anchor="middle" fill="#555" font-size="12">off</text>
+
+  <rect x="640" y="60" width="520" height="290" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="900" y="88" text-anchor="middle" font-weight="bold" font-size="16" fill="#1f5f1f">VM with IPv6 only (mode IPv6)</text>
+  <text x="670" y="124" fill="#333">The agent checks over IPv6 (::1, ::6)</text>
+  <text x="670" y="152" fill="#333">15090, 15021 and 15020 listen on [::] (measured, all HTTP 200)</text>
+  <text x="670" y="180" fill="#333">the probe works without any extra setting</text>
+  <text x="670" y="208" fill="#333">no dual stack line, no ISTIO_SVC_IP workaround</text>
+  <text x="900" y="262" text-anchor="middle" font-weight="bold" fill="#1f5f1f">Health check and scraping work together</text>
+  <text x="900" y="290" text-anchor="middle" fill="#555" font-size="12">Do not use the tcpSocket probe: it misses a stopped application.</text>
+
+  <text x="600" y="395" text-anchor="middle" fill="#333" font-size="13">Hetzner gives every server a private IPv4 by DHCP; switch it off with netplan (dhcp4: false) and disable cloud-init network config.</text>
+</svg>

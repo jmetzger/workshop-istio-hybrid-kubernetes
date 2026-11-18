@@ -156,4 +156,4 @@ A few seconds later the status is `Healthy=True` again and the call answers `HTT
 * `proxy-status` says that the **sidecar** of the VM is connected. Only a `probe` says whether the **application** answers.
 * The probe runs on the VM. After a change of the `WorkloadGroup` the VM needs the new `mesh.yaml`.
 * The reason for an unhealthy VM is in the status of the `WorkloadEntry` and in `/var/log/istio/istio.log` on the VM.
-* IPv6 only: the probe works without any extra setting. On a VM with IPv4 **and** IPv6 it needs workarounds, see [Dual stack on the VM: what to set](00-dual-stack-switches.md).
+* IPv6 only: the probe works without any extra setting, and Prometheus can still scrape the Envoy metrics (`15090`). On a VM with IPv4 **and** IPv6 you must choose: the probe or the scraping of `15090`, see [why](00-dual-stack-switches-details.md) and [what to set](00-dual-stack-switches.md).

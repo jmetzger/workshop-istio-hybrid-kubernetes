@@ -52,6 +52,7 @@ All material in this repository is in English.
      * [Health check: is the application on the VM alive?](virtual-machines/04-health-check-of-the-vm.md)
      * [Outage: what happens to the VM, and how it comes back](virtual-machines/03-outage-what-happens-to-the-vm.md)
      * (Optional) [Add a virtual machine to the mesh with IPv4 and IPv6 (dual stack)](virtual-machines/02-add-a-vm-to-the-mesh-dual-stack-optional.md)
+     * [Health check or scraping on a VM: why not both?](virtual-machines/00-why-health-check-or-scraping.md)
      * (Optional) [Dual stack on the VM: what to set (`DUAL_STACK` and `ISTIO_DUAL_STACK`)](virtual-machines/00-dual-stack-switches.md)
      * (Optional) [Reference: Dual stack on the VM: details and measurements](virtual-machines/00-dual-stack-switches-details.md)
 

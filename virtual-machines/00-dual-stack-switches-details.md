@@ -156,6 +156,10 @@ So a `probe` on our VM works only with these three things together:
 
 We tested the other probe types only on a VM with IPv6 only (see below), not on the dual stack VM. Without a `probe` there is no health check at all: a VM with a stopped application stays `HEALTHY` and calls fail with `503`.
 
+## Why scraping and a health `probe` exclude each other
+
+Short answer: on a dual stack VM you cannot have both. The full explanation with two pictures is on its own page: [Health check or scraping on a VM](00-why-health-check-or-scraping.md).
+
 ## What the cluster provides: `istiod`
 
 The listeners `15001` and `15006` of Envoy (inbound and outbound redirect) are not decided on the VM. `istiod` builds them. They exist on `[::]` only if `ISTIO_DUAL_STACK=true` is set in the environment of `istiod` (Helm value `pilot.env.ISTIO_DUAL_STACK`, default `false`). In a real environment this is part of the cluster provisioning (our lab script sets it in step 2 of the exercise).
