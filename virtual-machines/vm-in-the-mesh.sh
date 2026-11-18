@@ -333,6 +333,7 @@ EOF
   cat <<'EOF'
 chown -R istio-proxy: /var/lib/istio /etc/certs /etc/istio/proxy /etc/istio/config /var/run/secrets
 systemctl start istio
+systemctl stop vm-echo 2>/dev/null || true
 systemd-run --unit vm-echo python3 /root/vm-echo-server.py
 VMSTEPS
 EOF
