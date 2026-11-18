@@ -37,15 +37,15 @@ curl -6 -s -o /dev/null -w "HTTP %{http_code}\n" "http://[$GATEWAY]/productpage"
 HTTP 200
 ```
 
-Two more callers like in the previous exercise, but with names of their own (`zt-client`, `zt-plain`), so that an old `client` or `plain` from another exercise cannot interfere. One **with** a sidecar (namespace `default`) and one **without** (namespace `zt-plain`):
+Two more callers, one **with** a sidecar (namespace `default`) and one **without** (namespace `zt-plain`):
 
 ```
+# Starting client in deploy (sidecar)
 kubectl create deploy zt-client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
 kubectl create ns zt-plain --dry-run=client -o yaml | kubectl apply -f -
 kubectl -n zt-plain create deploy plain --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl -n zt-plain apply -f -
 kubectl rollout status deploy/zt-client
 kubectl -n zt-plain rollout status deploy/plain
-
 ```
 
 (You can run this block again at any time.)
