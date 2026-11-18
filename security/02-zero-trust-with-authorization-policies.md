@@ -449,7 +449,6 @@ curl -6 -s "http://[$GATEWAY]/productpage" | grep -c -E "Error fetching"
 0
 ```
 
-Open the page in a browser: `http://[<GATEWAY>]/productpage` (the address from step 1). Reload it a few times: details, reviews and, with `reviews` v2 and v3, the stars from `ratings` are there.
 
 ```
 kubectl get authorizationpolicy
