@@ -51,7 +51,7 @@
   <!-- plain pod -->
   <rect x="200" y="360" width="190" height="70" rx="8" fill="#ffffff" stroke="#555" stroke-width="2" stroke-dasharray="6 4"/>
   <text x="295" y="388" font-size="14" font-weight="700" text-anchor="middle" fill="#222">Pod without sidecar</text>
-  <text x="295" y="408" font-size="12" text-anchor="middle" fill="#555">namespace plain, no identity</text>
+  <text x="295" y="408" font-size="12" text-anchor="middle" fill="#555">namespace zt-plain, no identity</text>
 
   <!-- allowed arrows -->
   <line x1="150" y1="235" x2="213" y2="235" stroke="#d9730d" stroke-width="3" marker-end="url(#ao)"/>

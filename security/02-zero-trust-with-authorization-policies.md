@@ -36,23 +36,23 @@ curl -6 -s -o /dev/null -w "HTTP %{http_code}\n" "http://[$GATEWAY]/productpage"
 HTTP 200
 ```
 
-Two more callers, the same as in the previous exercise. One **with** a sidecar (namespace `default`) and one **without** (namespace `plain`):
+Two more callers like in the previous exercise, but with names of their own (`zt-client`, `zt-plain`), so that an old `client` or `plain` from another exercise cannot interfere. One **with** a sidecar (namespace `default`) and one **without** (namespace `zt-plain`):
 
 ```
-kubectl create deploy client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
-kubectl create ns plain --dry-run=client -o yaml | kubectl apply -f -
-kubectl -n plain create deploy plain --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl -n plain apply -f -
-kubectl rollout status deploy/client
-kubectl -n plain rollout status deploy/plain
+kubectl create deploy zt-client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
+kubectl create ns zt-plain --dry-run=client -o yaml | kubectl apply -f -
+kubectl -n zt-plain create deploy plain --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl -n zt-plain apply -f -
+kubectl rollout status deploy/zt-client
+kubectl -n zt-plain rollout status deploy/plain
 ```
 
-(You can run this again at any time: if `client` and `plain` already exist, nothing breaks.)
+(You can run this block again at any time.)
 
 Both reach `productpage`. There is no policy yet:
 
 ```
-kubectl exec deploy/client -c curl -- curl -s -o /dev/null -m 5 -w "client:  HTTP %{http_code}\n" http://productpage:9080/productpage
-kubectl -n plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain:   HTTP %{http_code}\n" http://productpage.default:9080/productpage
+kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "client:  HTTP %{http_code}\n" http://productpage:9080/productpage
+kubectl -n zt-plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain:   HTTP %{http_code}\n" http://productpage.default:9080/productpage
 kubectl get authorizationpolicy
 ```
 
@@ -131,8 +131,8 @@ Repeat the calls until you see the expected answers. Callers with a sidecar stil
 
 ```
 curl -6 -s -o /dev/null -w "gateway: HTTP %{http_code}\n" "http://[$GATEWAY]/productpage"
-kubectl exec deploy/client -c curl -- curl -s -o /dev/null -m 5 -w "client:  HTTP %{http_code}\n" http://productpage:9080/productpage
-kubectl -n plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain:   HTTP %{http_code}\n" http://productpage.default:9080/productpage
+kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "client:  HTTP %{http_code}\n" http://productpage:9080/productpage
+kubectl -n zt-plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain:   HTTP %{http_code}\n" http://productpage.default:9080/productpage
 ```
 
 ```
@@ -428,12 +428,12 @@ deny-all                     21s
 
 Each call below is not in the picture (or not allowed by the policy), so each one is refused. Wait until step 6 is settled first. If a call answers `200`, wait and repeat it.
 
-`client` has a sidecar, but its service account is `default`:
+`zt-client` has a sidecar, but its service account is `default`:
 
 ```
-kubectl exec deploy/client -c curl -- curl -s -o /dev/null -m 5 -w "client to productpage: HTTP %{http_code}\n" http://productpage:9080/productpage
-kubectl exec deploy/client -c curl -- curl -s -o /dev/null -m 5 -w "client to details:     HTTP %{http_code}\n" http://details:9080/details/0
-kubectl exec deploy/client -c curl -- curl -s -o /dev/null -m 5 -w "client to ratings:     HTTP %{http_code}\n" http://ratings:9080/ratings/0
+kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "client to productpage: HTTP %{http_code}\n" http://productpage:9080/productpage
+kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "client to details:     HTTP %{http_code}\n" http://details:9080/details/0
+kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "client to ratings:     HTTP %{http_code}\n" http://ratings:9080/ratings/0
 ```
 
 ```
@@ -445,7 +445,7 @@ client to ratings:     HTTP 403
 The pod without a sidecar has no certificate and so no principal. It does not even reach the policy: `STRICT` (step 2) closes the connection first:
 
 ```
-kubectl -n plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain: HTTP %{http_code}\n" http://productpage.default:9080/productpage
+kubectl -n zt-plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain: HTTP %{http_code}\n" http://productpage.default:9080/productpage
 ```
 
 ```
@@ -554,7 +554,7 @@ After a while (repeat the calls) all calls work again:
 
 ```
 curl -6 -s -o /dev/null -w "HTTP %{http_code}\n" "http://[$GATEWAY]/productpage"
-kubectl exec deploy/client -c curl -- curl -s -o /dev/null -m 5 -w "HTTP %{http_code}\n" http://ratings:9080/ratings/0
+kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "HTTP %{http_code}\n" http://ratings:9080/ratings/0
 ```
 
 ```
@@ -562,9 +562,9 @@ HTTP 200
 HTTP 200
 ```
 
-If you do not need `client` and `plain` any more:
+Remove the two callers of this exercise:
 
 ```
-kubectl delete deploy client
-kubectl delete ns plain
+kubectl delete deploy zt-client
+kubectl delete ns zt-plain
 ```
