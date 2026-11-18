@@ -36,15 +36,15 @@
   <rect x="520" y="150" width="200" height="250" rx="8" fill="#ffffff" stroke="#4a6fa5" stroke-width="2"/>
   <text x="620" y="190" text-anchor="middle" font-weight="bold" fill="#222" font-size="16">Prometheus</text>
   <text x="620" y="214" text-anchor="middle" fill="#555" font-size="13">one in each cluster</text>
-  <text x="620" y="260" text-anchor="middle" fill="#555" font-size="13">collects the three</text>
+  <text x="620" y="260" text-anchor="middle" fill="#555" font-size="13">pulls (scrapes) the three</text>
   <text x="620" y="280" text-anchor="middle" fill="#555" font-size="13">metrics from time to time</text>
   <text x="620" y="330" text-anchor="middle" fill="#555" font-size="13">answers the query of</text>
   <text x="620" y="350" text-anchor="middle" fill="#555" font-size="13">the panel</text>
 
   <!-- arrows sources -> prometheus -->
-  <line x1="422" y1="160" x2="516" y2="230" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
-  <line x1="422" y1="276" x2="516" y2="276" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
-  <line x1="422" y1="392" x2="516" y2="320" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="516" y1="230" x2="422" y2="160" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="516" y1="276" x2="422" y2="276" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="516" y1="320" x2="422" y2="392" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
 
   <!-- grafana -->
   <rect x="840" y="110" width="320" height="332" rx="8" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
@@ -72,11 +72,11 @@
   <text x="856" y="418" fill="#555" font-size="13">the agent renews after half of the lifetime.</text>
 
   <!-- arrow prometheus -> grafana -->
-  <line x1="722" y1="276" x2="836" y2="276" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="836" y1="276" x2="722" y2="276" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
   <circle cx="779" cy="276" r="13" fill="#d9730d"/><text x="779" y="281" text-anchor="middle" fill="#fff" font-weight="bold">Q</text>
   <text x="779" y="252" text-anchor="middle" fill="#555" font-size="12">query</text>
 
   <!-- legend -->
-  <text x="40" y="488" fill="#555" font-size="13">Orange arrow: the numbers travel. The values in the mini table are examples, the real ones are in your Grafana.</text>
+  <text x="40" y="488" fill="#555" font-size="13">Orange arrow: who asks whom (Prometheus pulls from the reporters, Grafana queries Prometheus). The numbers come back in the answer. The values in the mini table are examples, the real ones are in your Grafana.</text>
   <text x="40" y="508" fill="#555" font-size="13">VM certificates are not in the table: Prometheus does not collect from the VM in our lab.</text>
 </svg>
