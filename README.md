@@ -79,3 +79,6 @@ All material in this repository is in English.
      * [Upgrade a VM in place](upgrade/03-upgrade-the-vm-in-place.md)
      * [Upgrade a VM with revisions](upgrade/04-upgrade-the-vm-with-revisions.md)
      * [Upgrade two VMs, one after the other](upgrade/05-upgrade-two-vms-one-after-the-other.md)
+
+  1. Day-2 operations
+     * [Day-2 operations for Istio: what comes after the installation](day-2/00-istio-day-2-operations.md)
