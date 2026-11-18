@@ -8,19 +8,20 @@ mTLS (the previous exercise) tells every sidecar **who** is calling: each worklo
 
 Zero trust means: nothing is allowed by default. In this exercise you
 
-1. lock the whole namespace `default` with one empty policy (`deny-all`), and see why this is not enough with two connected clusters,
-2. read in the log of the sidecar **why** a request was refused,
-3. allow exactly the four calls Bookinfo needs, one policy each (the numbers in the picture),
-4. check that every other call is still refused,
-5. add a `DENY` policy that refuses a call even where an `ALLOW` exists.
+1. make mTLS mandatory (`PeerAuthentication` with `STRICT`), so that every caller has an identity,
+2. lock the whole namespace `default` with one empty policy (`deny-all`), and see why this is not enough with two connected clusters,
+3. read in the log of the sidecar **why** a request was refused,
+4. allow exactly the four calls Bookinfo needs, one policy each (the numbers in the picture),
+5. check that every other call is still refused,
+6. add a `DENY` policy that refuses a call even where an `ALLOW` exists.
 
-A caller is recognised by its **principal**: `cluster.local/ns/<namespace>/sa/<service account>`. It is part of the workload certificate; the sidecar writes it into its log as `uriSanPeerCertificate` (step 3).
+A caller is recognised by its **principal**: `cluster.local/ns/<namespace>/sa/<service account>`. It is part of the workload certificate; the sidecar writes it into its log as `uriSanPeerCertificate` (step 4).
 
 All commands run on your bastion host as your lab user. Bookinfo is already deployed and published through the ingress gateway (exercise "Expose Bookinfo through the ingress gateway over IPv6"). In your lab the ingress gateway runs in the namespace `istio-ingress`, Bookinfo in `default`.
 
 **Attention 1:** the policies in this exercise act on the whole namespace `default`. Everything else you run there is locked out until the clean up at the end.
 
-**Attention 2:** Bookinfo runs in **both** clusters, and both clusters are one mesh. An `AuthorizationPolicy` is an object of **one** cluster. You will see what that means in step 2.
+**Attention 2:** Bookinfo runs in **both** clusters, and both clusters are one mesh. An `AuthorizationPolicy` is an object of **one** cluster. You will see what that means in step 3.
 
 ## Step 1: Callers and the starting point
 
@@ -92,7 +93,58 @@ mkdir -p zero-trust
 cd zero-trust
 ```
 
-## Step 2: Deny all
+## Step 2: Require mTLS (STRICT)
+
+An `AuthorizationPolicy` decides by the identity of the caller. That identity comes from the mTLS handshake. In mode `PERMISSIVE` (the default, previous exercise) a workload also accepts plain text from callers without any identity. For zero trust we close that door first: `STRICT` accepts only mTLS.
+
+A small helper that runs `kubectl apply` in both clusters (Bookinfo runs in both, see Attention 2). Use it from now on:
+
+```
+apply2() { for c in cluster-a cluster-b; do kubectl --context $c apply "$@"; done; }
+```
+
+Create `peerauthentication-strict.yml`:
+
+```
+cat > peerauthentication-strict.yml <<'EOF'
+apiVersion: security.istio.io/v1
+kind: PeerAuthentication
+metadata:
+  name: default
+  namespace: default
+spec:
+  mtls:
+    mode: STRICT
+EOF
+```
+
+```
+apply2 -f peerauthentication-strict.yml
+```
+
+```
+peerauthentication.security.istio.io/default created
+peerauthentication.security.istio.io/default created
+```
+
+Repeat the calls until you see the expected answers. Callers with a sidecar still work, the pod without a sidecar is locked out (no HTTP status, only a reset connection, as in the previous exercise):
+
+```
+curl -6 -s -o /dev/null -w "gateway: HTTP %{http_code}\n" "http://[$GATEWAY]/productpage"
+kubectl exec deploy/client -c curl -- curl -s -o /dev/null -m 5 -w "client:  HTTP %{http_code}\n" http://productpage:9080/productpage
+kubectl -n plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain:   HTTP %{http_code}\n" http://productpage.default:9080/productpage
+```
+
+```
+gateway: HTTP 200
+client:  HTTP 200
+plain:   HTTP 000
+command terminated with exit code 56
+```
+
+`HTTP 000` means: no answer at all. Everybody who is left now has an identity. What each identity may do is decided in the next steps.
+
+## Step 3: Deny all
 
 Create `deny-all.yml`:
 
@@ -125,10 +177,9 @@ for i in $(seq 1 10); do curl -6 -s -o /dev/null -m 8 -w "%{http_code} " "http:/
 
 Your order differs, but you see both answers, `403` and `200`, and it does not become stable. The reason: the clusters are one mesh. The gateway sends a part of the requests to `productpage` in cluster b, and cluster b has no policy yet.
 
-Now the same policy in cluster b. To save typing, a small helper that runs `kubectl apply` in both clusters (use it from now on):
+Now the same policy in cluster b, with the helper `apply2` from step 2:
 
 ```
-apply2() { for c in cluster-a cluster-b; do kubectl --context $c apply "$@"; done; }
 apply2 -f deny-all.yml
 ```
 
@@ -155,7 +206,7 @@ An `AuthorizationPolicy` without `action` and without `rules` is an `ALLOW` poli
 
 The `403` and the text `RBAC: access denied` come from the **sidecar of `productpage`**, not from the application. (Compare: `STRICT` in the previous exercise gave no HTTP status at all, only a reset connection.)
 
-## Step 3: Find out why: the log of the sidecar
+## Step 4: Find out why: the log of the sidecar
 
 The sidecar only logs its decisions at log level `debug` of the component `rbac`:
 
@@ -195,7 +246,7 @@ ACTION   AuthorizationPolicy   RULES
 ALLOW    deny-all.default      1
 ```
 
-## Step 4: Allow the gateway to call productpage
+## Step 5: Allow the gateway to call productpage
 
 The principal of the gateway is `cluster.local/ns/istio-ingress/sa/istio-ingressgateway`: namespace `istio-ingress`, service account `istio-ingressgateway`. You saw it in the log, and you can read the service account from the pod:
 
@@ -253,7 +304,7 @@ HTTP 200
       <p class="text-lg text-gray-600">Sorry, product reviews are currently unavailable for this book.</p>
 ```
 
-The page comes, but without details and reviews: `productpage` may be called now, but it may not call `details` and `reviews` yet. The log of the sidecar shows the new decision. Call the page a few times first (see step 3: only the requests that arrive in cluster a are logged here):
+The page comes, but without details and reviews: `productpage` may be called now, but it may not call `details` and `reviews` yet. The log of the sidecar shows the new decision. Call the page a few times first (see step 4: only the requests that arrive in cluster a are logged here):
 
 ```
 for i in 1 2 3 4 5 6; do curl -6 -s -o /dev/null "http://[$GATEWAY]/productpage"; done
@@ -265,7 +316,7 @@ kubectl logs deploy/productpage-v1 -c istio-proxy --tail=80 | grep rbac_filter |
 ... allowed by default or by policy
 ```
 
-## Step 5: Allow the rest of the chain
+## Step 6: Allow the rest of the chain
 
 `productpage` calls `details` and `reviews`, `reviews` calls `ratings`. One policy for each target, with the service account of the **caller** as principal.
 
@@ -373,9 +424,9 @@ allow-reviews       ALLOW    16s
 deny-all                     21s
 ```
 
-## Step 6: Everything else is still refused
+## Step 7: Everything else is still refused
 
-Each call below is not in the picture (or not allowed by the policy), so each one is refused. Wait until step 5 is settled first. If a call answers `200`, wait and repeat it.
+Each call below is not in the picture (or not allowed by the policy), so each one is refused. Wait until step 6 is settled first. If a call answers `200`, wait and repeat it.
 
 `client` has a sidecar, but its service account is `default`:
 
@@ -391,15 +442,15 @@ client to details:     HTTP 403
 client to ratings:     HTTP 403
 ```
 
-The pod without a sidecar has no certificate and so no principal. It still gets through the mTLS check (mode `PERMISSIVE`, previous exercise), but no `principals` rule can match it:
+The pod without a sidecar has no certificate and so no principal. It does not even reach the policy: `STRICT` (step 2) closes the connection first:
 
 ```
-kubectl -n plain exec deploy/plain -- curl -s -m 5 -w "\nHTTP %{http_code}\n" http://productpage.default:9080/productpage
+kubectl -n plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain: HTTP %{http_code}\n" http://productpage.default:9080/productpage
 ```
 
 ```
-RBAC: access denied
-HTTP 403
+plain: HTTP 000
+command terminated with exit code 56
 ```
 
 The right caller with the wrong method: the gateway may call `productpage`, but only with `GET`:
@@ -426,7 +477,7 @@ reviews to details: HTTP 403
 
 `reviews` may call `ratings` (policy 4) and nothing else.
 
-## Step 7: A DENY policy
+## Step 8: A DENY policy
 
 `DENY` policies are checked **before** `ALLOW` policies. They fit exceptions: refuse a call even where an `ALLOW` policy would let it pass.
 
@@ -480,15 +531,16 @@ The order in which Istio evaluates the policies of a workload (Istio documentati
 * **`403` with `RBAC: access denied` is a policy, not the application.** It comes from the sidecar of the **called** pod. Look at the log of that sidecar (`rbac:debug`), not at the caller and not at the application.
 * **`matched policy none`** means: an `ALLOW` policy exists for the workload, but none matches. The line before it shows the principal of the caller (`uriSanPeerCertificate`): compare it character by character with the `principals` in your policy.
 * **Ingress gateway in another namespace:** its principal contains `istio-ingress`, not `default`. Bookinfo and gateway are in different namespaces in our lab, so the namespace in the principal must be right.
-* **A policy is an object of one cluster.** With two connected clusters, apply it in both. Otherwise a part of the requests goes to the cluster without the policy and the answers alternate between `403` and `200` (step 2).
+* **A policy is an object of one cluster.** With two connected clusters, apply it in both. Otherwise a part of the requests goes to the cluster without the policy and the answers alternate between `403` and `200` (step 3).
 * **A new policy needs a few seconds** (in our lab from a few seconds to more than a minute). Right after an `apply2` you may still see the old behaviour. Wait and repeat before you search for an error.
-* **A pod without a sidecar has no principal.** It can never match a `principals` rule, also not in `PERMISSIVE` mode.
+* **A pod without a sidecar has no principal.** It can never match a `principals` rule. With `PERMISSIVE` it would get through mTLS and then an `RBAC: access denied` (`403`); with `STRICT` it fails earlier, with a reset connection and no HTTP status.
+* **`PeerAuthentication` and `AuthorizationPolicy` work together.** `STRICT` answers "is there an identity?", the policy answers "may this identity do this?". Without `STRICT` a caller without identity is only refused by the `ALLOW` rules, not by the connection.
 * **`deny-all` first means an outage until the allow policies are there.** In this exercise that is on purpose.
 
 ## Clean up
 
 ```
-for c in cluster-a cluster-b; do kubectl --context $c delete authorizationpolicy --all; done
+for c in cluster-a cluster-b; do kubectl --context $c delete authorizationpolicy --all; kubectl --context $c delete peerauthentication default; done
 istioctl proxy-config log deploy/productpage-v1 --level rbac:warning | grep rbac
 cd ..
 rm -r zero-trust

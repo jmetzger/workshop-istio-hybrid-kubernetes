@@ -11,6 +11,7 @@
   <rect x="440" y="56" width="730" height="400" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
   <text x="458" y="82" font-size="16" font-weight="700" fill="#2b6a2b">namespace default</text>
   <text x="458" y="102" font-size="14" fill="#2b6a2b">deny-all: an empty policy, nothing is allowed</text>
+  <text x="458" y="120" font-size="14" fill="#2b6a2b">PeerAuthentication STRICT: only mTLS</text>
 
   <!-- namespace istio-ingress -->
   <rect x="200" y="150" width="200" height="150" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2" stroke-dasharray="6 4"/>
@@ -80,6 +81,7 @@
   </g>
   <text x="1005" y="215" font-size="12" text-anchor="middle" fill="#c0392b">details to reviews</text>
   <text x="750" y="424" font-size="12" text-anchor="middle" fill="#c0392b">productpage to ratings</text>
+  <text x="510" y="384" font-size="12" text-anchor="end" fill="#c0392b">no answer: STRICT</text>
 
   <!-- legend: policies -->
   <line x1="30" y1="480" x2="1170" y2="480" stroke="#ccc" stroke-width="1"/>
@@ -93,6 +95,6 @@
     <circle cx="640" cy="538" r="11" fill="#d9730d"/><text x="640" y="543" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">4</text>
     <text x="662" y="543"><tspan font-weight="700">allow-ratings</tspan>: only reviews may call ratings</text>
     <circle cx="640" cy="568" r="11" fill="#c0392b"/><text x="640" y="573" font-size="13" font-weight="700" text-anchor="middle" fill="#fff">x</text>
-    <text x="662" y="573">dashed red: no policy allows it, answer is 403</text>
+    <text x="662" y="573">dashed red: refused (403, or no answer for the pod without sidecar)</text>
   </g>
 </svg>
