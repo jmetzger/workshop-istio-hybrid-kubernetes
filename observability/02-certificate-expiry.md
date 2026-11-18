@@ -19,7 +19,30 @@ The last column is what follows from the chain of trust. We did not let a root o
 
 The short ones renew themselves. The dangerous ones are the long ones, because nobody renews them and nobody looks at them for months.
 
-All commands run on your bastion host as your lab user, in cluster a.
+All commands run on your bastion host as your lab user, in cluster a. Prometheus and Grafana are part of the lab, you do not install anything. This page does not need any other exercise.
+
+## Step 0: Prepare
+
+You ask Prometheus from a small test pod (`client`) inside the mesh. Create it, if it does not exist yet, and wait until it runs:
+
+```
+kubectl get deploy client > /dev/null 2>&1 || kubectl create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl rollout status deploy/client
+```
+
+Then define a small helper `Q` in your shell. It sends a query to Prometheus and prints one line per result: first the labels, then the value. If you open a new shell, define it again:
+
+```
+Q() { kubectl exec deploy/client -c curl -- curl -s -G "http://prometheus.istio-system:9090/api/v1/query" --data-urlencode "query=$1" | jq -r '.data.result[] | [(.metric | to_entries | map(.value) | join(" ")), .value[1]] | @tsv'; }
+```
+
+Test it. Every sidecar reports how long its certificate is still valid, so you get one line per proxy:
+
+```
+Q 'count(istio_agent_cert_expiry_seconds)'
+```
+
+You see one number, the count of proxies with a certificate in cluster a (11 in our lab, it depends on what runs in your cluster). If the answer is empty, run the command again: the first call after the start of the pod can fail.
 
 ## Step 1: The whole chain of one workload
 
@@ -77,7 +100,7 @@ kubectl -n istio-system get certificate istiod -o jsonpath="{.status.notAfter} r
 2026-11-13T16:43:05Z renew at 2026-11-13T16:13:05Z
 ```
 
-cert-manager also tells Prometheus (you need the add-ons from the [previous exercise](01-prometheus-grafana-kiali.md) and the helper `Q` from there). Seconds until the certificate expires:
+cert-manager also tells Prometheus (helper `Q` from step 0). Seconds until the certificate expires:
 
 ```
 Q 'certmanager_certificate_expiration_timestamp_seconds - time()'
@@ -164,7 +187,7 @@ First check that the VM answers (the agent listens on all addresses, and your cl
 
 ```
 VM=v6-$(whoami)-a-vm1.do.t3isp.de
-kubectl -n istio-system exec deploy/prometheus -c prometheus-server -- wget -qO- -T 5 "http://$VM:15020/metrics" | grep ^istio_agent_cert_expiry_seconds
+kubectl exec deploy/client -c curl -- curl -s -m 5 "http://$VM:15020/metrics" | grep ^istio_agent_cert_expiry_seconds
 ```
 
 ```
@@ -199,11 +222,11 @@ With the Prometheus Operator you would not edit a ConfigMap. You would create a 
 Prometheus reloads its configuration by itself, after at most a minute. Check the target:
 
 ```
-kubectl -n istio-system exec deploy/prometheus -c prometheus-server -- wget -qO- 'http://localhost:9090/api/v1/query?query=up%7Bjob%3D%22vm-agents%22%7D' | jq -r '.data.result[] | [.metric.instance, .value[1]] | @tsv'
+Q 'up{job="vm-agents"}'
 ```
 
 ```
-v6-tln12-a-vm1.do.t3isp.de:15020	1
+up v6-tln12-a-vm1.do.t3isp.de:15020 vm-agents a-vm1	1
 ```
 
 `1` means Prometheus collects from the VM. Reload the dashboard: a row `a-vm1` is in the table of cluster a, and a line `a-vm1` in the saw below it, between about 600 and 300 seconds like every workload. We measured this in our lab (one VM in cluster a, after one minute `up` was `1`).
