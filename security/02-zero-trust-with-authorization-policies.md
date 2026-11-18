@@ -117,6 +117,7 @@ A small helper that runs `kubectl apply` in both clusters (Bookinfo runs in both
 
 ```
 apply2() { for c in cluster-a cluster-b; do kubectl --context $c apply "$@"; done; }
+
 ```
 
 Create `peerauthentication-strict.yml`:
@@ -132,10 +133,12 @@ spec:
   mtls:
     mode: STRICT
 EOF
+
 ```
 
 ```
 apply2 -f peerauthentication-strict.yml
+
 ```
 
 ```
