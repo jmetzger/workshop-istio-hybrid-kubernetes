@@ -13,6 +13,8 @@ A mesh has several certificates with very different lifetimes. You look at each 
 | certificate of `istiod` | 1 hour | cert-manager | proxies cannot connect to `istiod` |
 | workload certificate (sidecar, gateway, VM) | 10 minutes (1 hour is the default of istio-csr) | the agent in the sidecar, after half of the lifetime | new connections of this workload fail, connections that are open keep working |
 
+In our lab nobody renews the two CAs, because the setup creates them once. In production, with cert-manager the intermediate CA can be a `Certificate` with `isCA: true` and then renews itself; the root CA you always replace by hand, with a time where the old and the new root are both trusted.
+
 The last column is what follows from the chain of trust. We did not let a root or an intermediate CA expire in our lab; for workload certificates of pods and of a VM we measured it.
 
 The short ones renew themselves. The dangerous ones are the long ones, because nobody renews them and nobody looks at them for months.
