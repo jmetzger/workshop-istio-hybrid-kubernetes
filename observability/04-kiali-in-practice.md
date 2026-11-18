@@ -1,5 +1,7 @@
 # Kiali in practice: read the graph, find a broken rule
 
+![Kiali draws nothing by itself: the sidecars of both clusters count the requests, Prometheus stores the counters, Kiali reads them and the Istio objects](/images/kiali-where-the-picture-comes-from.svg)
+
 ## What we do
 
 Kiali is installed in your lab, and many teams do not know what to do with it. In this exercise you use it for three jobs that it does well:
@@ -61,9 +63,10 @@ Click on an edge or a node. The panel on the right shows the requests per second
 
 ## Step 3: Break a rule on purpose
 
-Somebody wants to send 80 percent of the calls to `reviews` to version 1 and 20 percent to version 3. They apply the `VirtualService` and **forget the `DestinationRule`** that defines the subsets. Save this as `01-virtualservice-reviews-80-20.yml`:
+Somebody wants to send 80 percent of the calls to `reviews` to version 1 and 20 percent to version 3. They apply the `VirtualService` and **forget the `DestinationRule`** that defines the subsets. Create the file `01-virtualservice-reviews-80-20.yml`:
 
 ```
+cat <<'EOF' > 01-virtualservice-reviews-80-20.yml
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
@@ -81,6 +84,7 @@ spec:
             host: reviews
             subset: v3
           weight: 20
+EOF
 ```
 
 ```
@@ -125,9 +129,10 @@ The check is `KIA1107`, message **"Subset not found"**, at `spec/http[0]/route[0
 
 ## Step 5: Repair and check
 
-Save this as `02-destinationrule-reviews.yml`:
+Create the file `02-destinationrule-reviews.yml`:
 
 ```
+cat <<'EOF' > 02-destinationrule-reviews.yml
 apiVersion: networking.istio.io/v1
 kind: DestinationRule
 metadata:
@@ -141,6 +146,7 @@ spec:
     - name: v3
       labels:
         version: v3
+EOF
 ```
 
 ```

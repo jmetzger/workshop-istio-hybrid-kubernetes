@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 470" width="1200" height="470" font-family="Segoe UI, Arial, sans-serif" font-size="14">
+  <defs>
+    <marker id="arr" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#d9730d"/></marker>
+    <marker id="arrg" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="11" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#555"/></marker>
+  </defs>
+  <rect width="1200" height="470" fill="#ffffff"/>
+  <text x="600" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Where the picture in Kiali comes from</text>
+  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Kiali draws nothing by itself. It shows what the sidecars reported to Prometheus, and what is in the Istio configuration.</text>
+
+  <!-- cluster a -->
+  <rect x="30" y="80" width="680" height="250" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="48" y="104" font-weight="bold" fill="#3b8a3b" font-size="15">cluster a, namespace default</text>
+  <rect x="60" y="150" width="130" height="64" rx="8" fill="#f3f6fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="125" y="188" text-anchor="middle" fill="#222" font-weight="bold">client</text>
+  <rect x="290" y="150" width="140" height="64" rx="8" fill="#f3f6fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="360" y="188" text-anchor="middle" fill="#222" font-weight="bold">productpage</text>
+  <rect x="540" y="120" width="140" height="56" rx="8" fill="#f3f6fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="610" y="154" text-anchor="middle" fill="#222" font-weight="bold">reviews</text>
+  <rect x="540" y="236" width="140" height="56" rx="8" fill="#f3f6fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="610" y="270" text-anchor="middle" fill="#222" font-weight="bold">details</text>
+  <line x1="192" y1="182" x2="286" y2="182" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="432" y1="170" x2="536" y2="150" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="432" y1="196" x2="536" y2="258" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <circle cx="239" cy="166" r="13" fill="#d9730d"/><text x="239" y="171" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
+  <text x="125" y="318" text-anchor="middle" fill="#555" font-size="12">every pod has an Envoy sidecar</text>
+  
+
+  <!-- cluster b -->
+  <rect x="30" y="350" width="680" height="90" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="48" y="374" font-weight="bold" fill="#3b8a3b" font-size="15">cluster b: same applications, its sidecars report too</text>
+  <text x="48" y="404" fill="#555" font-size="13">Kiali shows both clusters side by side, so every application appears twice.</text>
+  <text x="48" y="426" fill="#555" font-size="13">A rule that you apply acts only in the cluster where you applied it.</text>
+
+  <!-- prometheus / kiali -->
+  <rect x="800" y="120" width="170" height="64" rx="8" fill="#fff7ee" stroke="#d9730d" stroke-width="2"/>
+  <text x="885" y="148" text-anchor="middle" fill="#222" font-weight="bold">Prometheus</text>
+  <text x="885" y="168" text-anchor="middle" fill="#555" font-size="12">request counters</text>
+  <rect x="1010" y="120" width="160" height="64" rx="8" fill="#f4eefa" stroke="#7a4fa5" stroke-width="2"/>
+  <text x="1090" y="148" text-anchor="middle" fill="#222" font-weight="bold">Kiali</text>
+  <text x="1090" y="168" text-anchor="middle" fill="#555" font-size="12">graph and checks</text>
+  <rect x="1010" y="260" width="160" height="64" rx="8" fill="#f3f6fb" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="1090" y="288" text-anchor="middle" fill="#222" font-weight="bold">Kubernetes API</text>
+  <text x="1090" y="308" text-anchor="middle" fill="#555" font-size="12">Istio objects</text>
+
+  <line x1="682" y1="148" x2="796" y2="148" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <circle cx="739" cy="132" r="13" fill="#d9730d"/><text x="739" y="137" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+  <line x1="972" y1="152" x2="1006" y2="152" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <circle cx="989" cy="136" r="13" fill="#d9730d"/><text x="989" y="141" text-anchor="middle" fill="#fff" font-weight="bold">3</text>
+  <line x1="1090" y1="258" x2="1090" y2="188" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <circle cx="1112" cy="224" r="13" fill="#d9730d"/><text x="1112" y="229" text-anchor="middle" fill="#fff" font-weight="bold">4</text>
+
+  <!-- legend -->
+  <g fill="#333" font-size="13">
+    <text x="760" y="360" font-weight="bold">In order</text>
+    <text x="760" y="384">1  A request goes from client to productpage to reviews and details.</text>
+    <text x="760" y="406">2  Each sidecar counts the request (who, to whom, status code).</text>
+    <text x="760" y="428">3  Kiali reads the counters: no requests, no edge.</text>
+    <text x="760" y="450">4  Kiali reads the Istio objects and checks them (KIA1107).</text>
+  </g>
+</svg>
