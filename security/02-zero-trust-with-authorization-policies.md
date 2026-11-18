@@ -23,6 +23,13 @@ All commands run on your bastion host as your lab user. Bookinfo is already depl
 
 **Attention 2:** Bookinfo runs in **both** clusters, and both clusters are one mesh. An `AuthorizationPolicy` is an object of **one** cluster. You will see what that means in step 3.
 
+## Step 0: Prepare 
+
+```
+mkdir -p ~/zero-trust
+cd ~/zero-trust
+```
+
 ## Step 1: Callers and the starting point
 
 The address of the gateway and a helper that prints only the HTTP status:
