@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 560" font-family="Segoe UI,Arial,sans-serif" font-size="14">
+<defs>
+<marker id="a" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8z" fill="#555"/></marker>
+</defs>
+<rect width="1200" height="560" fill="#fff"/>
+<text x="600" y="32" text-anchor="middle" font-size="22" font-weight="bold">Day 2: four questions an operations team asks every day</text>
+
+<!-- 1 istiod -->
+<rect x="30" y="56" width="262" height="320" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+<circle cx="58" cy="86" r="15" fill="#3b8a3b"/><text x="58" y="92" text-anchor="middle" fill="#fff" font-weight="bold" font-size="16">1</text>
+<text x="82" y="92" font-weight="bold" font-size="16">Is istiod healthy?</text>
+<text x="48" y="130" font-weight="bold" fill="#555" font-size="12">METRIC</text>
+<text x="48" y="150">pilot_xds</text>
+<text x="48" y="170">pilot_proxy_convergence_time</text>
+<text x="48" y="190" font-size="13" fill="#555">memory of container discovery</text>
+<text x="48" y="228" font-weight="bold" fill="#555" font-size="12">DASHBOARD</text>
+<text x="48" y="248">Istio Control Plane</text>
+<text x="48" y="286" font-weight="bold" fill="#555" font-size="12">LAB VALUE</text>
+<text x="48" y="306">9 proxies connected</text>
+<text x="48" y="326">99 % of pushes within 0.1 s</text>
+<text x="48" y="346">62 MiB (cluster a)</text>
+
+<!-- 2 certificates -->
+<rect x="318" y="56" width="262" height="320" rx="10" fill="#f6f1fa" stroke="#7a4fa5" stroke-width="2"/>
+<circle cx="346" cy="86" r="15" fill="#7a4fa5"/><text x="346" y="92" text-anchor="middle" fill="#fff" font-weight="bold" font-size="16">2</text>
+<text x="370" y="92" font-weight="bold" font-size="16">Are the certificates valid?</text>
+<text x="336" y="130" font-weight="bold" fill="#555" font-size="12">METRIC</text>
+<text x="336" y="150">istio_agent_cert_expiry_seconds</text>
+<text x="336" y="170">x509_cert_not_after - time()</text>
+<text x="336" y="190" font-size="13" fill="#555">CAs, istiod, sidecars, VMs</text>
+<text x="336" y="228" font-weight="bold" fill="#555" font-size="12">DASHBOARD</text>
+<text x="336" y="248">Lab: certificates and when</text>
+<text x="336" y="266">they expire</text>
+<text x="336" y="304" font-weight="bold" fill="#555" font-size="12">LAB VALUE</text>
+<text x="336" y="324">shortest sidecar certificate:</text>
+<text x="336" y="344">363 s left (it lives 10 min)</text>
+
+<!-- 3 traffic -->
+<rect x="606" y="56" width="262" height="320" rx="10" fill="#fff6ec" stroke="#d9730d" stroke-width="2"/>
+<circle cx="634" cy="86" r="15" fill="#d9730d"/><text x="634" y="92" text-anchor="middle" fill="#fff" font-weight="bold" font-size="16">3</text>
+<text x="658" y="92" font-weight="bold" font-size="16">Is the traffic fine?</text>
+<text x="624" y="130" font-weight="bold" fill="#555" font-size="12">METRIC</text>
+<text x="624" y="150">istio_requests_total (5xx)</text>
+<text x="624" y="170">istio_request_duration_</text>
+<text x="624" y="188">milliseconds</text>
+<text x="624" y="228" font-weight="bold" fill="#555" font-size="12">DASHBOARD</text>
+<text x="624" y="248">Istio Mesh, Istio Service</text>
+<text x="624" y="286" font-weight="bold" fill="#555" font-size="12">LAB VALUE</text>
+<text x="624" y="306">no 5xx in the last hour</text>
+<text x="624" y="326">share without error: 1</text>
+
+<!-- 4 sidecars -->
+<rect x="894" y="56" width="262" height="320" rx="10" fill="#eef3fa" stroke="#4a6fa5" stroke-width="2"/>
+<circle cx="922" cy="86" r="15" fill="#4a6fa5"/><text x="922" y="92" text-anchor="middle" fill="#fff" font-weight="bold" font-size="16">4</text>
+<text x="946" y="92" font-weight="bold" font-size="16">What does it cost?</text>
+<text x="912" y="130" font-weight="bold" fill="#555" font-size="12">METRIC</text>
+<text x="912" y="150">memory of container</text>
+<text x="912" y="170">istio-proxy, per pod</text>
+<text x="912" y="190" font-size="13" fill="#555">up == 0 (a target is down)</text>
+<text x="912" y="228" font-weight="bold" fill="#555" font-size="12">DASHBOARD</text>
+<text x="912" y="248">Istio Performance</text>
+<text x="912" y="286" font-weight="bold" fill="#555" font-size="12">LAB VALUE</text>
+<text x="912" y="306">38 to 45 MiB per sidecar</text>
+<text x="912" y="326">0 targets down</text>
+
+<!-- flow -->
+<line x1="161" y1="376" x2="161" y2="410" stroke="#555" stroke-width="2"/>
+<line x1="449" y1="376" x2="449" y2="410" stroke="#555" stroke-width="2"/>
+<line x1="737" y1="376" x2="737" y2="410" stroke="#555" stroke-width="2"/>
+<line x1="1025" y1="376" x2="1025" y2="410" stroke="#555" stroke-width="2"/>
+<line x1="161" y1="410" x2="1025" y2="410" stroke="#555" stroke-width="2"/>
+<line x1="195" y1="410" x2="195" y2="436" stroke="#555" stroke-width="2" marker-end="url(#a)"/>
+
+<rect x="30" y="440" width="330" height="70" rx="10" fill="#fff" stroke="#888" stroke-width="2"/>
+<text x="195" y="468" text-anchor="middle" font-weight="bold">Prometheus</text>
+<text x="195" y="490" text-anchor="middle" font-size="13" fill="#555">collects and stores the numbers</text>
+<line x1="360" y1="475" x2="410" y2="475" stroke="#555" stroke-width="2" marker-end="url(#a)"/>
+<rect x="414" y="440" width="330" height="70" rx="10" fill="#fff" stroke="#888" stroke-width="2"/>
+<text x="579" y="468" text-anchor="middle" font-weight="bold">Grafana</text>
+<text x="579" y="490" text-anchor="middle" font-size="13" fill="#555">shows them as dashboards</text>
+<line x1="744" y1="475" x2="794" y2="475" stroke="#555" stroke-width="2" marker-end="url(#a)"/>
+<rect x="798" y="440" width="358" height="70" rx="10" fill="#fff" stroke="#888" stroke-width="2"/>
+<text x="977" y="468" text-anchor="middle" font-weight="bold">You decide</text>
+<text x="977" y="490" text-anchor="middle" font-size="13" fill="#555">alarm (wakes somebody) or only a picture</text>
+
+<text x="600" y="545" text-anchor="middle" font-size="12" fill="#555">Values measured in our lab (Istio 1.29.9, cert-manager with istio-csr, no traffic problems)</text>
+</svg>

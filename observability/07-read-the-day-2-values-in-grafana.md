@@ -1,5 +1,7 @@
 # Read the day-2 values in Grafana
 
+![Four questions an operations team asks every day: is istiod healthy, are the certificates valid, is the traffic fine, what does it cost. Each has a metric, a Grafana dashboard and a value measured in our lab. Prometheus stores the numbers, Grafana shows them, you decide between alarm and picture](/images/day-2-values-to-watch.svg)
+
 ## What we do
 
 You look at the values that an operations team watches in a mesh: is `istiod` healthy, does the configuration arrive in the proxies, how long do the certificates live, are there errors in the traffic. You find each value in a ready-made Grafana dashboard and ask Prometheus for the same number. Measured in our lab (Istio 1.29.9, cert-manager with istio-csr).
