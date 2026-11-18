@@ -143,7 +143,7 @@ kubectl rollout status deploy/shop
 Start the test pod:
 
 ```
-kubectl run client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl run client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
 kubectl wait --for=condition=Ready pod/client
 ```
 
