@@ -22,9 +22,11 @@ A certificate has no metric of its own. Three different components report their 
 |---|---|---|---|
 | root CA and intermediate CA | `x509_cert_not_after` | `x509-certificate-exporter`, reads the secret `istio-ca` | point in time (seconds since 1970) |
 | certificate of `istiod` | `certmanager_certificate_expiration_timestamp_seconds` | cert-manager | point in time |
-| workload certificate (every sidecar and the ingress gateway) | `istio_agent_cert_expiry_seconds` | the Istio agent in every sidecar | seconds left |
+| workload certificate (every sidecar and the ingress gateway, and a VM) | `istio_agent_cert_expiry_seconds` | the Istio agent in every sidecar and on the VM | seconds left |
 
 Mind the units. Two metrics give a point in time, one gives the time left. To compare them you subtract `time()` (now) from the first two. You do this in step 3.
+
+A VM is not a pod, so Prometheus does not find it by itself. How you add it is step 7 of [Make the expiry of certificates visible](02-certificate-expiry.md); the dashboard needs no change.
 
 The exporter is the only part that is not in a standard Istio installation. The lab installed it with Helm (nothing to do for you, it is running):
 

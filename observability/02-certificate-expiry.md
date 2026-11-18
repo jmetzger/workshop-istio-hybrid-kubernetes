@@ -156,7 +156,53 @@ kubectl -n cert-manager scale deploy cert-manager-istio-csr --replicas=1
 
 One minute later every workload row is green again (565 seconds left in our lab). The agents ask again by themselves, you do not restart any pod.
 
-The certificate of a VM is not in the table: Prometheus does not collect from the VM in our lab. For a VM, read the file as in step 4.
+## Step 7: Put the VM into the table
+
+The VM is not in the table yet: Prometheus collects from pods, and the VM is not a pod. The Istio agent on the VM reports the same metric as every sidecar, `istio_agent_cert_expiry_seconds`, on port 15020. You only have to tell Prometheus where to look. This needs the VM to be in the mesh (exercise [A VM joins the mesh](../virtual-machines/01-add-a-vm-to-the-mesh.md)).
+
+First check that the VM answers (the agent listens on all addresses, and your clusters reach the VM over IPv6):
+
+```
+VM=v6-$(whoami)-a-vm1.do.t3isp.de
+kubectl -n istio-system exec deploy/prometheus -c prometheus-server -- wget -qO- -T 5 "http://$VM:15020/metrics" | grep ^istio_agent_cert_expiry_seconds
+```
+
+```
+istio_agent_cert_expiry_seconds{resource_name="default"} 578.7
+```
+
+Now add a job to the Prometheus of cluster a. Open the configuration:
+
+```
+kubectl -n istio-system edit cm prometheus
+```
+
+Find the line `scrape_configs:` and add this job below it, with the same indentation as the other jobs (replace `tlnX` with your user name; the label `pod` is what the table shows as the name):
+
+```
+- job_name: vm-agents
+  static_configs:
+  - targets:
+    - v6-tlnX-a-vm1.do.t3isp.de:15020
+    labels:
+      pod: a-vm1
+```
+
+Save and close. Prometheus reloads its configuration by itself, after at most a minute. Check the target:
+
+```
+kubectl -n istio-system exec deploy/prometheus -c prometheus-server -- wget -qO- 'http://localhost:9090/api/v1/query?query=up%7Bjob%3D%22vm-agents%22%7D' | jq -r '.data.result[] | [.metric.instance, .value[1]] | @tsv'
+```
+
+```
+v6-tln12-a-vm1.do.t3isp.de:15020	1
+```
+
+`1` means Prometheus collects from the VM. Reload the dashboard: a row `a-vm1` is in the table of cluster a, and a line `a-vm1` in the saw below it, between about 600 and 300 seconds like every workload. We measured this in our lab (one VM in cluster a, after one minute `up` was `1`).
+
+If the VM stops renewing (see [Outage: what happens to the VM](../virtual-machines/03-outage-what-happens-to-the-vm.md)), its row falls and turns red like the row of a pod. For a VM in cluster b you do the same in the Prometheus of cluster b.
+
+The agent reports what the VM holds in its own file. You can still read the file itself (step 4) when Prometheus does not answer.
 
 ## What to watch, and how
 
