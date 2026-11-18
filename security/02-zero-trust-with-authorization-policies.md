@@ -152,6 +152,7 @@ Repeat the calls until you see the expected answers. Callers with a sidecar stil
 curl -6 -s -o /dev/null -w "gateway: HTTP %{http_code}\n" "http://[$GATEWAY]/productpage"
 kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "client:  HTTP %{http_code}\n" http://productpage:9080/productpage
 kubectl -n zt-plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain:   HTTP %{http_code}\n" http://productpage.default:9080/productpage
+
 ```
 
 ```
