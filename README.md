@@ -65,10 +65,10 @@ All material in this repository is in English.
      * [What Istio costs: CPU and memory of the sidecars and of istiod](observability/00-what-istio-costs.md)
      * [Prometheus, Grafana, Kiali, and what Istio costs](observability/01-prometheus-grafana-kiali.md)
      * [Make the expiry of certificates visible](observability/02-certificate-expiry.md)
+     * [Build the certificate dashboard by hand in Grafana](observability/06-build-the-certificate-dashboard-by-hand.md)
      * [Memory of the sidecars: many services, and the Sidecar object](observability/03-sidecar-memory-and-the-sidecar-object.md)
      * [Kiali in practice: read the graph, find a broken rule](observability/04-kiali-in-practice.md)
      * [Latency: a pod without a sidecar and a pod with one](observability/05-latency-with-and-without-a-sidecar.md)
-     * [Build the certificate dashboard by hand in Grafana](observability/06-build-the-certificate-dashboard-by-hand.md)
 
   1. Upgrade
      * [Upgrade Istio: control plane first, then the proxies](upgrade/01-upgrade-istio-in-place.md)
