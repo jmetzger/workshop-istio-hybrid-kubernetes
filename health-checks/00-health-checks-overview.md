@@ -25,7 +25,7 @@ Only a probe can tell. A probe is a small check that someone runs again and agai
 Two things surprise people:
 
 * **With a sidecar, Istio rewrites the probes of a pod.** The `kubelet` has no certificate, so with mTLS `STRICT` it could not reach the application any more. The probe is sent to the agent in the sidecar (port `15020`), and the agent asks the application.
-* **A VM without a `probe` is always healthy.** The mesh knows only that the sidecar is connected. And not every probe type works on a VM: `httpGet` and `exec` find a stopped application, `tcpSocket` does not.
+* **A VM without a `probe` is always healthy.** The mesh knows only that the sidecar is connected. 
 
 ## Question 4: does it really work?
 
@@ -35,7 +35,7 @@ A probe says "the application answers". It does not say that a caller gets the r
 
 * Name the question first: link, proxy, application, or traffic.
 * `remote-clusters` and `proxy-status` check the mesh. A probe checks the application.
-* On a VM you must configure the probe yourself, and you must choose the type: `httpGet` or `exec`, not `tcpSocket`.
+* On a VM you must configure the probe yourself in the `WorkloadGroup`.
 * On a dual stack VM you cannot have the probe and the scraping of Envoy metrics together, see [why](../virtual-machines/00-why-health-check-or-scraping.md).
 
 Next: [Probes on pods and on VMs](01-probes-on-pods-and-vms.md)

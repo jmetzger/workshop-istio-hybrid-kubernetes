@@ -1,12 +1,14 @@
 # Probes on pods and on VMs
 
+![On a pod the kubelet asks the agent in the sidecar, which asks the application. On a VM the agent asks the application and reports the result to istiod, which writes it into the WorkloadEntry](/images/probes-pod-and-vm.svg)
+
 ## What we do
 
 A probe asks the application "are you alive?". You see three things:
 
 1. How Istio rewrites the probes of a pod, and what happens when a probe fails (readiness and liveness).
-2. Why the rewrite exists: with mTLS `STRICT` and without the rewrite the probe fails.
-3. Which probe types find a stopped application on a **pod** and on a **VM**.
+2. That the probes keep working with mTLS `STRICT`.
+3. How the same question is asked on a **VM**, where the agent runs the probe.
 
 Read first: [Health checks in the mesh](00-health-checks-overview.md).
 
@@ -194,69 +196,18 @@ NAME                           READY   STATUS    RESTARTS   AGE
 health-demo-79f64cfb48-hcnlb   2/2     Running   0          45s
 ```
 
-With `STRICT` every call into the pod needs mTLS, and the pod still becomes ready: the `kubelet` calls port `15020` of the agent (see step 2), not the application. Step 6 shows what happens without that.
+With `STRICT` every call into the pod needs mTLS, and the pod still becomes ready: the `kubelet` calls port `15020` of the agent (see step 2), not the application. 
 
-### Step 6: STRICT without the rewrite
+### Step 6: An `exec` probe on a pod
 
-Switch the rewrite off for this deployment (annotation on the pod template):
-
-```
-kubectl --context $CTX_A -n probes patch deploy health-demo --type merge -p '{"spec":{"template":{"metadata":{"annotations":{"sidecar.istio.io/rewriteAppHTTPProbers":"false"}}}}}'
-sleep 25
-kubectl --context $CTX_A -n probes get pods
-kubectl --context $CTX_A -n probes get pod -l app=health-demo -o jsonpath='{range .items[*]}{.metadata.name}{" "}{.spec.containers[0].readinessProbe.httpGet}{"\n"}{end}'
-kubectl --context $CTX_A -n probes describe pod -l app=health-demo | grep "probe failed" | tail -1
-```
-
-```
-NAME                           READY   STATUS    RESTARTS   AGE
-health-demo-79f64cfb48-hcnlb   2/2     Running   0          71s
-health-demo-b94b55976-qbhlc    1/2     Running   0          25s
-health-demo-79f64cfb48-hcnlb {"path":"/app-health/app/readyz","port":15020,"scheme":"HTTP"}
-health-demo-b94b55976-qbhlc {"path":"/ready","port":8080,"scheme":"HTTP"}
-  Warning  Unhealthy  2s (x2 over 5s)  kubelet            spec.containers{app}: Readiness probe failed: Get "http://[2a01:4f8:c016:712e::1:915d]:8080/ready": read tcp [2a01:4f8:c016:712e::1]:51934->[2a01:4f8:c016:712e::1:915d]:8080: read: connection reset by peer
-```
-
-The new pod keeps the original probe (`/ready` on `8080`). The `kubelet` talks plain HTTP, the sidecar demands mTLS and resets the connection: the pod never becomes ready, and the rolling update stops while the old pod keeps serving. That is why the rewrite is on by default.
-
-### Step 7: `tcpSocket` and `exec` on a pod
-
-Remove the first deployment. Two new deployments run `sleep`, so **nothing listens on `8080`**. The first has a `tcpSocket` probe, the second an `exec` probe:
+Remove the first deployment. The new deployment runs `sleep` and has an `exec` probe: the pod is ready when the file `/tmp/ready` exists.
 
 ```
 kubectl --context $CTX_A -n probes delete deploy health-demo
 ```
 
 ```
-cat <<'EOF' > 03-tcp-demo.yml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: tcp-demo
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: tcp-demo
-  template:
-    metadata:
-      labels:
-        app: tcp-demo
-    spec:
-      containers:
-      - name: app
-        image: python:3.13-alpine
-        command: ["sleep", "3600"]
-        readinessProbe:
-          tcpSocket:
-            port: 8080
-          periodSeconds: 3
-          failureThreshold: 2
-EOF
-```
-
-```
-cat <<'EOF' > 04-exec-demo.yml
+cat <<'EOF' > 03-exec-demo.yml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -284,42 +235,34 @@ EOF
 ```
 
 ```
-kubectl --context $CTX_A -n probes apply -f 03-tcp-demo.yml -f 04-exec-demo.yml
+kubectl --context $CTX_A -n probes apply -f 03-exec-demo.yml
 sleep 30
 kubectl --context $CTX_A -n probes get pods
-kubectl --context $CTX_A -n probes get pod -l app=tcp-demo -o jsonpath='{.items[0].spec.containers[0].readinessProbe}{"\n"}'
 kubectl --context $CTX_A -n probes get pod -l app=exec-demo -o jsonpath='{.items[0].spec.containers[0].readinessProbe}{"\n"}'
 ```
 
 ```
-NAME                        READY   STATUS    RESTARTS   AGE
+NAME                         READY   STATUS    RESTARTS   AGE
 exec-demo-5d768f4dd7-z2vqr   1/2     Running   0          31s
-tcp-demo-655cc7c5bb-b52c6    1/2     Running   0          31s
-{"failureThreshold":2,"httpGet":{"path":"/app-health/app/readyz","port":15020,"scheme":"HTTP"},"periodSeconds":3,"successThreshold":1,"timeoutSeconds":1}
 {"exec":{"command":["test","-f","/tmp/ready"]},"failureThreshold":2,"periodSeconds":3,"successThreshold":1,"timeoutSeconds":1}
 ```
 
-* The `tcpSocket` probe is rewritten too (to `httpGet` on `15020`, the agent opens the TCP connection to `8080` itself), so a pod with a sidecar notices that nothing listens.
-* The `exec` probe is not rewritten, the `kubelet` runs it in the container.
-
-Both turn ready when the condition is true. Start a server on `8080` in the first one, create the file in the second:
+The `exec` probe is not rewritten: the `kubelet` runs the command in the container. Create the file and the pod turns ready:
 
 ```
-kubectl --context $CTX_A -n probes exec deploy/tcp-demo -c app -- sh -c 'nohup python -m http.server 8080 --bind :: >/dev/null 2>&1 &'
 kubectl --context $CTX_A -n probes exec deploy/exec-demo -c app -- touch /tmp/ready
 sleep 8
 kubectl --context $CTX_A -n probes get pods
 ```
 
 ```
-NAME                        READY   STATUS    RESTARTS   AGE
+NAME                         READY   STATUS    RESTARTS   AGE
 exec-demo-5d768f4dd7-z2vqr   2/2     Running   0          41s
-tcp-demo-655cc7c5bb-b52c6    2/2     Running   0          41s
 ```
 
-## Part 2: probe types on a VM
+## Part 2: an `exec` probe on a VM
 
-A VM has no `kubelet`. The agent on the VM runs the probe from the `WorkloadGroup` (see [Health check of the VM](../virtual-machines/04-health-check-of-the-vm.md), which does `httpGet`). Here you try the other two types, with the same steps each time.
+A VM has no `kubelet`. The agent on the VM runs the probe from the `WorkloadGroup` (see [Health check of the VM](../virtual-machines/04-health-check-of-the-vm.md), which does `httpGet`). Here you try `exec`.
 
 ```
 export VM=a-vm1
@@ -334,61 +277,7 @@ st() { kubectl --context $CTX_A get workloadentry -n vm -o jsonpath='{range .ite
 call() { kubectl --context $CTX_A exec deploy/client -c curl -- curl -s -m 5 -o /dev/null -w "HTTP %{http_code}\n" http://diameter-adapter.vm.svc.cluster.local:8000/; }
 ```
 
-### Step 8: `tcpSocket` on the VM
-
-The probe block is added to the end of `02-workloadgroup.yml`:
-
-```
-cp 02-workloadgroup.yml wg-tcp.yml
-printf '  probe:\n    periodSeconds: 3\n    failureThreshold: 2\n    tcpSocket:\n      port: 8000\n' >> wg-tcp.yml
-tail -6 wg-tcp.yml
-```
-
-```
-  probe:
-    periodSeconds: 3
-    failureThreshold: 2
-    tcpSocket:
-      port: 8000
-```
-
-Give the VM the new configuration and a fresh token, and restart the sidecar:
-
-```
-kubectl --context $CTX_A apply -f wg-tcp.yml
-istioctl --context $CTX_A x workload entry configure -f wg-tcp.yml -o vmfiles-tcp --clusterID cluster-a --ingressIP $ISTIOD_ADDR --autoregister
-scp -q vmfiles-tcp/mesh.yaml $VM:/etc/istio/config/mesh
-scp -q vmfiles-tcp/istio-token $VM:/var/run/secrets/tokens/istio-token
-ssh $VM "chown istio-proxy: /etc/istio/config/mesh /var/run/secrets/tokens/istio-token; systemctl restart istio"
-sleep 25
-st; call
-```
-
-```
-Healthy=True () 
-HTTP 200
-```
-
-Now stop the application on the VM:
-
-```
-ssh $VM "systemctl stop vm-echo"
-sleep 10
-st; call
-```
-
-```
-Healthy=True () 
-HTTP 503
-```
-
-The VM stays `Healthy=True`, but the call fails with `503`. The `tcpSocket` probe does not find a stopped application on the VM. Start the application again:
-
-```
-ssh $VM "systemd-run --unit vm-echo python3 /root/vm-echo-server.py"
-```
-
-### Step 9: `exec` on the VM
+### Step 7: `exec` on the VM
 
 The probe is a command on the VM. It is healthy when the exit status is 0. Here: "something listens on port 8000":
 
@@ -433,16 +322,15 @@ info	healthcheck	success threshold hit, marking as healthy
 
 ## What to take away
 
-| Probe type | Pod with sidecar | VM (IPv6 only) |
+| | Pod with sidecar | VM (IPv6 only) |
 |---|---|---|
-| `httpGet` | rewritten to port `15020`, finds a stopped application | finds it, `Healthy=False` after about 6 s |
-| `tcpSocket` | rewritten to port `15020`, finds a stopped application | **does not find it**: `Healthy=True`, calls fail with `503` |
+| Who runs the probe | the `kubelet`, sent to the agent on port `15020` (`httpGet`) | the agent on the VM, from the `WorkloadGroup` |
+| `httpGet` | rewritten, finds a stopped application | finds it, `Healthy=False` after about 6 s |
 | `exec` | not rewritten, runs in the container | finds it, `Healthy=False (exit status 1)` |
 
-* On a pod, Istio rewrites `httpGet` and `tcpSocket` probes so that they keep working with mTLS `STRICT`. Without the rewrite the pod never becomes ready (step 6).
-* On a VM, use `httpGet` or `exec`. A `tcpSocket` probe says "healthy" while the application is down.
-* The failure is visible in the status of the `WorkloadEntry`, not in `proxy-status`.
-* IPv6 only. On a dual stack VM the `httpGet` probe needs `host: 127.0.0.1` and `DUAL_STACK`, see [why](../virtual-machines/00-why-health-check-or-scraping.md). We did not test `tcpSocket` and `exec` on a dual stack VM.
+* On a pod, Istio rewrites `httpGet` probes to port `15020`, so they keep working with mTLS `STRICT`.
+* The failure of a pod is visible in `READY` and in the `EndpointSlice`, the failure of a VM in the status of the `WorkloadEntry`. `proxy-status` shows neither.
+* IPv6 only. On a dual stack VM the `httpGet` probe needs `host: 127.0.0.1` and `DUAL_STACK`, see [why](../virtual-machines/00-why-health-check-or-scraping.md). We did not test `exec` on a dual stack VM.
 
 ## Clean up
 
@@ -456,7 +344,7 @@ scp -q vmfiles-base/istio-token $VM:/var/run/secrets/tokens/istio-token
 ssh $VM "chown istio-proxy: /etc/istio/config/mesh /var/run/secrets/tokens/istio-token; systemctl restart istio"
 sleep 25
 st; call
-rm -rf wg-tcp.yml wg-exec.yml vmfiles-tcp vmfiles-exec vmfiles-base
+rm -rf wg-exec.yml vmfiles-exec vmfiles-base
 ```
 
 ```

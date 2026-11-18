@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" width="1200" height="760" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="ao" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d9730d"/></marker>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#1a5fb4"/></marker>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3b8a3b"/></marker>
+  </defs>
+  <rect width="1200" height="760" fill="#ffffff"/>
+  <text x="600" y="38" text-anchor="middle" font-size="26" font-weight="600" fill="#222">Who asks the application "are you alive?"</text>
+
+  <!-- ================= POD ================= -->
+  <text x="40" y="84" font-size="20" font-weight="600" fill="#1a5fb4">Pod with a sidecar</text>
+  <rect x="40" y="100" width="1120" height="270" rx="10" fill="#fafcff" stroke="#4a6fa5" stroke-width="1.5"/>
+
+  <rect x="70" y="170" width="200" height="100" rx="8" fill="#ffffff" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="170" y="212" text-anchor="middle" font-size="20" font-weight="600" fill="#222">kubelet</text>
+  <text x="170" y="240" text-anchor="middle" font-size="15" fill="#555">on the node</text>
+
+  <rect x="420" y="125" width="720" height="190" rx="10" fill="#f4f8ff" stroke="#4a6fa5" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="440" y="150" font-size="15" fill="#4a6fa5">the pod</text>
+
+  <rect x="450" y="170" width="250" height="100" rx="8" fill="#ffffff" stroke="#1a5fb4" stroke-width="2"/>
+  <text x="575" y="205" text-anchor="middle" font-size="20" font-weight="600" fill="#222">istio-proxy</text>
+  <text x="575" y="232" text-anchor="middle" font-size="15" fill="#555">agent, port 15020</text>
+  <text x="575" y="254" text-anchor="middle" font-size="15" fill="#555">knows the real probes</text>
+
+  <rect x="880" y="170" width="230" height="100" rx="8" fill="#ffffff" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="995" y="205" text-anchor="middle" font-size="20" font-weight="600" fill="#222">your application</text>
+  <text x="995" y="232" text-anchor="middle" font-size="15" fill="#555">port 8080</text>
+  <text x="995" y="254" text-anchor="middle" font-size="15" fill="#555">/ready  /healthz</text>
+
+  <line x1="270" y1="220" x2="446" y2="220" stroke="#d9730d" stroke-width="3" marker-end="url(#ao)"/>
+  <circle cx="358" cy="190" r="14" fill="#d9730d"/><text x="358" y="196" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">1</text>
+  <text x="358" y="256" text-anchor="middle" font-size="13" fill="#d9730d">/app-health/app/readyz</text>
+
+  <line x1="700" y1="220" x2="876" y2="220" stroke="#d9730d" stroke-width="3" marker-end="url(#ao)"/>
+  <circle cx="788" cy="190" r="14" fill="#d9730d"/><text x="788" y="196" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">2</text>
+  <text x="788" y="256" text-anchor="middle" font-size="14" fill="#d9730d">/ready</text>
+
+  <text x="70" y="342" font-size="16" fill="#333">Ready: the pod stays in the EndpointSlice.  Not ready: it leaves it.  Liveness fails: the container is restarted.</text>
+
+  <g transform="translate(0,30)">
+  <!-- ================= VM ================= -->
+  <text x="40" y="394" font-size="20" font-weight="600" fill="#3b8a3b">Virtual machine</text>
+  <rect x="40" y="410" width="1120" height="250" rx="10" fill="#fafdfa" stroke="#3b8a3b" stroke-width="1.5"/>
+
+  <rect x="70" y="440" width="560" height="190" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="90" y="465" font-size="15" fill="#3b8a3b">the VM</text>
+
+  <rect x="100" y="490" width="230" height="100" rx="8" fill="#ffffff" stroke="#1a5fb4" stroke-width="2"/>
+  <text x="215" y="525" text-anchor="middle" font-size="20" font-weight="600" fill="#222">pilot-agent</text>
+  <text x="215" y="552" text-anchor="middle" font-size="15" fill="#555">runs the probe from</text>
+  <text x="215" y="574" text-anchor="middle" font-size="15" fill="#555">its mesh config</text>
+
+  <rect x="390" y="490" width="210" height="100" rx="8" fill="#ffffff" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="495" y="525" text-anchor="middle" font-size="20" font-weight="600" fill="#222">your application</text>
+  <text x="495" y="552" text-anchor="middle" font-size="15" fill="#555">port 8000</text>
+  <text x="495" y="574" text-anchor="middle" font-size="15" fill="#555">httpGet or exec</text>
+
+  <line x1="330" y1="540" x2="386" y2="540" stroke="#d9730d" stroke-width="3" marker-end="url(#ao)"/>
+  <circle cx="358" cy="510" r="14" fill="#d9730d"/><text x="358" y="516" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">1</text>
+
+  <rect x="730" y="440" width="170" height="90" rx="8" fill="#ffffff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="815" y="480" text-anchor="middle" font-size="20" font-weight="600" fill="#222">istiod</text>
+  <text x="815" y="506" text-anchor="middle" font-size="15" fill="#555">in cluster a</text>
+
+  <rect x="985" y="440" width="150" height="90" rx="8" fill="#ffffff" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="1060" y="472" text-anchor="middle" font-size="18" font-weight="600" fill="#222">WorkloadEntry</text>
+  <text x="1060" y="498" text-anchor="middle" font-size="15" fill="#555">Healthy=True</text>
+  <text x="1060" y="518" text-anchor="middle" font-size="15" fill="#555">or False</text>
+
+  <path d="M330,505 C 480,440 600,445 726,478" fill="none" stroke="#1a5fb4" stroke-width="3" marker-end="url(#ab)"/>
+  <circle cx="537" cy="455" r="14" fill="#1a5fb4"/><text x="537" y="461" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">2</text>
+
+  <line x1="900" y1="485" x2="981" y2="485" stroke="#3b8a3b" stroke-width="3" marker-end="url(#ag)"/>
+  <circle cx="940" cy="455" r="14" fill="#3b8a3b"/><text x="940" y="461" text-anchor="middle" font-size="16" font-weight="700" fill="#fff">3</text>
+
+  <text x="730" y="575" font-size="16" fill="#333">Healthy=False: istiod takes the VM out of the</text>
+  <text x="730" y="597" font-size="16" fill="#333">distribution, after about 6 seconds in our lab.</text>
+  <text x="730" y="625" font-size="16" fill="#333">Without a probe: always healthy.</text>
+
+  </g>
+  <!-- legend -->
+  <circle cx="60" cy="734" r="7" fill="#d9730d"/><text x="76" y="739" font-size="14" fill="#444">the probe request</text>
+  <circle cx="230" cy="734" r="7" fill="#1a5fb4"/><text x="246" y="739" font-size="14" fill="#444">the agent reports</text>
+  <circle cx="410" cy="734" r="7" fill="#3b8a3b"/><text x="426" y="739" font-size="14" fill="#444">istiod writes the status</text>
+</svg>
