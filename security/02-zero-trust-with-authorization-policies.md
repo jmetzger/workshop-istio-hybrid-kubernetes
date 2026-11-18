@@ -488,6 +488,7 @@ The pod without a sidecar has no certificate and so no principal. It does not ev
 
 ```
 kubectl -n zt-plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain: HTTP %{http_code}\n" http://productpage.default:9080/productpage
+
 ```
 
 
