@@ -250,7 +250,7 @@ spec:
 EOF
 ```
 
-Wait about 15 seconds (the setting needs a moment to reach the sidecars), then read the last line of the sidecar of `shop`:
+Wait about 15 seconds (the setting needs a moment to reach the sidecars), then read the last line of the sidecar of `shop`. There is already an entry although the log was just switched on: `shop` sends a call every five seconds, so a few calls ran after the setting arrived. Calls from before are not logged afterwards.
 
 ```
 kubectl logs deploy/shop -c istio-proxy --tail=1
