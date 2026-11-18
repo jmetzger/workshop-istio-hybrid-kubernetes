@@ -154,7 +154,15 @@ IP=$(kubectl get svc istio-ingressgateway -n istio-ingress -o jsonpath='{.status
 for i in $(seq 1 20); do curl -s -o /dev/null -w "%{time_total}\n" "http://[$IP]/productpage"; done | sort -n
 ```
 
-Measured in our lab: 11 calls took 0.03 to 0.2 seconds, 9 calls took 3.0 to 3.2 seconds. **Some** calls are slow, **some** are fast. The pods are healthy, no errors.
+Measured in our lab: 11 calls took 0.03 to 0.2 seconds, 9 calls took 3.0 to 3.2 seconds. **Some** calls are slow, **some** are fast. The pods are healthy, no errors in `kubectl get pods`.
+
+Look at the page in the browser, or ask for the text a few times:
+
+```
+for i in $(seq 1 6); do curl -s "http://[$IP]/productpage" | grep -o "Sorry, product details are currently unavailable\|Book Details" | head -1; done
+```
+
+Measured in our lab: 4 times `Book Details`, 2 times `Sorry, product details are currently unavailable`. The page is delivered, but without the details of the book.
 
 Now go to Jaeger:
 
@@ -165,6 +173,8 @@ Now go to Jaeger:
 2. Open one. The longest bar below the three spans that wrap everything is the span of `productpage` towards `details.default`: **3 s**. Jaeger marks it with a red icon, and in the list the trace says `1 Error`. The tags of this span show `error` = `true`, `http.status_code` = `0` and `response_flags` = `DI,DC` (`DI` is "delay injected" in Envoy).
 
 ![Jaeger, slow trace](../images/jaeger-5-slow-trace.png)
+
+**Why is it an error?** The delay is 3 seconds, and `productpage` waits **at most 3 seconds** for `details` (in the code of Bookinfo: `timeout=3.0`). It gives up and closes the connection. The sidecar reports this as `http.status_code` = `0` and the flag `DC` (the caller closed the connection). Jaeger shows every such span in red. This is also the reason for the page without details in the browser.
 
 3. Look for the span of `details` itself. **There is none.** The delay is added by the sidecar of `productpage` **before** the request is sent. The request never reached `details`.
 4. Open the span of `productpage` that is the server side (the one on the level of the `productpage` call from the gateway) and check `istio.cluster_id`. In our lab all 9 slow requests ran through `productpage` in **cluster-a**, and none in cluster-b.
