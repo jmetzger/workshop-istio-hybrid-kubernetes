@@ -120,9 +120,10 @@ In this picture the span of `reviews` has `istio.cluster_id` = `cluster-b` and `
 
 ## Step 4: Find a slow call
 
-Somebody reports that some page loads are slow, others are fast. We build this in. A `VirtualService` delays every call from the sidecars of cluster a to `details` by 3 seconds. Save this as `01-virtualservice-details-delay.yml`:
+Somebody reports that some page loads are slow, others are fast. We build this in. A `VirtualService` delays every call from the sidecars of cluster a to `details` by 3 seconds. Create the file `01-virtualservice-details-delay.yml` and apply it:
 
 ```
+cat <<'EOF' > 01-virtualservice-details-delay.yml
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
@@ -139,6 +140,7 @@ spec:
       route:
         - destination:
             host: details
+EOF
 ```
 
 ```
