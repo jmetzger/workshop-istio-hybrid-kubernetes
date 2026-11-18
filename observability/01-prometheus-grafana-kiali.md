@@ -151,8 +151,6 @@ kiali HTTP 200
 grafana HTTP 200
 ```
 
-To open them in a browser you need a tunnel from your laptop through the bastion host. The trainer shows Kiali and Grafana on the screen. We have not tested the tunnel from a participant laptop.
-
 ## Clean up
 
 Leave the add-ons installed for the next exercises. To remove them:
