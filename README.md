@@ -87,3 +87,6 @@ All material in this repository is in English.
 
   1. Day-2 operations
      * [Day-2 operations for Istio: what comes after the installation](day-2/00-istio-day-2-operations.md)
+
+  1. Training pad
+     * [Yopad 16.11. - 18.11.2026: links, exercises and schedule of the training](yopad-2026-11-16-18.md)
