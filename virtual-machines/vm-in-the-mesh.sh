@@ -354,7 +354,7 @@ step "Call the VM from a pod" \
   "A test pod with a sidecar calls the service diameter-adapter. The answer comes from the VM." \
   "The header x-forwarded-client-cert shows the identities of both sides: mTLS between the pod and the VM."
 go <<'EOF'
-kubectl --context $CTX_A create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl --context $CTX_A create deploy client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl --context $CTX_A apply -f -
 kubectl --context $CTX_A rollout status deploy/client
 kubectl --context $CTX_A exec deploy/client -c curl -- curl -s -m 8 -w "\nHTTP %{http_code}\n" http://diameter-adapter.vm.svc.cluster.local:8000/
 EOF
@@ -370,7 +370,7 @@ EOF
 step "Call the VM from cluster b" \
   "The VM is registered in cluster a. A pod in cluster b finds it, too: both clusters are one mesh."
 go <<'EOF'
-kubectl --context $CTX_B create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl --context $CTX_B create deploy client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl --context $CTX_B apply -f -
 kubectl --context $CTX_B rollout status deploy/client
 kubectl --context $CTX_B exec deploy/client -c curl -- curl -s -m 8 -w "\nHTTP %{http_code}\n" http://diameter-adapter.vm.svc.cluster.local:8000/
 EOF
