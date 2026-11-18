@@ -94,15 +94,17 @@ cd zero-trust
 
 ## Step 2: Deny all
 
-`deny-all.yml`:
+Create `deny-all.yml`:
 
 ```
+cat > deny-all.yml <<'EOF'
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
   name: deny-all
   namespace: default
 spec: {}
+EOF
 ```
 
 First only in cluster a:
@@ -205,9 +207,10 @@ kubectl -n istio-ingress get pod -l istio=ingressgateway -o jsonpath='{.items[0]
 istio-ingressgateway
 ```
 
-`allow-productpage.yml`:
+Create `allow-productpage.yml`:
 
 ```
+cat > allow-productpage.yml <<'EOF'
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -226,6 +229,7 @@ spec:
     - operation:
         methods: ["GET"]
         paths: ["/productpage", "/static/*", "/login", "/logout", "/api/v1/products*"]
+EOF
 ```
 
 ```
@@ -265,9 +269,10 @@ kubectl logs deploy/productpage-v1 -c istio-proxy --tail=80 | grep rbac_filter |
 
 `productpage` calls `details` and `reviews`, `reviews` calls `ratings`. One policy for each target, with the service account of the **caller** as principal.
 
-`allow-details.yml`:
+Create `allow-details.yml`:
 
 ```
+cat > allow-details.yml <<'EOF'
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -286,11 +291,13 @@ spec:
     - operation:
         methods: ["GET"]
         paths: ["/details/*"]
+EOF
 ```
 
-`allow-reviews.yml`:
+Create `allow-reviews.yml`:
 
 ```
+cat > allow-reviews.yml <<'EOF'
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -309,11 +316,13 @@ spec:
     - operation:
         methods: ["GET"]
         paths: ["/reviews/*"]
+EOF
 ```
 
-`allow-ratings.yml`:
+Create `allow-ratings.yml`:
 
 ```
+cat > allow-ratings.yml <<'EOF'
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -332,6 +341,7 @@ spec:
     - operation:
         methods: ["GET"]
         paths: ["/ratings/*"]
+EOF
 ```
 
 ```
@@ -420,9 +430,10 @@ reviews to details: HTTP 403
 
 `DENY` policies are checked **before** `ALLOW` policies. They fit exceptions: refuse a call even where an `ALLOW` policy would let it pass.
 
-`deny-ratings-debug.yml`: refuse every call to `ratings` that carries the header `x-debug: true`:
+Create `deny-ratings-debug.yml` (refuse every call to `ratings` that carries the header `x-debug: true`):
 
 ```
+cat > deny-ratings-debug.yml <<'EOF'
 apiVersion: security.istio.io/v1
 kind: AuthorizationPolicy
 metadata:
@@ -437,6 +448,7 @@ spec:
   - when:
     - key: request.headers[x-debug]
       values: ["true"]
+EOF
 ```
 
 ```
