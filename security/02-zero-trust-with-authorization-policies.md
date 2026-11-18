@@ -111,10 +111,6 @@ bookinfo-reviews       21h
 default                21h
 ```
 
-```
-mkdir -p zero-trust
-cd zero-trust
-```
 
 ## Step 2: Require mTLS (STRICT)
 
