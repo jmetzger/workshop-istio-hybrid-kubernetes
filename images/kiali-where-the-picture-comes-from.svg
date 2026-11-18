@@ -5,7 +5,7 @@
   </defs>
   <rect width="1200" height="470" fill="#ffffff"/>
   <text x="600" y="34" text-anchor="middle" font-size="20" font-weight="bold" fill="#222">Where the picture in Kiali comes from</text>
-  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Kiali draws nothing by itself. It shows what the sidecars reported to Prometheus, and what is in the Istio configuration.</text>
+  <text x="600" y="58" text-anchor="middle" fill="#555" font-size="13">Kiali draws nothing by itself. It shows what Prometheus collected from the sidecars, and what is in the Istio configuration.</text>
 
   <!-- cluster a -->
   <rect x="30" y="80" width="680" height="250" rx="10" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
@@ -22,7 +22,7 @@
   <line x1="432" y1="170" x2="536" y2="150" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
   <line x1="432" y1="196" x2="536" y2="258" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
   <circle cx="239" cy="166" r="13" fill="#d9730d"/><text x="239" y="171" text-anchor="middle" fill="#fff" font-weight="bold">1</text>
-  <text x="125" y="318" text-anchor="middle" fill="#555" font-size="12">every pod has an Envoy sidecar</text>
+  <text x="48" y="318" fill="#555" font-size="12">every pod has an Envoy sidecar, Prometheus scrapes all of them</text>
   
 
   <!-- cluster b -->
@@ -42,9 +42,10 @@
   <text x="1090" y="288" text-anchor="middle" fill="#222" font-weight="bold">Kubernetes API</text>
   <text x="1090" y="308" text-anchor="middle" fill="#555" font-size="12">Istio objects</text>
 
-  <line x1="682" y1="148" x2="796" y2="148" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
-  <circle cx="739" cy="132" r="13" fill="#d9730d"/><text x="739" y="137" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
-  <line x1="972" y1="152" x2="1006" y2="152" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <line x1="712" y1="148" x2="796" y2="148" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <path d="M690,349 V340 H760 V170 H796" fill="none" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
+  <circle cx="754" cy="132" r="13" fill="#d9730d"/><text x="754" y="137" text-anchor="middle" fill="#fff" font-weight="bold">2</text>
+  <line x1="1008" y1="152" x2="974" y2="152" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
   <circle cx="989" cy="136" r="13" fill="#d9730d"/><text x="989" y="141" text-anchor="middle" fill="#fff" font-weight="bold">3</text>
   <line x1="1090" y1="258" x2="1090" y2="188" stroke="#d9730d" stroke-width="3" marker-end="url(#arr)"/>
   <circle cx="1112" cy="224" r="13" fill="#d9730d"/><text x="1112" y="229" text-anchor="middle" fill="#fff" font-weight="bold">4</text>
@@ -53,8 +54,8 @@
   <g fill="#333" font-size="13">
     <text x="760" y="360" font-weight="bold">In order</text>
     <text x="760" y="384">1  A request goes from client to productpage to reviews and details.</text>
-    <text x="760" y="406">2  Each sidecar counts the request (who, to whom, status code).</text>
-    <text x="760" y="428">3  Kiali reads the counters: no requests, no edge.</text>
+    <text x="760" y="406">2  Prometheus scrapes the counters of all sidecars, in both clusters.</text>
+    <text x="760" y="428">3  Kiali asks Prometheus for the counters. No requests, no edge.</text>
     <text x="760" y="450">4  Kiali reads the Istio objects and checks them (KIA1107).</text>
   </g>
 </svg>
