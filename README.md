@@ -56,6 +56,10 @@ All material in this repository is in English.
      * (Optional) [Dual stack on the VM: what to set (`DUAL_STACK` and `ISTIO_DUAL_STACK`)](virtual-machines/00-dual-stack-switches.md)
      * (Optional) [Reference: Dual stack on the VM: details and measurements](virtual-machines/00-dual-stack-switches-details.md)
 
+  1. Health checks
+     * [Health checks in the mesh: what you can check, and with what](health-checks/00-health-checks-overview.md)
+     * [Probes on pods and on VMs](health-checks/01-probes-on-pods-and-vms.md)
+
   1. Debugging Istio
      * [Logs and log levels](debugging/01-logs-and-log-levels.md)
      * [ControlZ: the debug page of istiod](debugging/02-controlz.md)
