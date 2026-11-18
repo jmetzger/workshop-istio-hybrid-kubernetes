@@ -217,8 +217,8 @@ istio_agent_cert_expiry_seconds{resource_name="default"} 578.7
 Now add a job to the Prometheus of cluster a. The configuration of this Prometheus is in the ConfigMap `prometheus` (it is the sample of Istio, not the Prometheus Operator). The commands read the configuration, add the job `vm-agents` with the address of your VM at the end, and write it back. `scrape_configs` is the last part of this file, so a job at the end belongs to it. The label `pod` is what the table shows as the name. The `grep` makes sure the job is added only once, if you run it again:
 
 ```
-kubectl -n istio-system get cm prometheus -o jsonpath='{.data.prometheus\.yml}' > /tmp/prometheus.yml
-grep -q "job_name: vm-agents" /tmp/prometheus.yml || cat >> /tmp/prometheus.yml <<YAML
+kubectl -n istio-system get cm prometheus -o jsonpath='{.data.prometheus\.yml}' > /tmp/$(whoami)-prometheus.yml
+grep -q "job_name: vm-agents" /tmp/$(whoami)-prometheus.yml || cat >> /tmp/$(whoami)-prometheus.yml <<YAML
 - job_name: vm-agents
   static_configs:
   - targets:
@@ -226,9 +226,9 @@ grep -q "job_name: vm-agents" /tmp/prometheus.yml || cat >> /tmp/prometheus.yml 
     labels:
       pod: a-vm1
 YAML
-jq -Rs '{data: {"prometheus.yml": .}}' /tmp/prometheus.yml > /tmp/prom-patch.json
-kubectl -n istio-system patch cm prometheus --type merge --patch-file /tmp/prom-patch.json
-rm /tmp/prometheus.yml /tmp/prom-patch.json
+jq -Rs '{data: {"prometheus.yml": .}}' /tmp/$(whoami)-prometheus.yml > /tmp/$(whoami)-prom-patch.json
+kubectl -n istio-system patch cm prometheus --type merge --patch-file /tmp/$(whoami)-prom-patch.json
+rm /tmp/$(whoami)-prometheus.yml /tmp/$(whoami)-prom-patch.json
 ```
 
 ```
