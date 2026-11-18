@@ -1,5 +1,7 @@
 # Monitoring: Prometheus, Grafana, Kiali, and what Istio costs
 
+![Prometheus pulls (scrapes) the metrics endpoints of sidecars, istiod, cert-manager and the x509 exporter; Grafana and Kiali ask Prometheus; the browser reaches them through Caddy and the ingress gateway](/images/monitoring-flow.svg)
+
 ## What we do
 
 The three sample add-ons of Istio are already installed in your lab. You ask Prometheus four questions: who talks to whom, how fast, and how much memory and CPU the sidecars and `istiod` use. Measured in our lab (Istio 1.29.9, IPv6 only).

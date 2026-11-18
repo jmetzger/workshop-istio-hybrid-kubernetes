@@ -5,11 +5,11 @@
 <text x="480" y="28" text-anchor="middle" font-size="20" font-weight="bold">Monitoring in our lab: who reports, who stores, who shows</text>
 <rect x="20" y="50" width="600" height="400" rx="10" fill="#f4f8ff" stroke="#4a78c2" stroke-width="2"/>
 <text x="35" y="72" font-weight="bold" fill="#2b4f8c">Cluster a  (cluster b is the same, with its own Prometheus)</text>
-<rect x="40" y="90" width="270" height="150" rx="8" fill="#fff" stroke="#888"/>
+<rect x="40" y="90" width="270" height="195" rx="8" fill="#fff" stroke="#888"/>
 <text x="50" y="110" font-weight="bold">1. Who reports (metrics endpoint)</text>
 <text x="50" y="134">Sidecar / gateway (15020, /stats/prometheus)</text><text x="50" y="152" fill="#555">requests, latency, memory, cert expiry</text>
 <text x="50" y="176">istiod (15014, /metrics)</text><text x="50" y="194" fill="#555">control plane, push, cert signing</text>
-<text x="50" y="218">cert-manager, x509-exporter</text><text x="50" y="234" fill="#555">istiod cert, root + intermediate CA</text>
+<text x="50" y="218">cert-manager (9402), x509-exporter (9793)</text><text x="50" y="234" fill="#555">/metrics: istiod cert, root + intermediate CA</text><text x="50" y="258">kubelet cAdvisor (via API server)</text><text x="50" y="273" font-size="12" fill="#555" >memory and CPU of the sidecars</text>
 <rect x="360" y="110" width="240" height="110" rx="8" fill="#fff4e0" stroke="#e8710a" stroke-width="2"/>
 <text x="480" y="136" text-anchor="middle" font-weight="bold">2. Prometheus</text>
 <text x="480" y="160" text-anchor="middle">scrapes (pulls) every few seconds</text><text x="480" y="180" text-anchor="middle">finds pods by itself</text><text x="480" y="200" text-anchor="middle" fill="#555">(Kubernetes service discovery)</text>
