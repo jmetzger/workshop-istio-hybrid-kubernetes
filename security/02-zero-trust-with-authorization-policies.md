@@ -59,9 +59,16 @@ kubectl -n zt-plain rollout status deploy/plain
 Both reach `productpage`. There is no policy yet:
 
 ```
+# Checking connection to productpage within default
 kubectl exec deploy/zt-client -c curl -- curl -s -o /dev/null -m 5 -w "client:  HTTP %{http_code}\n" http://productpage:9080/productpage
+
+# Checking connection to productpage from namespace: zt-plain 
 kubectl -n zt-plain exec deploy/plain -- curl -s -o /dev/null -m 5 -w "plain:   HTTP %{http_code}\n" http://productpage.default:9080/productpage
+
+# Do we have any AuthorizationPolicy
+# in our name space default 
 kubectl get authorizationpolicy
+
 ```
 
 ```
