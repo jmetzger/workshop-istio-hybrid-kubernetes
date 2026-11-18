@@ -75,6 +75,7 @@ All material in this repository is in English.
   1. Upgrade
      * [Upgrade Istio: control plane first, then the proxies](upgrade/01-upgrade-istio-in-place.md)
      * [Upgrade Istio with revisions: two control planes side by side](upgrade/02-upgrade-istio-with-revisions.md)
+     * [Traces with Jaeger: follow one request through both clusters](observability/08-traces-with-jaeger.md)
      * [How the sidecar on a VM is upgraded](upgrade/00-how-the-vm-sidecar-is-upgraded.md)
      * [Upgrade a VM in place](upgrade/03-upgrade-the-vm-in-place.md)
      * [Upgrade a VM with revisions](upgrade/04-upgrade-the-vm-with-revisions.md)
