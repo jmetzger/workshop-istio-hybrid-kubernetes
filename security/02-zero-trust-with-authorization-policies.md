@@ -38,9 +38,9 @@ HTTP 200
 Two more callers, the same as in the previous exercise. One **with** a sidecar (namespace `default`) and one **without** (namespace `plain`):
 
 ```
-kubectl create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl create deploy client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
 kubectl create ns plain
-kubectl -n plain create deploy plain --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl -n plain create deploy plain --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl -n plain apply -f -
 kubectl rollout status deploy/client
 kubectl -n plain rollout status deploy/plain
 ```

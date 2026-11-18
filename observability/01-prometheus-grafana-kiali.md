@@ -23,7 +23,7 @@ You should see `grafana`, `kiali` and `prometheus` with `Running`.
 ## Step 2: Create some traffic
 
 ```
-kubectl create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl create deploy client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
 kubectl rollout status deploy/client
 kubectl exec deploy/client -c curl -- sh -c 'for i in $(seq 1 100); do curl -s -o /dev/null http://productpage:9080/productpage; done; echo done'
 ```

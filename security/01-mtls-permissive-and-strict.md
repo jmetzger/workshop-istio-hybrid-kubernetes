@@ -17,10 +17,10 @@ All commands run on your bastion host as your lab user, in cluster a.
 A caller **with** a sidecar (namespace `default`):
 
 ```
-kubectl create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl create deploy client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
 kubectl rollout status deploy/client
 
-kubectl --context cluster-b create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl --context cluster-b create deploy client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl --context cluster-b apply -f -
 kubectl --context cluster-b rollout status deploy/client 
 ```
 
@@ -30,7 +30,7 @@ A caller **without** a sidecar, in a namespace that has no injection label:
 
 ```
 kubectl create ns plain
-kubectl -n plain create deploy plain --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl -n plain create deploy plain --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl -n plain apply -f -
 kubectl -n plain rollout status deploy/plain
 kubectl -n plain get pods
 ```

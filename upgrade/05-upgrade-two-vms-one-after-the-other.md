@@ -41,7 +41,7 @@ VM=b-vm1 ./vm-in-the-mesh.sh
 cd ~/upgrade-vm
 ```
 
-The script ends in step 8 with `error: failed to create deployment: deployments.apps "client" already exists`, if the pod `client` from the first run is still there. The VM is in the mesh at that point (step 7). Both VMs must show up, with one `WorkloadEntry` each:
+The pod `client` from the first run may still be there. That does not matter: the script creates it with `kubectl apply`, so a second run does not stop at it. Both VMs must show up, with one `WorkloadEntry` each:
 
 ```
 istioctl --context $CTX proxy-status | grep -E "NAME|vm"

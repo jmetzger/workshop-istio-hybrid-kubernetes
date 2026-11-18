@@ -7,7 +7,7 @@ In a mesh `tcpdump` shows much less than you are used to: the traffic between tw
 All commands run on your bastion host as your lab user, in cluster a. You need the test pod `client`:
 
 ```
-kubectl create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl create deploy client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
 kubectl rollout status deploy/client
 ```
 

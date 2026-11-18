@@ -17,7 +17,7 @@ The commands run on your bastion host as your lab user, in cluster a. Kiali runs
 Kiali needs requests to draw edges. Open a **second terminal** on the bastion host and let it run for 15 minutes (900 calls, one per second, then it stops by itself):
 
 ```
-kubectl create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl create deploy client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
 kubectl rollout status deploy/client
 kubectl exec deploy/client -c curl -- sh -c 'for i in $(seq 1 900); do curl -s -o /dev/null http://productpage:9080/productpage; sleep 1; done'
 ```

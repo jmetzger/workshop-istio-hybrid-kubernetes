@@ -5,7 +5,7 @@ The trainer shows this, you watch. All commands are here so that you can repeat 
 Measured in our lab (Istio 1.29.9, Bookinfo in the namespace `default`, both clusters connected). The caller is the test pod `client` (a pod with a sidecar and `curl`):
 
 ```
-kubectl create deploy client --image=curlimages/curl:8.11.1 -- sleep infinity
+kubectl create deploy client --image=curlimages/curl:8.11.1 --dry-run=client -o yaml -- sleep infinity | kubectl apply -f -
 kubectl rollout status deploy/client
 mkdir -p ~/traffic-demo && cd ~/traffic-demo
 ```
