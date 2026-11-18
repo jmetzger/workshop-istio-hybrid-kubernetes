@@ -144,7 +144,25 @@ The loop only sees the proxies of the cluster you are in. For cluster b, write `
 
 ## Step 6: All certificates at a glance in Grafana
 
-Open Grafana (address and password are in `~/monitoring-access.md`). Choose **Dashboards**, the folder **lab**, and the dashboard **Lab: certificates and when they expire**.
+### Open Grafana
+
+Address, user and password are in a file on your bastion host. Show it there:
+
+```
+cat ~/monitoring-access.md
+```
+
+In the table you find the address of Grafana, it looks like `https://grafana.<your lab user>.do.t3isp.de` (for the lab user `tln5`: `https://grafana.tln5.do.t3isp.de`). Below the table is the login: the user is your lab user, and the line `password:` holds your personal password. If you only want that line:
+
+```
+grep password ~/monitoring-access.md
+```
+
+Open the address in the browser of your laptop. The browser asks for the user and the password of this file (a login window of the browser, this is the first protection in front of all monitoring pages). Grafana itself opens without a second login. The password is made for each lab, it is not the password of the bastion host.
+
+If the browser shows a certificate warning or does not load the page, check that you typed the address without a dot at the end and with `https://`.
+
+Then choose **Dashboards** in the menu on the left, open the folder **lab**, and open the dashboard **Lab: certificates and when they expire**.
 
 It has one table for cluster a and one for cluster b. Every row is one certificate, the one that expires first is on top:
 
