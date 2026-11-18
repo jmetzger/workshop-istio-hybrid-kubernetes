@@ -1,5 +1,7 @@
 # Day-2 operations for Istio: what comes after the installation
 
+![Day 1 is the installation, done once. Day 2 has four kinds of work: change (upgrade, revisions, way back), watch (istiod, certificates, traffic, cost), when it fails (istiod gone, a VM, two clusters), secure and debug (mTLS, authorization, troubleshooting)](/images/day-2-operations-map.svg)
+
 ## What this page is
 
 Day 1 is the installation. Day 2 is everything after it: keeping Istio safe, stable and up to date. This page is a map. For each routine task it says what it is, and where in this workshop you do it. There are no commands here; the commands are on the pages we link to.

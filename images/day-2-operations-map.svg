@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" width="1200" height="640" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#555"/></marker>
+  </defs>
+  <rect width="1200" height="640" fill="#ffffff"/>
+  <text x="600" y="42" text-anchor="middle" font-size="28" font-weight="700" fill="#222">Day-2 operations: what comes after the installation</text>
+
+  <rect x="40" y="75" width="230" height="90" rx="12" fill="#f3faf3" stroke="#3b8a3b" stroke-width="2"/>
+  <text x="155" y="112" text-anchor="middle" font-size="20" font-weight="700" fill="#2d6a2d">Day 1</text>
+  <text x="155" y="140" text-anchor="middle" font-size="17" fill="#333">install Istio (once)</text>
+
+  <line x1="272" y1="120" x2="338" y2="120" stroke="#555" stroke-width="3" marker-end="url(#a)"/>
+
+  <rect x="340" y="75" width="820" height="90" rx="12" fill="#eef3fa" stroke="#4a6fa5" stroke-width="2"/>
+  <text x="750" y="112" text-anchor="middle" font-size="20" font-weight="700" fill="#1a5fb4">Day 2</text>
+  <text x="750" y="140" text-anchor="middle" font-size="17" fill="#333">keep it safe, stable and up to date, every day</text>
+
+  <!-- cards -->
+  <g font-size="16" fill="#333">
+    <rect x="40" y="200" width="270" height="330" rx="12" fill="#fff" stroke="#4a6fa5" stroke-width="2"/>
+    <circle cx="68" cy="228" r="16" fill="#4a6fa5"/><text x="68" y="234" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">1</text>
+    <text x="92" y="234" font-size="21" font-weight="700" fill="#1a5fb4">Change</text>
+    <text x="60" y="275" font-weight="700">Upgrade</text>
+    <text x="60" y="300">istiod first, then the</text><text x="60" y="320">sidecars (restart pods)</text>
+    <text x="60" y="355" font-weight="700">Revisions</text>
+    <text x="60" y="380">second istiod next to the</text><text x="60" y="400">old one, move one</text><text x="60" y="420">namespace at a time</text>
+    <text x="60" y="455" font-weight="700">Way back</text>
+    <text x="60" y="480">set the label back,</text><text x="60" y="500">restart the pods</text>
+
+    <rect x="330" y="200" width="270" height="330" rx="12" fill="#fff" stroke="#3b8a3b" stroke-width="2"/>
+    <circle cx="358" cy="228" r="16" fill="#3b8a3b"/><text x="358" y="234" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">2</text>
+    <text x="382" y="234" font-size="21" font-weight="700" fill="#2d6a2d">Watch</text>
+    <text x="350" y="275" font-weight="700">Is istiod healthy?</text>
+    <text x="350" y="300">connections, push errors</text>
+    <text x="350" y="335" font-weight="700">Do certificates renew?</text>
+    <text x="350" y="360">lab: 10 min lifetime,</text><text x="350" y="380">renewed after 5 min</text>
+    <text x="350" y="415" font-weight="700">Is the traffic fine?</text>
+    <text x="350" y="440">success rate, 5xx</text>
+    <text x="350" y="475" font-weight="700">What does it cost?</text>
+    <text x="350" y="500">memory of sidecars, istiod</text>
+
+    <rect x="620" y="200" width="270" height="330" rx="12" fill="#fff" stroke="#d9730d" stroke-width="2"/>
+    <circle cx="648" cy="228" r="16" fill="#d9730d"/><text x="648" y="234" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">3</text>
+    <text x="672" y="234" font-size="21" font-weight="700" fill="#b05a08">When it fails</text>
+    <text x="640" y="275" font-weight="700">istiod is gone</text>
+    <text x="640" y="300">traffic keeps working,</text><text x="640" y="320">new pods are not created</text>
+    <text x="640" y="355" font-weight="700">A VM loses the</text><text x="640" y="375" font-weight="700">control plane</text>
+    <text x="640" y="400">how it comes back</text>
+    <text x="640" y="435" font-weight="700">Two clusters</text>
+    <text x="640" y="460">do they still see each</text><text x="640" y="480">other? remote-clusters</text>
+
+    <rect x="910" y="200" width="250" height="330" rx="12" fill="#fff" stroke="#7a4fa5" stroke-width="2"/>
+    <circle cx="938" cy="228" r="16" fill="#7a4fa5"/><text x="938" y="234" text-anchor="middle" font-size="17" font-weight="700" fill="#fff">4</text>
+    <text x="962" y="234" font-size="21" font-weight="700" fill="#5d3a85">Secure and debug</text>
+    <text x="930" y="275" font-weight="700">mTLS</text>
+    <text x="930" y="300">PERMISSIVE, then STRICT</text>
+    <text x="930" y="335" font-weight="700">Authorization</text>
+    <text x="930" y="360">deny all, then allow</text><text x="930" y="380">each path</text>
+    <text x="930" y="415" font-weight="700">Troubleshooting</text>
+    <text x="930" y="440">logs, access logs,</text><text x="930" y="460">ControlZ, test a</text><text x="930" y="480">connection</text>
+  </g>
+
+  <line x1="750" y1="167" x2="750" y2="196" stroke="#555" stroke-width="2" marker-end="url(#a)"/>
+
+  <text x="600" y="580" text-anchor="middle" font-size="17" fill="#333">Each card has an exercise in this workshop. Order of an upgrade: control plane first, then the proxies.</text>
+  <text x="600" y="606" text-anchor="middle" font-size="15" fill="#666">Values in the lab: Istio 1.29.9, cert-manager with istio-csr</text>
+</svg>
