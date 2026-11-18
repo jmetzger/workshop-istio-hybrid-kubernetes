@@ -55,7 +55,7 @@ The important lines are `providers: - name: jaeger` and `randomSamplingPercentag
 And Jaeger itself:
 
 ```
-kubectl get pods,svc -n istio-system | grep -i jaeger
+kubectl get pods,svc -n istio-system | grep -i -e jaeger -e tracing
 ```
 
 You see the pod `jaeger-...` and the services `tracing` (the web interface, port 80) and `jaeger-collector` (port 4317 and others).
@@ -79,28 +79,38 @@ One endpoint, an address of cluster a. This is why the spans of **both** cluster
 Open Jaeger in the browser: `https://<your jaeger address>/jaeger` (replace `<your jaeger address>` with the address from `~/monitoring-access.md`, the file already contains the full address).
 
 1. On the left, **Service**: choose `productpage.default`. Leave the rest, click **Find Traces**.
-2. The list shows your traces. Each line is one request, with the number of spans and the total duration.
+2. The list shows your traces. Each line is one request: the name of the first span, the number of spans, one colored label per service (with the number of its spans) and the total duration on the right. Above the list, the dots show duration over time.
 3. Click one trace with **8 or 9 spans**.
 
-You see a waterfall. For a call that went through the ingress gateway it looks like this (durations differ):
+![Jaeger search, productpage.default](../images/jaeger-1-search.png)
+
+You see a waterfall. For a call that went through the ingress gateway it looks like this:
+
+![Jaeger trace, waterfall](../images/jaeger-2-trace-waterfall.png)
+
+Each line is one span: the service on the left, the operation next to it, the bar in time, the duration at the bar. The indentation shows who called whom. Measured in our lab, the example above has 9 spans and 5 services (durations differ in your lab):
 
 ```
-istio-ingressgateway   server  productpage.default ...            (whole request)
-istio-ingressgateway   client  router outbound|9080||productpage...
-productpage            server  productpage.default ...
-productpage            client  details.default ...
-details                server  details.default ...
-productpage            client  reviews.default ...
-reviews                server  reviews.default ...
-reviews                client  ratings.default ...
-ratings                server  ratings.default ...
+istio-ingressgateway   productpage.default.svc.cluster.local:9080/productpage      58.51 ms
+istio-ingressgateway     router outbound|9080||productpage.default...; egress      58.16 ms
+productpage                productpage.default.svc.cluster.local:9080/productpage  56.06 ms
+productpage                  details.default.svc.cluster.local:9080/*               3.28 ms
+details                        details.default.svc.cluster.local:9080/*             2.17 ms
+productpage                  reviews.default.svc.cluster.local:9080/*              38.13 ms
+reviews                        reviews.default.svc.cluster.local:9080/*            37.09 ms
+reviews                          ratings.default.svc.cluster.local:9080/*           4.92 ms
+ratings                            ratings.default.svc.cluster.local:9080/*         2.81 ms
 ```
 
 How to read it:
 
-- Every call has **two spans**: a `client` span (the sidecar of the caller, measures from its side) and a `server` span (the sidecar of the target). The difference between them is the time on the network and in the two sidecars.
+- Every call has **two spans**: one from the sidecar of the caller (tag `span.kind` = `client`, measures from its side) and one from the sidecar of the target (`span.kind` = `server`). Jaeger does not show this in a column, you see it in the tags of the span, and in the picture: the span of the caller is the one with the service name of the caller, one level up. The difference between the two is the time on the network and in the two sidecars.
 - The bars are placed in time. `details` and `reviews` are called one after the other by `productpage`.
-- Click a span and open **Tags**. `istio.cluster_id` tells you **in which cluster** this sidecar runs. `http.status_code`, `response_flags` and `upstream_cluster` are there too.
+- Click a span and open **Tags**. `istio.cluster_id` tells you **in which cluster** this sidecar runs. `http.status_code`, `response_flags` and `upstream_cluster` are there too. In the list and in the waterfall the cluster is **not** shown, you only find it in the tags.
+
+![Jaeger span, tags](../images/jaeger-3-span-tags.png)
+
+In this picture the span of `reviews` has `istio.cluster_id` = `cluster-b` and `istio.canonical_revision` = `v3`.
 
 **Questions for your team (5 minutes):**
 
@@ -146,10 +156,16 @@ Measured in our lab: 11 calls took 0.03 to 0.2 seconds, 9 calls took 3.0 to 3.2 
 
 Now go to Jaeger:
 
-1. Service `productpage.default`, **Min Duration** `2s`, **Find Traces**. Only the slow requests are left.
-2. Open one. The longest bar is the span `productpage` (client) to `details.default`: about **3000 ms**.
+1. Service `productpage.default`, **Min Duration** `2s` (the field accepts `2s`, `100ms` and similar), **Find Traces**. Only the slow requests are left. In our lab the dots of all of them sit at 3.03 to 3.19 seconds.
+
+![Jaeger search with Min Duration 2s](../images/jaeger-4-min-duration.png)
+
+2. Open one. The longest bar below the three spans that wrap everything is the span of `productpage` towards `details.default`: **3 s**. Jaeger marks it with a red icon, and in the list the trace says `1 Error`. The tags of this span show `error` = `true`, `http.status_code` = `0` and `response_flags` = `DI,DC` (`DI` is "delay injected" in Envoy).
+
+![Jaeger, slow trace](../images/jaeger-5-slow-trace.png)
+
 3. Look for the span of `details` itself. **There is none.** The delay is added by the sidecar of `productpage` **before** the request is sent. The request never reached `details`.
-4. Open the span `productpage` (server) and check `istio.cluster_id`. In our lab all 9 slow requests ran through `productpage` in **cluster-a**, and none in cluster-b.
+4. Open the span of `productpage` that is the server side (the one on the level of the `productpage` call from the gateway) and check `istio.cluster_id`. In our lab all 9 slow requests ran through `productpage` in **cluster-a**, and none in cluster-b.
 
 Why? The `VirtualService` exists only in cluster a. The sidecars of cluster b do not know it. The gateway sends a request to `productpage` in cluster a or in cluster b, so about half of the requests are slow. This is the picture of many multi-cluster problems: **the same rule has to exist in both clusters**. A graph with averages would show "a little slower". The trace shows which requests, where, and in which cluster.
 
@@ -195,5 +211,5 @@ kubectl -n istio-system patch telemetry lab-tracing --type merge -p '{"spec":{"t
 - A trace needs **three things**: sidecars that create spans (a `Telemetry` resource), a place to send them (an extension provider in the mesh configuration), and an application that **copies the trace headers**.
 - In a multi-cluster mesh the sidecars of the second cluster need the collector service name. The service can exist **without pods** in cluster b.
 - Jaeger in this lab keeps the traces **in memory**. A restart of the pod deletes them. For production use a storage (Elasticsearch, Cassandra or OpenSearch) or a hosted service.
-- A fault injected by a sidecar (delay, abort) shows in the trace as a **client span without a server span**.
+- A fault injected by a sidecar (delay, abort) shows in the trace as a span of the caller **without a span of the target**, marked as an error, with `DI` in `response_flags`.
 - Compare with the other tools: Kiali shows **who calls whom** (graph), Prometheus and Grafana show **how often and how fast on average**, Jaeger shows **what happened to one request**.
