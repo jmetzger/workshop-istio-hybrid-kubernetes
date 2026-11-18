@@ -69,6 +69,7 @@ All material in this repository is in English.
      * [Memory of the sidecars: many services, and the Sidecar object](observability/03-sidecar-memory-and-the-sidecar-object.md)
      * [Kiali in practice: read the graph, find a broken rule](observability/04-kiali-in-practice.md)
      * [Latency: a pod without a sidecar and a pod with one](observability/05-latency-with-and-without-a-sidecar.md)
+     * [Read the day-2 values in Grafana](observability/07-read-the-day-2-values-in-grafana.md)
 
   1. Upgrade
      * [Upgrade Istio: control plane first, then the proxies](upgrade/01-upgrade-istio-in-place.md)
