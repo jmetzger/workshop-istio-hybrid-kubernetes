@@ -51,6 +51,7 @@ kubectl -n zt-plain create deploy plain --image=curlimages/curl:8.11.1 --dry-run
 # Waiting for rollout 
 kubectl rollout status deploy/zt-client
 kubectl -n zt-plain rollout status deploy/plain
+
 ```
 
 (You can run this block again at any time.)
