@@ -171,22 +171,28 @@ kubectl -n istio-system exec deploy/prometheus -c prometheus-server -- wget -qO-
 istio_agent_cert_expiry_seconds{resource_name="default"} 578.7
 ```
 
-Now add a job to the Prometheus of cluster a. The configuration of this Prometheus is in the ConfigMap `prometheus` (it is the sample of Istio, not the Prometheus Operator). The command reads the configuration, adds the job `vm-agents` with the address of your VM, and writes it back. The label `pod` is what the table shows as the name. Run it again at any time, it replaces the job and does not add a second one:
+Now add a job to the Prometheus of cluster a. The configuration of this Prometheus is in the ConfigMap `prometheus` (it is the sample of Istio, not the Prometheus Operator). The commands read the configuration, add the job `vm-agents` with the address of your VM at the end, and write it back. `scrape_configs` is the last part of this file, so a job at the end belongs to it. The label `pod` is what the table shows as the name. The `grep` makes sure the job is added only once, if you run it again:
 
 ```
-kubectl -n istio-system get cm prometheus -o jsonpath='{.data.prometheus\.yml}' | python3 -c '
-import sys, json, yaml
-c = yaml.safe_load(sys.stdin)
-c["scrape_configs"] = [j for j in c["scrape_configs"] if j["job_name"] != "vm-agents"]
-c["scrape_configs"].append({"job_name": "vm-agents", "static_configs": [{"targets": ["v6-" + sys.argv[1] + "-a-vm1.do.t3isp.de:15020"], "labels": {"pod": "a-vm1"}}]})
-print(json.dumps({"data": {"prometheus.yml": yaml.safe_dump(c)}}))' $(whoami) > /tmp/prom-patch.json
+kubectl -n istio-system get cm prometheus -o jsonpath='{.data.prometheus\.yml}' > /tmp/prometheus.yml
+grep -q "job_name: vm-agents" /tmp/prometheus.yml || cat >> /tmp/prometheus.yml <<YAML
+- job_name: vm-agents
+  static_configs:
+  - targets:
+    - v6-$(whoami)-a-vm1.do.t3isp.de:15020
+    labels:
+      pod: a-vm1
+YAML
+jq -Rs '{data: {"prometheus.yml": .}}' /tmp/prometheus.yml > /tmp/prom-patch.json
 kubectl -n istio-system patch cm prometheus --type merge --patch-file /tmp/prom-patch.json
-rm /tmp/prom-patch.json
+rm /tmp/prometheus.yml /tmp/prom-patch.json
 ```
 
 ```
 configmap/prometheus patched
 ```
+
+`jq -Rs` reads the whole file as one text and wraps it into the JSON that `kubectl patch` needs. The other entries of the ConfigMap stay as they are.
 
 With the Prometheus Operator you would not edit a ConfigMap. You would create a `ScrapeConfig` with the same address and label.
 
