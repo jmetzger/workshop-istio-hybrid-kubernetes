@@ -558,7 +558,8 @@ apply2 -f deny-ratings-debug.yml
 The same debug container, now with and without the header. The call with the header is repeated until it is refused (it can take more than a minute):
 
 ```
-kubectl debug $POD -i -q --image=curlimages/curl:8.11.1 --target=reviews --profile=general -- sh -c 'for i in $(seq 1 40); do r=$(curl -s -o /dev/null -m 5 -w "%{http_code}" -H "x-debug: true" http://ratings:9080/ratings/0); [ "$r" = 403 ] && break; sleep 2; done; echo "x-debug:  HTTP $r"; curl -s -o /dev/null -m 5 -w "normal:   HTTP %{http_code}\n" http://ratings:9080/ratings/0'
+kubectl debug $POD -i -q --image=curlimages/curl:8.11.1 --target=reviews --profile=general -- sh -c 'for i in $(seq 1 40); do r=$(curl -s -o /dev/null -m 5 -w "%{http_code}" -H "x-debug: true" http://ratings:9080/ratings/0); [ "$r" = 403 ] && break; sleep 2; done; echo "x-debug:  HTTP $r"
+curl -s -o /dev/null -m 5 -w "normal:   HTTP %{http_code}\n" http://ratings:9080/ratings/0'
 
 ```
 
@@ -571,7 +572,6 @@ The order in which Istio evaluates the policies of a workload (Istio documentati
 
 | Order | Kind | Result |
 |---|---|---|
-| 1 | `CUSTOM` (external authorizer) | decides, if it applies |
 | 2 | `DENY` | request refused, if a rule matches |
 | 3 | `ALLOW` | request passes, if a rule matches; if `ALLOW` policies exist and none matches: refused |
 | 4 | no policy at all | request passes |
