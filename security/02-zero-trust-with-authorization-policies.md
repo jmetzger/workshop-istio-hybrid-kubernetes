@@ -30,6 +30,7 @@ The address of the gateway and a helper that prints only the HTTP status:
 ```
 export GATEWAY=$(kubectl get svc istio-ingressgateway -n istio-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
 curl -6 -s -o /dev/null -w "HTTP %{http_code}\n" "http://[$GATEWAY]/productpage"
+
 ```
 
 ```
